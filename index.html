@@ -937,9 +937,6 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
   </div>
 </div>
 
-<div style="padding:16px 24px;background:var(--black);text-align:center">
-  <span id="secretTrigger" onclick="secretClick()" style="font-size:12px;color:rgba(255,255,255,0.2);cursor:default;user-select:none;padding:8px 20px">© 2026 Codyfit</span>
-</div>
 <script>
 let secretCount=0,secretTimer=null;
 function secretClick(){
@@ -951,7 +948,7 @@ function secretClick(){
 </script>
 <footer>
   <span>CODYFIT</span>
-  <span>© 2026 Codyfit</span>
+  <span id="secretTrigger" onclick="secretClick()" style="cursor:default;user-select:none">© 2026 Codyfit</span>
 </footer>
 
 <script>
