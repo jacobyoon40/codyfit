@@ -924,8 +924,7 @@ function secretClick(){
   secretCount++;
   clearTimeout(secretTimer);
   secretTimer=setTimeout(()=>{secretCount=0;},1200);
-  if(secretCount>=5&&secretCount<8){secretCount===5&&(window.location.href='tech.html');}
-  if(secretCount>=8){secretCount=0;window.location.href='admin.html';}
+  if(secretCount>=5){secretCount=0;window.location.href='admin.html';}
 }
 </script>
 <footer>
