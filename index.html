@@ -1397,13 +1397,10 @@ async function doVote(el,idx){
   myVote=String(idx);
   localStorage.setItem('cf-my-vote',myVote);
 
-  // storage 저장
+  // Firebase 저장
   try{
-    let data={};
-    try{const r=await window.storage.get(VOTE_KEY,true);if(r)data=JSON.parse(r.value);}catch(e){}
-    data[key]=(data[key]||0)+1;
-    await window.storage.set(VOTE_KEY,JSON.stringify(data),true);
-  }catch(e){console.log('storage unavailable')}
+    if(window.saveVote) await window.saveVote(key);
+  }catch(e){console.log('vote save error',e)}
 
   showMsgToast('🗳️ 투표 완료! 소중한 의견 감사해요');
   track('vote_'+idx);
@@ -1506,6 +1503,20 @@ document.querySelectorAll('[data-c]').forEach(el=>{
       return true;
     } catch(e) {
       console.error("Firebase 저장 오류:", e);
+      return false;
+    }
+  };
+
+  // 투표 저장 함수
+  window.saveVote = async function(key) {
+    try {
+      await addDoc(collection(db, "votes"), {
+        key: key,
+        createdAt: serverTimestamp()
+      });
+      return true;
+    } catch(e) {
+      console.error("투표 저장 오류:", e);
       return false;
     }
   };
