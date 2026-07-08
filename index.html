@@ -1,1 +1,1514 @@
-placeholder
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codyfit — 내 옷장을 다시 태어나게 합니다</title>
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "CLARITY_PROJECT_ID");
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--black:#0a0a0a;--white:#fff;--cream:#f9f6f2;--rose:#b8697a;--rose-light:#f2e8ea;--g100:#f5f5f5;--g200:#e8e8e8;--g400:#aaa;--g600:#666;--g800:#333}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--black);color:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── SEARCH BAR ── */
+.search-bar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);padding:12px 20px;display:flex;align-items:center;gap:12px;max-width:100%;transition:background 0.3s}
+.search-logo{font-size:13px;font-weight:900;letter-spacing:0.15em;color:var(--white);flex-shrink:0}
+.search-input-wrap{flex:1;position:relative;max-width:400px}
+.search-input{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:9px 16px 9px 38px;font-size:13px;color:var(--white);font-family:inherit;outline:none;transition:border-color 0.2s}
+.search-input::placeholder{color:rgba(255,255,255,0.3)}
+.search-input:focus{border-color:rgba(255,255,255,0.3)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:0.4}
+.search-icon svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2}
+.search-actions{display:flex;gap:8px;margin-left:auto}
+.search-btn{padding:8px 16px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:opacity 0.2s}
+.search-btn.primary{background:var(--white);color:var(--black)}
+.search-btn.ghost{background:transparent;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.15)}
+.search-btn:active{opacity:0.7}
+.nav-pulse{border-color:var(--rose)!important;color:var(--rose)!important;animation:navpulse 2s ease-in-out infinite}
+@keyframes navpulse{0%,100%{box-shadow:0 0 0 0 rgba(184,105,122,0.4)}50%{box-shadow:0 0 0 6px rgba(184,105,122,0)}}
+.nav-glow{border-color:rgba(255,255,255,0.4)!important;color:#fff!important;position:relative;overflow:hidden}
+.nav-glow::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(to right,transparent,rgba(255,255,255,0.15),transparent);animation:navshine 2.5s ease-in-out infinite}
+@keyframes navshine{0%{left:-100%}100%{left:200%}}
+
+/* ── HERO SPLIT ── */
+.hero{height:100svh;min-height:600px;display:flex;overflow:hidden;padding-top:96px}
+.hero-left{width:45%;background:var(--black);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:2}
+@media(max-width:600px){.hero-left{width:100%;position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.2),rgba(0,0,0,0.9));justify-content:flex-end;align-items:flex-end}}
+.hero-left-inner{padding:40px 40px 40px 32px;max-width:340px;width:100%}
+@media(max-width:600px){.hero-left-inner{padding:0 24px 52px}}
+.hero-logo-mark{font-size:11px;font-weight:900;letter-spacing:0.3em;color:rgba(255,255,255,0.3);margin-bottom:28px}
+.hero-h1{font-size:clamp(36px,5vw,58px);font-weight:900;line-height:1.1;letter-spacing:-2px;margin-bottom:16px;overflow:hidden}
+.hero-line{display:block;transform:translateY(0);transition:transform 0.5s cubic-bezier(.16,1,.3,1),opacity 0.5s ease;color:var(--white)}
+.hero-accent{color:var(--rose)}
+.hero-desc{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:28px;font-weight:300;transition:opacity 0.4s}
+.hero-actions{display:flex;gap:8px;margin-bottom:24px}
+.btn-white{flex:1;padding:15px;background:var(--white);color:var(--black);font-size:13px;font-weight:700;border:none;border-radius:100px;cursor:pointer;text-align:center;text-decoration:none;font-family:inherit;transition:opacity 0.2s}
+.btn-white:active{opacity:0.8}
+.btn-outline{padding:15px 18px;background:transparent;color:rgba(255,255,255,0.6);font-size:13px;border:1px solid rgba(255,255,255,0.2);border-radius:100px;cursor:pointer;text-decoration:none;transition:all 0.2s;white-space:nowrap}
+.btn-outline:active{background:rgba(255,255,255,0.1)}
+.hero-slide-dots{display:flex;gap:6px}
+.hero-dot{width:20px;height:2px;background:rgba(255,255,255,0.2);border-radius:100px;cursor:pointer;transition:all 0.3s}
+.hero-dot.on{width:32px;background:var(--white)}
+.hero-right{flex:1;position:relative;overflow:hidden}
+@media(max-width:600px){.hero-right{position:absolute;inset:0}}
+.hero-slides{position:absolute;inset:0}
+.hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 0.8s ease,transform 0.8s ease;transform:scale(1.04)}
+.hero-slide.on{opacity:1;transform:scale(1)}
+.hero-slide-num{position:absolute;bottom:28px;right:24px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.1em}
+
+/* ── 공통 ── */
+.sec{padding:72px 0}
+.sec-inner{padding:0 20px}
+@media(min-width:600px){.sec-inner{padding:0 32px}}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:0.2em;color:var(--rose);margin-bottom:12px}
+.sec-h2{font-size:clamp(24px,6vw,36px);font-weight:900;line-height:1.2;letter-spacing:-1px;margin-bottom:10px}
+.sec-h2.dark{color:var(--black)}
+.sec-h2.light{color:var(--white)}
+.sec-desc{font-size:14px;line-height:1.8;font-weight:300}
+.sec-desc.dark{color:var(--g600)}
+.sec-desc.light{color:rgba(255,255,255,0.4)}
+.rv{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+.rv.on{opacity:1;transform:translateY(0)}
+
+/* ── 콘텐츠 피드 ── */
+.feed-sec{background:var(--cream)}
+.feed-top{padding:0 20px;margin-bottom:0}
+@media(min-width:600px){.feed-top{padding:0 32px}}
+.feed-cat{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--g200);margin-bottom:24px}
+.feed-cat::-webkit-scrollbar{display:none}
+.fcat{flex-shrink:0;padding:12px 16px;font-size:13px;font-weight:500;color:var(--g400);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s}
+.fcat.on{color:var(--black);border-bottom-color:var(--black)}
+
+/* 매거진 그리드 */
+.mag-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--g200)}
+@media(min-width:600px){.mag-grid{grid-template-columns:1fr 1fr 1fr}}
+.mag-card{background:var(--white);cursor:pointer;overflow:hidden;transition:opacity 0.2s}
+.mag-card:active{opacity:0.85}
+.mag-card.featured{grid-column:span 2}
+@media(min-width:600px){.mag-card.featured{grid-column:span 1}}
+.mag-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;transition:transform 0.4s ease;background:var(--g100)}
+.mag-card.featured .mag-img{aspect-ratio:4/3}
+.mag-card:hover .mag-img{transform:scale(1.02)}
+.mag-body{padding:14px}
+.mag-cat{font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--rose);margin-bottom:5px}
+.mag-title{font-size:14px;font-weight:700;color:var(--black);line-height:1.4;margin-bottom:4px}
+.mag-sub{font-size:12px;color:var(--g400);font-weight:300;margin-bottom:10px}
+.mag-footer{display:flex;justify-content:space-between;align-items:center}
+.mag-meta{font-size:11px;color:var(--g400)}
+.mag-read{font-size:11px;font-weight:700;color:var(--black);text-decoration:none;display:flex;align-items:center;gap:4px}
+.mag-read svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.item-pins{position:absolute;inset:0;pointer-events:none}
+.mag-img-wrap{position:relative;overflow:hidden}
+.pin{position:absolute;cursor:pointer;pointer-events:all;transform:translate(-50%,-50%);z-index:2}
+.pin-dot{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--black);box-shadow:0 2px 10px rgba(0,0,0,0.25);transition:transform 0.15s}
+.pin:active .pin-dot{transform:scale(0.9)}
+.pin-tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--black);color:var(--white);font-size:11px;padding:4px 10px;border-radius:100px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.2s}
+.pin:hover .pin-tip{opacity:1}
+
+/* ── AI 업로드 ── */
+.upload-sec{background:var(--black)}
+.upload-demo{margin-top:32px;border-radius:20px;overflow:hidden;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08)}
+.upload-demo-bar{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:6px}
+.demo-dot{width:10px;height:10px;border-radius:50%}
+.upload-body{padding:20px}
+.upload-zone{border:2px dashed rgba(255,255,255,0.15);border-radius:14px;padding:40px 20px;text-align:center;cursor:pointer;transition:border-color 0.2s;position:relative;overflow:hidden}
+.upload-zone:hover{border-color:rgba(255,255,255,0.3)}
+.upload-zone.dragging{border-color:var(--rose)}
+.upload-icon{font-size:40px;margin-bottom:12px}
+.upload-title{font-size:15px;font-weight:700;color:var(--white);margin-bottom:6px}
+.upload-sub{font-size:13px;color:rgba(255,255,255,0.35);font-weight:300}
+.upload-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+
+/* AI 분석 진행 */
+.ai-analyzing{display:none;padding:20px 0}
+.ai-analyzing.on{display:block}
+.ai-preview-img{width:100%;border-radius:12px;overflow:hidden;position:relative;margin-bottom:20px}
+.ai-preview-img img{width:100%;max-height:280px;object-fit:cover;display:block}
+.scan-bar{position:absolute;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--rose),transparent);animation:scanmove 1.8s ease-in-out infinite}
+@keyframes scanmove{0%{top:0}100%{top:100%}}
+.ai-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.ai-step{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.04)}
+.ai-step-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.ai-step-icon.pending{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.3)}
+.ai-step-icon.active{background:rgba(184,105,122,0.2);color:var(--rose);animation:pulsing 1s infinite}
+.ai-step-icon.done{background:rgba(46,125,50,0.2);color:#4caf50}
+@keyframes pulsing{0%,100%{opacity:0.6}50%{opacity:1}}
+.ai-step-text{font-size:13px;font-weight:500;color:rgba(255,255,255,0.7)}
+.ai-step-sub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:1px}
+.ai-progress-bar{height:3px;background:rgba(255,255,255,0.08);border-radius:100px;overflow:hidden;margin-bottom:16px}
+.ai-progress-fill{height:100%;background:var(--rose);border-radius:100px;transition:width 0.5s ease;width:0}
+
+/* AI 결과 */
+.ai-result{display:none;padding:16px;background:rgba(255,255,255,0.04);border-radius:14px;border:1px solid rgba(255,255,255,0.08)}
+.ai-result.on{display:block}
+.ai-result-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.ai-result-thumb{width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0}
+.ai-result-thumb img{width:100%;height:100%;object-fit:cover}
+.ai-result-name{font-size:15px;font-weight:700;color:var(--white)}
+.ai-result-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
+.ai-tags-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.ai-tag{padding:5px 12px;border-radius:100px;font-size:12px;font-weight:600}
+.ai-tag.color{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8)}
+.ai-tag.style{background:rgba(184,105,122,0.15);color:#e8a0b0}
+.ai-tag.size{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5)}
+.ai-match-preview{background:rgba(255,255,255,0.03);border-radius:10px;padding:12px;margin-bottom:14px}
+.ai-match-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:0.1em;margin-bottom:10px}
+.ai-match-items{display:flex;gap:8px;overflow-x:auto}
+.ai-match-items::-webkit-scrollbar{display:none}
+.ai-match-item{flex-shrink:0;text-align:center}
+.ai-match-item img{width:52px;height:52px;border-radius:8px;object-fit:cover;display:block;margin-bottom:4px}
+.ai-match-item span{font-size:10px;color:rgba(255,255,255,0.4)}
+.btn-add-wardrobe{width:100%;padding:14px;background:var(--white);color:var(--black);font-size:14px;font-weight:700;border:none;border-radius:100px;cursor:pointer;font-family:inherit;transition:opacity 0.2s}
+.btn-add-wardrobe:active{opacity:0.8}
+
+/* ── 옥션 ── */
+.auction-sec{background:var(--cream)}
+.auction-filters{display:flex;gap:8px;overflow-x:auto;padding:0 20px;margin-bottom:20px}
+@media(min-width:600px){.auction-filters{padding:0 32px}}
+.auction-filters::-webkit-scrollbar{display:none}
+.af{flex-shrink:0;padding:8px 16px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--g200);color:var(--g600);background:var(--white);transition:all 0.2s}
+.af.on{background:var(--black);color:var(--white);border-color:var(--black)}
+
+/* AI 자연어 검색 */
+.ai-search-wrap{display:flex;flex-direction:column;gap:10px}
+.ai-search-box{display:flex;align-items:center;gap:10px;background:var(--white);border:2px solid var(--g200);border-radius:14px;padding:12px 16px;transition:border-color 0.2s}
+.ai-search-box:focus-within{border-color:var(--black)}
+.ai-search-icon{font-size:14px;color:var(--rose);flex-shrink:0;font-weight:700}
+.ai-search-input{flex:1;border:none;outline:none;font-size:14px;font-family:inherit;color:var(--black);background:transparent}
+.ai-search-input::placeholder{color:var(--g400)}
+.ai-search-clear{background:none;border:none;cursor:pointer;color:var(--g400);font-size:14px;padding:0;flex-shrink:0}
+.ai-search-result{min-height:0;transition:all 0.2s}
+.ai-result-tags{display:flex;flex-wrap:wrap;gap:6px;padding:8px 0}
+.ai-result-tag{padding:5px 12px;border-radius:100px;font-size:12px;font-weight:600}
+.ai-result-tag.cat{background:#f0e8ff;color:#6b21a8}
+.ai-result-tag.color{background:#fce7f3;color:#9d174d}
+.ai-result-tag.price{background:#dcfce7;color:#166534}
+.ai-result-tag.status{background:#fff7ed;color:#9a3412}
+.ai-result-label{font-size:11px;color:var(--g400);margin-bottom:6px;font-weight:500}
+.ai-search-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.ai-search-chips::-webkit-scrollbar{display:none}
+.ai-chip{flex-shrink:0;padding:7px 14px;background:var(--g100);border:1px solid var(--g200);border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;color:var(--g600);font-family:inherit;transition:all 0.15s;white-space:nowrap}
+.ai-chip:active{background:var(--black);color:var(--white);border-color:var(--black)}
+.auction-grid{padding:0 20px;display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:600px){.auction-grid{padding:0 32px;grid-template-columns:1fr 1fr}}
+.auction-card{background:var(--white);border-radius:16px;overflow:hidden;cursor:pointer;border:0.5px solid var(--g200);transition:transform 0.15s}
+.auction-card:active{transform:scale(0.98)}
+.auction-card-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--g100)}
+.auction-card-body{padding:14px}
+.auction-badges{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px}
+.badge.live{background:#fff3e0;color:#e65100}
+.badge.extended{background:#e8f5e9;color:#2e7d32}
+.badge.ending{background:#fce4ec;color:#c62828}
+.auction-name{font-size:15px;font-weight:700;color:var(--black);margin-bottom:3px}
+.auction-sub{font-size:12px;color:var(--g400);margin-bottom:10px;font-weight:300}
+.auction-price{font-size:18px;font-weight:900;color:var(--black)}
+.auction-compare{font-size:11px;color:var(--g400);margin-top:2px}
+.auction-compare span{color:#2e7d32;font-weight:700}
+.auction-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:0.5px solid var(--g200)}
+.auction-time{font-size:11px;color:var(--rose);font-weight:600}
+.bid-btn{padding:9px 18px;background:var(--black);color:var(--white);font-size:12px;font-weight:700;border:none;border-radius:100px;cursor:pointer;font-family:inherit}
+.stamp-btn{padding:7px 12px;background:var(--g100);border:1.5px solid var(--g200);border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;color:var(--g800);font-family:inherit;transition:all 0.2s;display:flex;align-items:center;gap:4px}
+.stamp-btn.on{background:#fff0f3;border-color:#ffb3c6;color:#e63364}
+.stamp-btn.on .stamp-icon{animation:stampbounce 0.4s cubic-bezier(.36,.07,.19,.97)}
+@keyframes stampbounce{0%{transform:scale(1)}30%{transform:scale(1.5)}60%{transform:scale(0.9)}100%{transform:scale(1)}}
+.offer-btn{padding:7px 12px;background:var(--white);border:1.5px solid var(--g200);border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;color:var(--g800);font-family:inherit;transition:all 0.2s}
+.offer-btn:active{background:var(--g100)}
+
+/* 댓글 */
+.comments{padding:0 14px 14px}
+.comment-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.comment{display:flex;gap:8px;align-items:flex-start}
+.comment-avatar{width:26px;height:26px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--g100)}
+.comment-avatar img{width:100%;height:100%;object-fit:cover}
+.comment-bubble{background:var(--g100);border-radius:12px;padding:8px 12px;flex:1}
+.comment-user{font-size:11px;font-weight:700;color:var(--black)}
+.comment-text{font-size:12px;color:var(--g600);margin-top:2px;line-height:1.5}
+.comment-input-row{display:flex;gap:8px}
+.comment-input{flex:1;background:var(--g100);border:none;border-radius:100px;padding:9px 14px;font-size:12px;font-family:inherit;outline:none;color:var(--black)}
+.comment-send{padding:9px 14px;background:var(--black);color:var(--white);border:none;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+
+/* ── 바텀시트 공통 ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.overlay.on{display:flex}
+.sheet{background:var(--white);border-radius:24px 24px 0 0;padding:20px 20px 48px;width:100%;max-width:480px;animation:sheetup 0.3s cubic-bezier(.16,1,.3,1)}
+@keyframes sheetup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes gbIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+.sheet-handle{width:40px;height:4px;background:var(--g200);border-radius:100px;margin:0 auto 20px}
+.sheet-title{font-size:16px;font-weight:700;color:var(--black);margin-bottom:4px}
+.sheet-sub{font-size:13px;color:var(--g400);margin-bottom:20px;font-weight:300}
+
+/* 매칭 시트 */
+.match-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--g200);cursor:pointer}
+.match-item:last-of-type{border:none}
+.match-thumb{width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0;background:var(--g100)}
+.match-thumb img{width:100%;height:100%;object-fit:cover}
+.match-info{flex:1}
+.match-name{font-size:14px;font-weight:600;color:var(--black)}
+.match-sub{font-size:12px;color:var(--g400);margin-top:2px;font-weight:300}
+.match-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;flex-shrink:0}
+.match-badge.yes{background:#e8f5e9;color:#2e7d32}
+.match-badge.no{background:var(--g100);color:var(--g600)}
+.sheet-cta{width:100%;padding:16px;background:var(--black);color:var(--white);font-size:15px;font-weight:700;border:none;border-radius:100px;cursor:pointer;margin-top:20px;font-family:inherit}
+
+/* 입찰 시트 */
+.bid-preview{display:flex;gap:12px;align-items:center;padding:14px;background:var(--g100);border-radius:12px;margin-bottom:20px}
+.bid-thumb{width:48px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0}
+.bid-thumb img{width:100%;height:100%;object-fit:cover}
+.bid-name{font-size:14px;font-weight:700;color:var(--black)}
+.bid-current{font-size:12px;color:var(--g400);margin-top:2px}
+.bid-input-wrap{margin-bottom:16px}
+.bid-input-label{font-size:12px;font-weight:600;color:var(--g600);margin-bottom:8px}
+.bid-input{width:100%;padding:14px;background:var(--g100);border:2px solid var(--g200);border-radius:12px;font-size:18px;font-weight:700;font-family:inherit;outline:none;color:var(--black);transition:border-color 0.2s}
+.bid-input:focus{border-color:var(--black)}
+.bid-min{font-size:11px;color:var(--g400);margin-top:6px}
+.bid-quick{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.bid-quick-btn{padding:8px 14px;background:var(--g100);border:1.5px solid var(--g200);border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;color:var(--g800);font-family:inherit;transition:all 0.2s}
+.bid-quick-btn.on{border-color:var(--black);background:var(--black);color:var(--white)}
+.bid-compare{background:#f1f8e9;border-radius:12px;padding:12px 14px;margin-bottom:20px}
+.bid-compare-title{font-size:11px;font-weight:700;color:#2e7d32;margin-bottom:8px}
+.bid-compare-row{display:flex;justify-content:space-between;font-size:12px;color:var(--g600);margin-bottom:4px}
+.bid-compare-row.hl{font-weight:700;color:#2e7d32}
+.bid-confirm{width:100%;padding:16px;background:var(--black);color:var(--white);font-size:15px;font-weight:700;border:none;border-radius:100px;cursor:pointer;font-family:inherit}
+
+/* ── CTA ── */
+.cta-sec{background:var(--black);padding:80px 24px 100px;text-align:center}
+.cta-h2{font-size:clamp(28px,7vw,40px);font-weight:900;line-height:1.2;letter-spacing:-1px;margin-bottom:12px}
+.cta-desc{font-size:14px;color:rgba(255,255,255,0.4);line-height:1.8;margin-bottom:36px;font-weight:300}
+.btn-kakao{display:flex;align-items:center;justify-content:center;gap:12px;background:#FEE500;color:#1a1a1a;font-size:15px;font-weight:700;padding:18px;border-radius:100px;text-decoration:none;max-width:360px;margin:0 auto}
+.kakao-dot{width:24px;height:24px;background:#1a1a1a;border-radius:50%;flex-shrink:0}
+.cta-hint{font-size:12px;color:rgba(255,255,255,0.2);margin-top:14px}
+footer{padding:28px 24px;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between}
+footer span{font-size:11px;color:rgba(255,255,255,0.2)}
+
+/* 투표 */
+.vote-list{display:flex;flex-direction:column;gap:8px}
+.vote-item{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;cursor:pointer;transition:border-color 0.2s,background 0.2s;position:relative;overflow:hidden}
+.vote-item:active{transform:scale(0.99)}
+.vote-item.voted{border-color:var(--rose);background:rgba(184,105,122,0.08)}
+.vote-label{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px}
+.vote-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px;font-weight:300}
+.vote-bar-wrap{height:3px;background:rgba(255,255,255,0.08);border-radius:100px;overflow:hidden;margin-bottom:6px}
+.vote-bar{height:100%;background:var(--rose);border-radius:100px;transition:width 0.6s cubic-bezier(.16,1,.3,1)}
+.vote-count{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4)}
+.vote-item.voted .vote-count{color:var(--rose)}
+
+/* WISHBOARD */
+.mood-pick{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:100px;width:32px;height:32px;cursor:pointer;font-size:15px;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
+.mood-pick.on{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3)}
+.gb-item{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px}
+.gb-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.gb-mood{font-size:16px}
+.gb-nick{font-size:12px;font-weight:700;color:rgba(255,255,255,0.7)}
+.gb-time{font-size:11px;color:rgba(255,255,255,0.25);margin-left:auto}
+.gb-text{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;font-weight:300}
+
+/* 플로팅 */
+.float-btn{position:fixed;bottom:24px;right:20px;z-index:200;background:var(--white);color:var(--black);font-size:13px;font-weight:700;padding:12px 22px;border-radius:100px;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,0.4);transform:translateY(80px);opacity:0;transition:all 0.4s cubic-bezier(.16,1,.3,1)}
+.float-btn.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- 베타 배너 -->
+<div id="betaBanner" style="position:fixed;top:0;left:0;right:0;z-index:101;background:var(--rose);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+  <div style="display:flex;align-items:center;gap:8px;flex:1;justify-content:center">
+    <span style="font-size:11px;font-weight:700;color:#fff;letter-spacing:0.05em">✦ 베타 서비스 준비 중</span>
+    <span style="font-size:11px;color:rgba(255,255,255,0.7);font-weight:300">관심 등록하면 가장 먼저 알려드려요</span>
+    <a href="#" onclick="showBetaToast();return false;" style="font-size:11px;font-weight:700;color:#fff;text-decoration:underline;white-space:nowrap" data-c="banner-cta">알림 받기 →</a>
+  </div>
+  <button onclick="document.getElementById('betaBanner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:14px;flex-shrink:0;padding:0">✕</button>
+</div>
+
+<!-- 검색바 -->
+<div class="search-bar" style="top:36px">
+  <div class="search-logo">CF</div>
+  <div class="search-input-wrap">
+    <div class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+    <input class="search-input" placeholder="브랜드, 스타일, 아이템 검색" oninput="track('search_input')" data-c="search-input">
+  </div>
+  <div class="search-actions">
+    <a class="search-btn ghost nav-pulse" href="#vote-section" onclick="showMsgToast('🗳️ 어떤 기능이 필요하세요?')" data-c="nav-vote">🗳️ 투표</a>
+    <a class="search-btn ghost nav-glow" href="#wish-section" onclick="showMsgToast('💌 위시보드로 이동해요')" data-c="nav-wish">✦ WISHBOARD</a>
+    <a class="search-btn ghost" href="#upload" onclick="showMsgToast('👗 옷장 등록하러 가볼게요!')" data-c="nav-upload">옷장 등록</a>
+    <a class="search-btn primary" href="#" onclick="showBetaToast();return false;" data-c="nav-cta">베타 신청 ✦</a>
+  </div>
+</div>
+
+<a class="float-btn" href="#" onclick="showBetaToast();return false;" id="floatBtn" data-c="float-cta">베타 신청 →</a>
+
+<!-- HERO -->
+<section class="hero" id="heroSection">
+  <!-- 좌: 텍스트 -->
+  <div class="hero-left">
+    <div class="hero-left-inner">
+      <div class="hero-logo-mark">CF</div>
+      <h1 class="hero-h1">
+        <span class="hero-line" id="heroLine1">내 옷장을</span>
+        <span class="hero-line" id="heroLine2">다시</span>
+        <span class="hero-line hero-accent" id="heroLine3">태어나게</span>
+      </h1>
+      <p class="hero-desc" id="heroDesc">가진 것으로 가능한 코디.<br>필요한 것만 사는 쇼핑.</p>
+      <div class="hero-actions">
+        <a class="btn-white" href="#" onclick="showBetaToast();return false;" data-c="hero-cta">베타 신청하기</a>
+        <a class="btn-outline" href="#feed" data-c="hero-browse">둘러보기</a>
+      </div>
+      <div class="hero-slide-dots">
+        <div class="hero-dot on" onclick="goSlide(0)"></div>
+        <div class="hero-dot" onclick="goSlide(1)"></div>
+        <div class="hero-dot" onclick="goSlide(2)"></div>
+      </div>
+    </div>
+  </div>
+  <!-- 우: 슬라이드 이미지 -->
+  <div class="hero-right">
+    <div class="hero-slides">
+      <div class="hero-slide on" style="background-image:url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=90&fit=crop&crop=top')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=90&fit=crop')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=90&fit=crop')"></div>
+    </div>
+    <div class="hero-slide-num"><span id="slideNum">01</span> / 03</div>
+  </div>
+</section>
+
+<!-- 콘텐츠 피드 -->
+<section class="sec feed-sec" id="feed">
+  <div class="feed-top rv">
+    <div class="sec-inner">
+      <div class="sec-label">EDITORIAL</div>
+      <h2 class="sec-h2 dark">오늘의 코디</h2>
+      <p class="sec-desc dark" style="margin-bottom:24px">아이템을 탭하면 내 옷장과 매칭됩니다</p>
+    </div>
+    <div class="feed-cat">
+      <div class="fcat on" onclick="switchFeed(this)" data-c="fcat-all">전체</div>
+      <div class="fcat" onclick="switchFeed(this)" data-c="fcat-street">스트릿</div>
+      <div class="fcat" onclick="switchFeed(this)" data-c="fcat-office">오피스</div>
+      <div class="fcat" onclick="switchFeed(this)" data-c="fcat-casual">캐주얼</div>
+      <div class="fcat" onclick="switchFeed(this)" data-c="fcat-minimal">미니멀</div>
+      <div class="fcat" onclick="switchFeed(this)" data-c="fcat-vintage">빈티지</div>
+      <div class="fcat" onclick="switchFeed(this)" data-c="fcat-resort">리조트</div>
+    </div>
+  </div>
+
+  <div class="mag-grid rv">
+
+    <!-- featured -->
+    <div class="mag-card featured" data-c="mag-1">
+      <div class="mag-img-wrap">
+        <img class="mag-img" src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=85&auto=format&fit=crop" alt="스트릿" loading="lazy">
+        <div class="item-pins">
+          <div class="pin" style="top:28%;left:42%" onclick="openMatch('오버사이즈 후드')" data-c="pin-1">
+            <div class="pin-dot">1</div><div class="pin-tip">오버사이즈 후드</div>
+          </div>
+          <div class="pin" style="top:62%;left:50%" onclick="openMatch('카고 팬츠')" data-c="pin-2">
+            <div class="pin-dot">2</div><div class="pin-tip">카고 팬츠</div>
+          </div>
+        </div>
+      </div>
+      <div class="mag-body">
+        <div class="mag-cat">STREET · 2026 SS</div>
+        <div class="mag-title">오버핏 레이어링의 정석</div>
+        <div class="mag-sub">보그코리아 · 스타일리스트 이지수</div>
+        <div class="mag-footer">
+          <div class="mag-meta">아이템 2개 태그됨</div>
+          <a class="mag-read" href="#" onclick="showMsgToast('📖 보그코리아 스타일 가이드예요');track('read-1')" data-c="read-1">읽기 <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mag-card" data-c="mag-2">
+      <div class="mag-img-wrap">
+        <img class="mag-img" src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&q=85&fit=crop" alt="오피스" loading="lazy">
+        <div class="item-pins">
+          <div class="pin" style="top:30%;left:50%" onclick="openMatch('화이트 블라우스')" data-c="pin-3">
+            <div class="pin-dot">1</div><div class="pin-tip">화이트 블라우스</div>
+          </div>
+        </div>
+      </div>
+      <div class="mag-body">
+        <div class="mag-cat">OFFICE · 하퍼스 바자</div>
+        <div class="mag-title">클린 오피스룩 가이드</div>
+        <div class="mag-sub">에디터 박민지</div>
+        <div class="mag-footer">
+          <div class="mag-meta">아이템 3개 태그됨</div>
+          <a class="mag-read" href="#" onclick="showMsgToast('✨ 클린 오피스룩 고민 중이라면!');track('read-2')" data-c="read-2">읽기 <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mag-card" data-c="mag-3">
+      <div class="mag-img-wrap">
+        <img class="mag-img" src="https://images.unsplash.com/photo-1554412933-514a83d2f3c8?w=600&q=85&fit=crop" alt="미니멀" loading="lazy">
+        <div class="item-pins">
+          <div class="pin" style="top:35%;left:55%" onclick="openMatch('크롭 니트')" data-c="pin-4">
+            <div class="pin-dot">1</div><div class="pin-tip">크롭 니트</div>
+          </div>
+        </div>
+      </div>
+      <div class="mag-body">
+        <div class="mag-cat">MINIMAL · 엘르 코리아</div>
+        <div class="mag-title">모노톤 미니멀리즘</div>
+        <div class="mag-sub">2026 트렌드 리포트</div>
+        <div class="mag-footer">
+          <div class="mag-meta">아이템 2개 태그됨</div>
+          <a class="mag-read" href="#" onclick="showMsgToast('🖤 미니멀리즘, 언제나 옳다');track('read-3')" data-c="read-3">읽기 <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mag-card" data-c="mag-4">
+      <div class="mag-img-wrap">
+        <img class="mag-img" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=85&fit=crop" alt="캐주얼" loading="lazy">
+        <div class="item-pins">
+          <div class="pin" style="top:40%;left:45%" onclick="openMatch('데님 자켓')" data-c="pin-5">
+            <div class="pin-dot">1</div><div class="pin-tip">데님 자켓</div>
+          </div>
+        </div>
+      </div>
+      <div class="mag-body">
+        <div class="mag-cat">CASUAL · W Korea</div>
+        <div class="mag-title">주말의 데님 룩</div>
+        <div class="mag-sub">스타일리스트 김하나</div>
+        <div class="mag-footer">
+          <div class="mag-meta">아이템 4개 태그됨</div>
+          <a class="mag-read" href="#" onclick="showMsgToast('👖 데님은 영원하다');track('read-4')" data-c="read-4">읽기 <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mag-card" data-c="mag-5">
+      <div class="mag-img-wrap">
+        <img class="mag-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&q=85&fit=crop" alt="빈티지" loading="lazy">
+        <div class="item-pins">
+          <div class="pin" style="top:45%;left:40%" onclick="openMatch('빈티지 블레이저')" data-c="pin-6">
+            <div class="pin-dot">1</div><div class="pin-tip">빈티지 블레이저</div>
+          </div>
+        </div>
+      </div>
+      <div class="mag-body">
+        <div class="mag-cat">VINTAGE · 싱글즈</div>
+        <div class="mag-title">빈티지 레이어링 룩</div>
+        <div class="mag-sub">세컨핸드 스타일 가이드</div>
+        <div class="mag-footer">
+          <div class="mag-meta">아이템 3개 태그됨</div>
+          <a class="mag-read" href="#" onclick="showMsgToast('🕰️ 빈티지의 귀환');track('read-5')" data-c="read-5">읽기 <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 매칭 시트 -->
+<div class="overlay" id="matchOverlay" onclick="closeOverlay('matchOverlay')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="matchTitle">내 옷장 매칭</div>
+    <div class="sheet-sub">이 아이템이 내 옷장과 어울리는지 확인해보세요</div>
+    <div class="match-item" data-c="match-1">
+      <div class="match-thumb"><img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=120&q=80&fit=crop" alt="" loading="lazy"></div>
+      <div class="match-info"><div class="match-name">흰 셔츠</div><div class="match-sub">내 옷장 · 코튼 · M</div></div>
+      <div class="match-badge yes">96% 매칭</div>
+    </div>
+    <div class="match-item" data-c="match-2">
+      <div class="match-thumb"><img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=120&q=80&fit=crop" alt="" loading="lazy"></div>
+      <div class="match-info"><div class="match-name">네이비 슬랙스</div><div class="match-sub">내 옷장 · 폴리 · M</div></div>
+      <div class="match-badge yes">88% 매칭</div>
+    </div>
+    <div class="match-item" data-c="match-3">
+      <div class="match-thumb" style="background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:18px">?</div>
+      <div class="match-info"><div class="match-name" id="matchItemName">아이템</div><div class="match-sub">내 옷장에 없음 → 최저가 연결</div></div>
+      <div class="match-badge no">구매 연결</div>
+    </div>
+    <button class="sheet-cta" onclick="track('match-cta');showBetaToast()" data-c="match-cta">내 옷장 등록하고 정확하게 받기</button>
+  </div>
+</div>
+
+<!-- AI 옷장 등록 -->
+<section class="sec upload-sec" id="upload">
+  <div class="sec-inner">
+    <div class="rv">
+      <div class="sec-label">AI WARDROBE</div>
+      <h2 class="sec-h2 light">사진 한 장으로<br>옷장이 완성됩니다</h2>
+      <p class="sec-desc light">AI가 색상, 스타일, 소재, 사이즈를 자동으로 분석합니다</p>
+    </div>
+
+    <div class="upload-demo rv" style="margin-top:32px">
+      <div class="upload-demo-bar">
+        <div class="demo-dot" style="background:#ff5f57"></div>
+        <div class="demo-dot" style="background:#febc2e;margin-left:5px"></div>
+        <div class="demo-dot" style="background:#28c840;margin-left:5px"></div>
+        <span style="font-size:12px;color:rgba(255,255,255,0.3);margin-left:10px" id="demoBarLabel">옷장 등록하기</span>
+      </div>
+      <div class="upload-body">
+
+        <!-- 업로드 존 -->
+        <div class="upload-zone" id="uploadZone" data-c="upload-zone">
+          <input type="file" class="upload-input" id="fileInput" accept="image/*" onchange="handleUpload(event)" data-c="upload-input">
+          <div class="upload-icon">📷</div>
+          <div class="upload-title">사진을 올리거나 드래그하세요</div>
+          <div class="upload-sub">JPG, PNG · 최대 10MB</div>
+        </div>
+
+        <!-- AI 분석 중 -->
+        <div class="ai-analyzing" id="aiAnalyzing">
+          <div class="ai-preview-img" id="aiPreviewWrap">
+            <img id="aiPreviewImg" src="" alt="">
+            <div class="scan-bar" id="scanBar"></div>
+          </div>
+          <div class="ai-progress-bar"><div class="ai-progress-fill" id="progressFill"></div></div>
+          <div class="ai-steps" id="aiSteps">
+            <div class="ai-step" id="step1">
+              <div class="ai-step-icon active">✦</div>
+              <div><div class="ai-step-text">이미지 인식 중</div><div class="ai-step-sub">Google Vision API</div></div>
+            </div>
+            <div class="ai-step" id="step2">
+              <div class="ai-step-icon pending">◎</div>
+              <div><div class="ai-step-text">스타일 분류 중</div><div class="ai-step-sub">카테고리 · 무드 · 시즌</div></div>
+            </div>
+            <div class="ai-step" id="step3">
+              <div class="ai-step-icon pending">◎</div>
+              <div><div class="ai-step-text">색상 팔레트 추출 중</div><div class="ai-step-sub">주조색 · 보조색 분석</div></div>
+            </div>
+            <div class="ai-step" id="step4">
+              <div class="ai-step-icon pending">◎</div>
+              <div><div class="ai-step-text">코디 매칭 연산 중</div><div class="ai-step-sub">내 옷장 아이템과 호환성 계산</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI 결과 -->
+        <div class="ai-result" id="aiResult">
+          <div class="ai-result-header">
+            <div class="ai-result-thumb"><img id="resultImg" src="" alt=""></div>
+            <div>
+              <div class="ai-result-name" id="resultName">분석 완료</div>
+              <div class="ai-result-sub">자동 태그 완료</div>
+            </div>
+          </div>
+          <div class="ai-tags-wrap" id="resultTags"></div>
+          <div class="ai-match-preview">
+            <div class="ai-match-title">매칭되는 내 옷장 아이템</div>
+            <div class="ai-match-items">
+              <div class="ai-match-item"><img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=100&q=80&fit=crop" alt="" loading="lazy"><span>흰 셔츠</span></div>
+              <div class="ai-match-item"><img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=100&q=80&fit=crop" alt="" loading="lazy"><span>슬랙스</span></div>
+              <div class="ai-match-item"><img src="https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=100&q=80&fit=crop" alt="" loading="lazy"><span>니트</span></div>
+            </div>
+          </div>
+          <button class="btn-add-wardrobe" onclick="track('add-wardrobe');showBetaToast()" data-c="add-wardrobe">옷장에 추가하고 코디 받기</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 옥션 -->
+<section class="sec auction-sec">
+  <div class="sec-inner rv">
+    <div class="sec-label">AUCTION</div>
+    <h2 class="sec-h2 dark">안 입는 옷을<br>순환시키세요</h2>
+    <p class="sec-desc dark">내 옷장에서 바로 올리고, 낙찰되면 새 코디가 시작됩니다</p>
+
+    <!-- AI 자연어 검색 -->
+    <div class="ai-search-wrap rv" style="margin-top:24px">
+      <div class="ai-search-box" id="aiSearchBox">
+        <div class="ai-search-icon">✦</div>
+        <input class="ai-search-input" id="aiSearchInput" placeholder="예: 블랙 아우터 3만원 이하" oninput="handleAiSearch(this.value)" data-c="ai-search-input">
+        <button class="ai-search-clear" id="aiSearchClear" onclick="clearAiSearch()" style="display:none">✕</button>
+      </div>
+      <div class="ai-search-result" id="aiSearchResult"></div>
+      <div class="ai-search-chips" id="aiSearchChips">
+        <button class="ai-chip" onclick="setSearch('블랙 아우터')" data-c="chip-1">블랙 아우터</button>
+        <button class="ai-chip" onclick="setSearch('3만원 이하 상의')" data-c="chip-2">3만원 이하 상의</button>
+        <button class="ai-chip" onclick="setSearch('빈티지 자켓')" data-c="chip-3">빈티지 자켓</button>
+        <button class="ai-chip" onclick="setSearch('마감 임박')" data-c="chip-4">마감 임박</button>
+        <button class="ai-chip" onclick="setSearch('자동연장 중')" data-c="chip-5">자동연장 중</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="auction-grid rv">
+
+    <div class="auction-card" data-c="a-card-1">
+      <img class="auction-card-img" src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=85&auto=format&fit=crop" alt="가죽 자켓" loading="lazy">
+      <div class="auction-card-body">
+        <div class="auction-badges"><span class="badge live">경매 중</span><span class="badge ending">마감 2시간</span></div>
+        <div class="auction-name">빈티지 가죽 자켓</div>
+        <div class="auction-sub">M · 레더 · 블랙 · 90s</div>
+        <div class="auction-price">₩38,000</div>
+        <div class="auction-compare">새제품 ₩120,000 대비 <span>68% 저렴</span></div>
+        <div class="auction-footer">
+          <div class="auction-time">⏱ 1시간 52분</div>
+          <div style="display:flex;gap:6px">
+            <button class="stamp-btn" onclick="toggleStamp(this,'a1')" data-c="stamp-1" title="관심표시">🩷 <span class="stamp-count">12</span></button>
+            <button class="offer-btn" onclick="openOffer('빈티지 가죽 자켓',38000)" data-c="offer-1">가격 제안</button>
+            <button class="bid-btn" onclick="openBid('빈티지 가죽 자켓',38000,120000,'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=120&q=80&fit=crop')" data-c="bid-1">입찰</button>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div class="comment-list" id="comments-1">
+          <div class="comment" id="pc_187397" style="position:relative">
+            <div class="comment-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&fit=crop" alt="" loading="lazy"></div>
+            <div class="comment-bubble"><div class="comment-user">지수_style</div><div class="comment-text">이거 진짜 갖고 싶네 ㄹㅇ 너무 이쁨 😍</div><button onclick="deleteComment('pc_187397')" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;padding:4px 6px;flex-shrink:0;align-self:flex-start" title="삭제">×</button></div>
+          </div>
+          <div class="comment" id="pc_797034" style="position:relative">
+            <div class="comment-avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80&fit=crop" alt="" loading="lazy"></div>
+            <div class="comment-bubble"><div class="comment-user">민지.fashion</div><div class="comment-text">90s 무드 개좋다 얼마에 낙찰될지 궁금</div><button onclick="deleteComment('pc_797034')" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;padding:4px 6px;flex-shrink:0;align-self:flex-start" title="삭제">×</button></div>
+          </div>
+        </div>
+        <div class="comment-input-row">
+          <input class="comment-input" placeholder="댓글 달기..." data-c="comment-input-1">
+          <button class="comment-send" onclick="addComment('comments-1',this)" data-c="comment-send-1">전송</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="auction-card" data-c="a-card-2">
+      <img class="auction-card-img" src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&q=85&auto=format&fit=crop" alt="셔츠" loading="lazy">
+      <div class="auction-card-body">
+        <div class="auction-badges"><span class="badge live">경매 중</span><span class="badge extended">자동연장 3일</span></div>
+        <div class="auction-name">코튼 화이트 셔츠</div>
+        <div class="auction-sub">S · 코튼 100% · 화이트</div>
+        <div class="auction-price">₩12,000</div>
+        <div class="auction-compare">새제품 ₩45,000 대비 <span>73% 저렴</span></div>
+        <div class="auction-footer">
+          <div class="auction-time">⏱ 자동연장 중</div>
+          <div style="display:flex;gap:6px">
+            <button class="stamp-btn" onclick="toggleStamp(this,'a2')" data-c="stamp-2" title="관심표시">🩷 <span class="stamp-count">5</span></button>
+            <button class="offer-btn" onclick="openOffer('코튼 화이트 셔츠',12000)" data-c="offer-2">가격 제안</button>
+            <button class="bid-btn" onclick="openBid('코튼 화이트 셔츠',12000,45000,'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=120&q=80&fit=crop')" data-c="bid-2">입찰</button>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div class="comment-list" id="comments-2">
+          <div class="comment" id="pc_600137" style="position:relative">
+            <div class="comment-avatar"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80&fit=crop" alt="" loading="lazy"></div>
+            <div class="comment-bubble"><div class="comment-user">하나_closet</div><div class="comment-text">코튼 100%면 완전 여름에 좋겠다 입찰 고민중 🤔</div><button onclick="deleteComment('pc_600137')" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;padding:4px 6px;flex-shrink:0;align-self:flex-start" title="삭제">×</button></div>
+          </div>
+        </div>
+        <div class="comment-input-row">
+          <input class="comment-input" placeholder="댓글 달기..." data-c="comment-input-2">
+          <button class="comment-send" onclick="addComment('comments-2',this)" data-c="comment-send-2">전송</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="auction-card" data-c="a-card-3">
+      <img class="auction-card-img" src="https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=600&q=85&auto=format&fit=crop" alt="니트" loading="lazy">
+      <div class="auction-card-body">
+        <div class="auction-badges"><span class="badge live">경매 중</span></div>
+        <div class="auction-name">울 베이지 니트</div>
+        <div class="auction-sub">M · 울혼방 · 베이지</div>
+        <div class="auction-price">₩22,000</div>
+        <div class="auction-compare">유사제품 평균 ₩89,000 대비 <span>75% 저렴</span></div>
+        <div class="auction-footer">
+          <div class="auction-time">⏱ 1일 4시간</div>
+          <div style="display:flex;gap:6px">
+            <button class="stamp-btn" onclick="toggleStamp(this,'a3')" data-c="stamp-3" title="관심표시">🩷 <span class="stamp-count">8</span></button>
+            <button class="offer-btn" onclick="openOffer('울 베이지 니트',22000)" data-c="offer-3">가격 제안</button>
+            <button class="bid-btn" onclick="openBid('울 베이지 니트',22000,89000,'https://images.unsplash.com/photo-1594938298603-c8148c4b4233?w=120&q=80&fit=crop')" data-c="bid-3">입찰</button>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div class="comment-list" id="comments-3">
+          <div class="comment" id="pc_234719" style="position:relative">
+            <div class="comment-avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&fit=crop" alt="" loading="lazy"></div>
+            <div class="comment-bubble"><div class="comment-user">style.kr</div><div class="comment-text">베이지 니트 개이쁨 ㄹㅇ 요즘 이 색 너무 핫함</div><button onclick="deleteComment('pc_234719')" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;padding:4px 6px;flex-shrink:0;align-self:flex-start" title="삭제">×</button></div>
+          </div>
+          <div class="comment" id="pc_873454" style="position:relative">
+            <div class="comment-avatar"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&q=80&fit=crop" alt="" loading="lazy"></div>
+            <div class="comment-bubble"><div class="comment-user">미니_ootd</div><div class="comment-text">이거 낙찰 받으면 내 옷장이랑 매칭해보고 싶다 🙏</div><button onclick="deleteComment('pc_873454')" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;padding:4px 6px;flex-shrink:0;align-self:flex-start" title="삭제">×</button></div>
+          </div>
+        </div>
+        <div class="comment-input-row">
+          <input class="comment-input" placeholder="댓글 달기..." data-c="comment-input-3">
+          <button class="comment-send" onclick="addComment('comments-3',this)" data-c="comment-send-3">전송</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 가격 제안 시트 -->
+<div class="overlay" id="offerOverlay" onclick="closeOverlay('offerOverlay')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="offerTitle">가격 제안하기</div>
+    <div class="sheet-sub">판매자가 수락하면 해당 가격에 거래됩니다</div>
+    <div style="background:var(--g100);border-radius:12px;padding:14px;margin-bottom:16px;display:flex;justify-content:space-between">
+      <span style="font-size:13px;color:var(--g600)">현재 경매가</span>
+      <span style="font-size:14px;font-weight:700;color:var(--black)" id="offerCurrentPrice"></span>
+    </div>
+    <div style="margin-bottom:8px;font-size:12px;font-weight:600;color:var(--g600)">제안 금액</div>
+    <input id="offerInput" type="number" style="width:100%;padding:14px;background:var(--g100);border:2px solid var(--g200);border-radius:12px;font-size:18px;font-weight:700;font-family:inherit;outline:none;color:var(--black);margin-bottom:8px;transition:border-color 0.2s" placeholder="₩0" oninput="this.style.borderColor=this.value?'var(--black)':'var(--g200)'">
+    <div style="font-size:11px;color:var(--g400);margin-bottom:20px">경매가보다 낮게 제안할 수 있습니다</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px" id="offerQuick"></div>
+    <button style="width:100%;padding:16px;background:var(--black);color:var(--white);font-size:15px;font-weight:700;border:none;border-radius:100px;cursor:pointer;font-family:inherit" onclick="submitOffer()" data-c="offer-confirm">제안 보내기</button>
+  </div>
+</div>
+
+<!-- 입찰 시트 -->
+<div class="overlay" id="bidOverlay" onclick="closeOverlay('bidOverlay')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="bid-preview">
+      <div class="bid-thumb"><img id="bidImg" src="" alt="" loading="lazy"></div>
+      <div><div class="bid-name" id="bidItemName"></div><div class="bid-current">현재가 <span id="bidCurrent"></span></div></div>
+    </div>
+    <div class="bid-input-wrap">
+      <div class="bid-input-label">입찰 금액 입력</div>
+      <input class="bid-input" type="number" id="bidInputVal" placeholder="₩0" oninput="track('bid_input')" data-c="bid-input">
+      <div class="bid-min" id="bidMinText">최소 입찰가: 현재가 + ₩500</div>
+    </div>
+    <div class="bid-quick" id="bidQuickBtns"></div>
+    <div class="bid-compare" id="bidCompareBox">
+      <div class="bid-compare-title">💡 가격 비교</div>
+      <div class="bid-compare-row"><span>새제품 정가</span><span id="bidNewP"></span></div>
+      <div class="bid-compare-row"><span>유사제품 평균</span><span id="bidSimilarP"></span></div>
+      <div class="bid-compare-row hl"><span>현재 낙찰 시 절약</span><span id="bidSaveP"></span></div>
+    </div>
+    <button class="bid-confirm" onclick="confirmBid()" data-c="bid-confirm">베타 신청하고 입찰하기</button>
+  </div>
+</div>
+
+<!-- 투표 + WISHBOARD -->
+<section style="background:var(--black);padding:72px 0">
+  <div style="max-width:680px;margin:0 auto;padding:0 24px">
+
+    <!-- 기능 투표 -->
+    <div class="rv" id="vote-section" style="margin-bottom:64px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.2em;color:var(--rose);margin-bottom:12px">VOTE</div>
+      <h2 style="font-size:clamp(22px,5vw,30px);font-weight:900;line-height:1.2;letter-spacing:-1px;color:#fff;margin-bottom:8px">어떤 기능이 가장 기대되나요?</h2>
+      <p style="font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:28px;font-weight:300">여러분의 선택이 서비스 방향이 됩니다</p>
+      <div class="vote-list" id="voteList">
+        <div class="vote-item" onclick="doVote(this,0)" data-c="vote-ai-codi">
+          <div class="vote-label">✦ AI 코디 추천</div>
+          <div class="vote-sub">내 옷장 기반 매일 아침 코디</div>
+          <div class="vote-bar-wrap"><div class="vote-bar" style="width:68%"></div></div>
+          <div class="vote-count">68%</div>
+        </div>
+        <div class="vote-item" onclick="doVote(this,1)" data-c="vote-auction">
+          <div class="vote-label">🏷️ 중고 옥션</div>
+          <div class="vote-sub">안 입는 옷 순환 거래</div>
+          <div class="vote-bar-wrap"><div class="vote-bar" style="width:52%"></div></div>
+          <div class="vote-count">52%</div>
+        </div>
+        <div class="vote-item" onclick="doVote(this,2)" data-c="vote-match">
+          <div class="vote-label">🔗 콘텐츠 매칭</div>
+          <div class="vote-sub">잡지 아이템 → 내 옷장 연결</div>
+          <div class="vote-bar-wrap"><div class="vote-bar" style="width:44%"></div></div>
+          <div class="vote-count">44%</div>
+        </div>
+        <div class="vote-item" onclick="doVote(this,3)" data-c="vote-price">
+          <div class="vote-label">💸 최저가 연결</div>
+          <div class="vote-sub">필요한 아이템 최저가 구매</div>
+          <div class="vote-bar-wrap"><div class="vote-bar" style="width:31%"></div></div>
+          <div class="vote-count">31%</div>
+        </div>
+        <div class="vote-item" onclick="doVote(this,4)" data-c="vote-style">
+          <div class="vote-label">🎨 스타일 진단</div>
+          <div class="vote-sub">내 패션 취향 AI 분석</div>
+          <div class="vote-bar-wrap"><div class="vote-bar" style="width:25%"></div></div>
+          <div class="vote-count">25%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WISHBOARD -->
+    <div class="rv" id="wish-section">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.2em;color:var(--rose);margin-bottom:12px">WISHBOARD</div>
+      <h2 style="font-size:clamp(22px,5vw,30px);font-weight:900;line-height:1.2;letter-spacing:-1px;color:#fff;margin-bottom:8px">원하는 기능을 알려주세요</h2>
+      <p style="font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:24px;font-weight:300">여러분의 위시리스트가 서비스를 만듭니다</p>
+
+      <!-- 작성폼 -->
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;margin-bottom:20px">
+        <div style="display:flex;gap:10px;margin-bottom:10px">
+          <input id="gbName" placeholder="닉네임 (선택)" style="width:120px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:8px 14px;font-size:12px;color:#fff;font-family:inherit;outline:none" data-c="gb-name">
+          <div style="display:flex;gap:6px;flex-wrap:wrap" id="moodPicker">
+            <button class="mood-pick on" onclick="pickMood(this,'✨')" data-c="mood-1">✨</button>
+            <button class="mood-pick" onclick="pickMood(this,'🔥')" data-c="mood-2">🔥</button>
+            <button class="mood-pick" onclick="pickMood(this,'💡')" data-c="mood-3">💡</button>
+            <button class="mood-pick" onclick="pickMood(this,'❤️')" data-c="mood-4">❤️</button>
+            <button class="mood-pick" onclick="pickMood(this,'🤔')" data-c="mood-5">🤔</button>
+          </div>
+        </div>
+        <textarea id="gbText" placeholder="원하는 기능, 기대하는 것 자유롭게..." rows="3" style="width:100%;background:transparent;border:none;outline:none;font-size:14px;color:#fff;font-family:inherit;resize:none;line-height:1.7" data-c="gb-text"></textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px">
+          <button onclick="submitGb()" style="padding:9px 20px;background:var(--white);color:var(--black);border:none;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit" data-c="gb-submit">남기기</button>
+        </div>
+      </div>
+
+      <!-- WISHBOARD 리스트 -->
+      <div id="gbList" style="display:flex;flex-direction:column;gap:10px">
+        <div class="gb-item">
+          <div class="gb-header"><span class="gb-mood">✨</span><span class="gb-nick">패션피플</span><span class="gb-time">방금 전</span></div>
+          <div class="gb-text">AI가 내 옷장 사진 보고 코디 뽑아준다니 진짜 너무 기대돼요 빨리 나왔으면</div>
+        </div>
+        <div class="gb-item">
+          <div class="gb-header"><span class="gb-mood">🔥</span><span class="gb-nick">ootd_lover</span><span class="gb-time">1분 전</span></div>
+          <div class="gb-text">옥션 기능 진짜 필요했어요 옷장에 안 입는 옷 너무 많은데 ㅠ</div>
+        </div>
+        <div class="gb-item">
+          <div class="gb-header"><span class="gb-mood">💡</span><span class="gb-nick">스타일러_k</span><span class="gb-time">3분 전</span></div>
+          <div class="gb-text">잡지 아이템 탭하면 내 옷이랑 매칭해준다는 거 완전 신박한 아이디어인 것 같아요</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <div class="rv">
+    <h2 class="cta-h2">내 옷장으로<br>직접 받아보세요</h2>
+    <p class="cta-desc">베타 오픈 시 가장 먼저 알려드립니다.<br>채널 추가 하나면 끝입니다.</p>
+    <a class="btn-kakao" href="#" onclick="showBetaToast();return false;" data-c="kakao-final">
+      <div class="kakao-dot"></div>카카오 채널 추가하기
+    </a>
+    <p class="cta-hint">광고 없습니다. 베타 알림만 드립니다.</p>
+  </div>
+</section>
+
+
+<!-- 베타 토스트 -->
+<div id="betaToast" style="position:fixed;inset:0;z-index:9999;display:none;align-items:flex-end;justify-content:center;font-family:'Noto Sans KR',-apple-system,sans-serif">
+  <div id="betaToastBg" style="position:absolute;inset:0;background:rgba(0,0,0,0)" onclick="closeBetaToast()"></div>
+  <div id="betaToastCard" style="position:relative;width:100%;max-width:480px;border-radius:28px 28px 0 0;overflow:hidden;transform:translateY(100%);transition:transform 0.45s cubic-bezier(.16,1,.3,1)">
+    <!-- 배경 이미지 -->
+    <div style="position:relative;height:200px;overflow:hidden">
+      <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=85&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;filter:brightness(0.5)">
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(10,10,10,1) 100%)"></div>
+      <div style="position:absolute;bottom:20px;left:24px;right:24px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.2em;color:#b8697a;margin-bottom:6px">COMING SOON</div>
+        <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.2;letter-spacing:-0.5px">곧 만나요</div>
+      </div>
+    </div>
+    <!-- 콘텐츠 -->
+    <div style="background:#0a0a0a;padding:24px 24px 48px">
+      <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.8;margin-bottom:24px;font-weight:300">내 옷장 등록부터 AI 코디 추천,<br>중고 옥션까지 — 베타 오픈을<br>가장 먼저 알려드릴게요.</p>
+      <a href="http://pf.kakao.com/_AxhPwX" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#FEE500;color:#1a1a1a;font-size:15px;font-weight:700;padding:16px;border-radius:100px;text-decoration:none;margin-bottom:10px;letter-spacing:0.01em" onclick="track('beta_kakao')">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+          <ellipse cx="11" cy="10" rx="10" ry="9" fill="#1a1a1a"/>
+          <path d="M11 4C7.134 4 4 6.507 4 9.6c0 1.92 1.19 3.608 2.99 4.632l-.76 2.768 3.17-2.09c.516.075 1.048.114 1.6.114 3.866 0 7-2.507 7-5.6S14.866 4 11 4z" fill="#FEE500"/>
+        </svg>
+        카카오 채널 추가하기
+      </a>
+      <button onclick="closeBetaToast()" style="width:100%;padding:14px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:100px;font-size:14px;color:rgba(255,255,255,0.3);cursor:pointer;font-family:inherit;letter-spacing:0.01em">나중에</button>
+    </div>
+  </div>
+</div>
+
+<div style="padding:16px 24px;background:var(--black);text-align:center">
+  <span id="secretTrigger" onclick="secretClick()" style="font-size:12px;color:rgba(255,255,255,0.06);cursor:default;user-select:none">©</span>
+</div>
+<script>
+let secretCount=0,secretTimer=null;
+function secretClick(){
+  secretCount++;
+  clearTimeout(secretTimer);
+  secretTimer=setTimeout(()=>{secretCount=0;},1200);
+  if(secretCount>=5&&secretCount<8){secretCount===5&&(window.location.href='tech.html');}
+  if(secretCount>=8){secretCount=0;window.location.href='admin.html';}
+}
+</script>
+<footer>
+  <span>CODYFIT</span>
+  <span>© 2026 Codyfit</span>
+</footer>
+
+<script>
+// 플로팅
+window.addEventListener('scroll',()=>{
+  document.getElementById('floatBtn').classList.toggle('show',window.scrollY>500);
+});
+
+// reveal
+const obs=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');obs.unobserve(e.target)}});
+},{threshold:0.1});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+
+// 피드 탭
+function switchFeed(el){
+  document.querySelectorAll('.fcat').forEach(f=>f.classList.remove('on'));
+  el.classList.add('on');
+  track('feed_'+el.textContent);
+}
+
+// 매칭 시트
+function openMatch(item){
+  document.getElementById('matchTitle').textContent=item+' 매칭 결과';
+  document.getElementById('matchItemName').textContent=item;
+  document.getElementById('matchOverlay').classList.add('on');
+  document.body.style.overflow='hidden';
+  track('match_'+item);
+}
+
+// 오버레이 닫기
+function closeOverlay(id){
+  document.getElementById(id).classList.remove('on');
+  document.body.style.overflow='';
+}
+
+// AI 업로드
+function handleUpload(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    const src=ev.target.result;
+    document.getElementById('uploadZone').style.display='none';
+    document.getElementById('aiResult').classList.remove('on');
+    document.getElementById('aiAnalyzing').classList.remove('on');
+    document.getElementById('aiAnalyzing').classList.add('on');
+    document.getElementById('aiPreviewImg').src=src;
+    document.getElementById('demoBarLabel').textContent='AI 분석 중...';
+    track('upload_photo');
+    runAiAnalysis(src);
+  };
+  reader.readAsDataURL(file);
+}
+
+async function runAiAnalysis(imgSrc){
+  const steps=[
+    {id:'step1',label:'이미지 인식 완료',progress:25},
+    {id:'step2',label:'스타일 분류 완료',progress:50},
+    {id:'step3',label:'색상 분석 완료',progress:75},
+    {id:'step4',label:'코디 매칭 완료',progress:100},
+  ];
+
+  // 단계별 애니메이션
+  for(let i=0;i<steps.length;i++){
+    await delay(900);
+    const s=steps[i];
+    const el=document.getElementById(s.id);
+    el.querySelector('.ai-step-icon').className='ai-step-icon done';
+    el.querySelector('.ai-step-icon').textContent='✓';
+    if(i<steps.length-1){
+      const next=document.getElementById(steps[i+1].id);
+      next.querySelector('.ai-step-icon').className='ai-step-icon active';
+      next.querySelector('.ai-step-icon').textContent='✦';
+    }
+    document.getElementById('progressFill').style.width=s.progress+'%';
+  }
+
+  await delay(500);
+
+  // Claude API 실제 호출
+  try{
+    const base64=imgSrc.split(',')[1];
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image',source:{type:'base64',media_type:'image/jpeg',data:base64}},
+            {type:'text',text:'이 옷 사진을 분석해서 JSON으로만 답해줘. {"name":"옷 이름","tags":[{"text":"태그","type":"color|style|size"}],"style":"전체 스타일 설명 한 줄"}'}
+          ]
+        }]
+      })
+    });
+    const data=await res.json();
+    const text=data.content[0].text;
+    const json=JSON.parse(text.replace(/```json|```/g,'').trim());
+    showResult(imgSrc,json.name,json.tags);
+  }catch(err){
+    // 폴백
+    showResult(imgSrc,'분석 완료',[
+      {text:'업로드된 아이템',type:'style'},
+      {text:'AI 태그 완료',type:'color'},
+      {text:'매칭 준비됨',type:'size'}
+    ]);
+  }
+}
+
+function resetUpload(){
+  document.getElementById('uploadZone').style.display='block';
+  document.getElementById('aiAnalyzing').classList.remove('on');
+  document.getElementById('aiResult').classList.remove('on');
+  const fi=document.getElementById('fileInput');
+  if(fi)fi.value='';
+  document.getElementById('demoBarLabel').textContent='옷장 등록하기';
+  document.getElementById('progressFill').style.width='0';
+  ['step1','step2','step3','step4'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    const icon=el.querySelector('.ai-step-icon');
+    icon.className='ai-step-icon '+(i===0?'active':'pending');
+    icon.textContent=i===0?'✦':'◎';
+  });
+}
+
+function showResult(imgSrc,name,tags){
+  document.getElementById('aiAnalyzing').classList.remove('on');
+  document.getElementById('scanBar').style.display='none';
+  const result=document.getElementById('aiResult');
+  result.classList.add('on');
+  document.getElementById('resultImg').src=imgSrc;
+  document.getElementById('resultName').textContent=name;
+  document.getElementById('demoBarLabel').textContent='분석 완료 ✓';
+  const wrap=document.getElementById('resultTags');
+  wrap.innerHTML='';
+  tags.forEach((t,i)=>{
+    const el=document.createElement('span');
+    el.className='ai-tag '+(t.type||'style');
+    el.textContent=t.text;
+    el.style.animationDelay=(i*0.08)+'s';
+    wrap.appendChild(el);
+  });
+  track('ai_analysis_complete');
+}
+
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+
+// 입찰
+let curBidPrice=0;
+function openBid(name,price,newPrice,img){
+  curBidPrice=price;
+  document.getElementById('bidItemName').textContent=name;
+  document.getElementById('bidImg').src=img;
+  document.getElementById('bidCurrent').textContent='₩'+price.toLocaleString();
+  document.getElementById('bidInputVal').value='';
+  document.getElementById('bidInputVal').placeholder='₩'+(price+500).toLocaleString()+' 이상';
+  document.getElementById('bidMinText').textContent='최소 입찰가: ₩'+(price+500).toLocaleString();
+  document.getElementById('bidNewP').textContent='₩'+newPrice.toLocaleString();
+  document.getElementById('bidSimilarP').textContent='₩'+Math.round(newPrice*0.85).toLocaleString();
+  document.getElementById('bidSaveP').textContent=Math.round((1-price/newPrice)*100)+'% 절약';
+  const qb=document.getElementById('bidQuickBtns');
+  qb.innerHTML='';
+  [500,1000,3000,5000].forEach(d=>{
+    const b=document.createElement('button');
+    b.className='bid-quick-btn';
+    b.textContent='+₩'+d.toLocaleString();
+    b.onclick=()=>{
+      document.querySelectorAll('.bid-quick-btn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      document.getElementById('bidInputVal').value=price+d;
+      track('bid_quick_'+d);
+    };
+    qb.appendChild(b);
+  });
+  document.getElementById('bidOverlay').classList.add('on');
+  document.body.style.overflow='hidden';
+  track('bid_open_'+name);
+}
+
+function confirmBid(){
+  const val=document.getElementById('bidInputVal').value;
+  if(val&&parseInt(val)>=curBidPrice+500){
+    track('bid_confirm');
+  }
+  showBetaToast();
+}
+
+// 댓글
+const nicknames=['스타일러_j','패션피플','ootd_lover','옷덕후','minime_style','closet_kr'];
+const avatars=[
+  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80&fit=crop',
+];
+
+// 욕설 필터
+const badWords=['욕','ㅅㅂ','ㅂㅅ','병신','ㅈㄹ','시발','fuck','shit','씨발','개새','놈','년','새끼','미친','죽어','꺼져','저능','찐따'];
+function filterBad(text){
+  let t=text;
+  badWords.forEach(w=>{
+    const re=new RegExp(w,'gi');
+    t=t.replace(re,'*'.repeat(w.length));
+  });
+  return t;
+}
+
+function addComment(listId,btn){
+  const input=btn.previousElementSibling;
+  const raw=input.value.trim();
+  if(!raw)return;
+  const text=filterBad(raw);
+  const list=document.getElementById(listId);
+  const div=document.createElement('div');
+  div.className='comment';
+  div.style.position='relative';
+  const nick=nicknames[Math.floor(Math.random()*nicknames.length)];
+  const av=avatars[Math.floor(Math.random()*avatars.length)];
+  const uid='c_'+Date.now();
+  div.id=uid;
+  div.innerHTML=`
+    <div class="comment-avatar"><img src="${av}" alt="" loading="lazy"></div>
+    <div class="comment-bubble" style="flex:1">
+      <div class="comment-user">${nick}</div>
+      <div class="comment-text">${text}</div>
+    </div>
+    <button onclick="deleteComment('${uid}')" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;padding:4px 6px;flex-shrink:0;align-self:flex-start" title="삭제">×</button>`;
+  list.appendChild(div);
+  input.value='';
+  track('comment_add');
+}
+
+function deleteComment(id){
+  const el=document.getElementById(id);
+  if(el){
+    el.style.opacity='0';
+    el.style.transition='opacity 0.2s';
+    setTimeout(()=>el.remove(),200);
+    track('comment_delete');
+  }
+}
+
+// 스탬프 (관심표시)
+function toggleStamp(btn,id){
+  btn.classList.toggle('on');
+  const cnt=btn.querySelector('.stamp-count');
+  const on=btn.classList.contains('on');
+  cnt.textContent=parseInt(cnt.textContent)+(on?1:-1);
+  track('stamp_'+(on?'on':'off')+'_'+id);
+}
+
+// 가격 제안
+let offerCurPrice=0;
+function openOffer(name,price){
+  offerCurPrice=price;
+  document.getElementById('offerTitle').textContent=name+' — 가격 제안';
+  document.getElementById('offerCurrentPrice').textContent='₩'+price.toLocaleString();
+  document.getElementById('offerInput').value='';
+  const qw=document.getElementById('offerQuick');
+  qw.innerHTML='';
+  const suggestions=[Math.round(price*0.9),Math.round(price*0.8),Math.round(price*0.7)];
+  suggestions.forEach(p=>{
+    const b=document.createElement('button');
+    b.style.cssText='padding:10px;background:var(--g100);border:1.5px solid var(--g200);border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--g800);transition:all 0.2s';
+    b.innerHTML='₩'+p.toLocaleString()+'<div style="font-size:10px;color:var(--g400);margin-top:2px">'+Math.round((1-p/price)*100)+'% 할인</div>';
+    b.onclick=()=>{
+      document.getElementById('offerInput').value=p;
+      document.getElementById('offerInput').style.borderColor='var(--black)';
+      document.querySelectorAll('#offerQuick button').forEach(x=>x.style.borderColor='var(--g200)');
+      b.style.borderColor='var(--black)';
+      track('offer_quick_'+p);
+    };
+    qw.appendChild(b);
+  });
+  document.getElementById('offerOverlay').classList.add('on');
+  document.body.style.overflow='hidden';
+  track('offer_open_'+name);
+}
+
+function submitOffer(){
+  const val=document.getElementById('offerInput').value;
+  if(!val||parseInt(val)<=0){
+    document.getElementById('offerInput').style.borderColor='#e63364';
+    return;
+  }
+  closeOverlay('offerOverlay');
+  showBetaToast();
+  track('offer_submit_'+val);
+}
+
+// 옥션 필터
+function filterAuction(el){
+  document.querySelectorAll('.af').forEach(f=>f.classList.remove('on'));
+  el.classList.add('on');
+  track('auction_filter_'+el.textContent);
+}
+
+// AI 자연어 검색
+const auctionData=[
+  {name:'빈티지 가죽 자켓',cat:'아우터',color:'블랙',price:38000,status:'마감임박',keywords:['빈티지','가죽','자켓','아우터','블랙','90s','레더']},
+  {name:'코튼 화이트 셔츠',cat:'상의',color:'화이트',price:12000,status:'자동연장',keywords:['셔츠','상의','화이트','코튼','흰색']},
+  {name:'울 베이지 니트',cat:'상의',color:'베이지',price:22000,status:'경매중',keywords:['니트','상의','베이지','울','겨울']},
+];
+
+let searchTimer=null;
+function handleAiSearch(val){
+  clearTimeout(searchTimer);
+  document.getElementById('aiSearchClear').style.display=val?'block':'none';
+  if(!val){
+    document.getElementById('aiSearchResult').innerHTML='';
+    document.getElementById('aiSearchChips').style.display='flex';
+    return;
+  }
+  document.getElementById('aiSearchChips').style.display='none';
+  searchTimer=setTimeout(()=>runAiSearch(val),400);
+  track('ai_search_type');
+}
+
+function runAiSearch(val){
+  const v=val.toLowerCase();
+  const tags=[];
+  
+  // 색상
+  const colors={블랙:'#1a1a1a',화이트:'#fff',베이지:'#c8a882',블루:'#3b82f6',네이비:'#1e3a5f'};
+  Object.keys(colors).forEach(c=>{if(v.includes(c))tags.push({text:c,type:'color'})});
+  
+  // 카테고리
+  ['상의','하의','아우터','신발','악세서리','자켓','셔츠','니트','팬츠'].forEach(c=>{
+    if(v.includes(c))tags.push({text:c,type:'cat'});
+  });
+  
+  // 가격
+  const priceMatch=v.match(/(\d+)만원?\s*(이하|이상|미만)?/);
+  if(priceMatch)tags.push({text:priceMatch[0],type:'price'});
+  
+  // 상태
+  if(v.includes('마감'))tags.push({text:'마감 임박',type:'status'});
+  if(v.includes('자동연장'))tags.push({text:'자동연장 중',type:'status'});
+  if(v.includes('빈티지'))tags.push({text:'빈티지',type:'cat'});
+  
+  const res=document.getElementById('aiSearchResult');
+  if(tags.length>0){
+    res.innerHTML=`<div class="ai-result-label">✦ AI가 이렇게 이해했어요</div><div class="ai-result-tags">${tags.map(t=>`<span class="ai-result-tag ${t.type}">${t.text}</span>`).join('')}</div>`;
+  } else {
+    res.innerHTML=`<div style="font-size:12px;color:var(--g400);padding:8px 0">"${val}" 검색 중...</div>`;
+  }
+  track('ai_search_run_'+val);
+}
+
+function setSearch(val){
+  const input=document.getElementById('aiSearchInput');
+  input.value=val;
+  handleAiSearch(val);
+  runAiSearch(val);
+  track('ai_chip_'+val);
+}
+
+function clearAiSearch(){
+  document.getElementById('aiSearchInput').value='';
+  document.getElementById('aiSearchResult').innerHTML='';
+  document.getElementById('aiSearchClear').style.display='none';
+  document.getElementById('aiSearchChips').style.display='flex';
+  track('ai_search_clear');
+}
+
+// 베타 토스트
+// 메시지 토스트
+let msgTimer=null;
+function showMsgToast(msg){
+  let el=document.getElementById('msgToastEl');
+  if(!el){
+    el=document.createElement('div');
+    el.id='msgToastEl';
+    el.style.cssText='position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(10,10,10,0.9);color:#fff;font-size:13px;font-weight:500;padding:10px 20px;border-radius:100px;white-space:nowrap;z-index:9998;opacity:0;transition:all 0.3s;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1)';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;
+  el.style.opacity='1';
+  el.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(msgTimer);
+  msgTimer=setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(-50%) translateY(-10px)'},2200);
+}
+
+// 히어로 슬라이드
+const slideData=[
+  {desc:'가진 것으로 가능한 코디.<br>필요한 것만 사는 쇼핑.'},
+  {desc:'스트릿에서 오피스까지.<br>내 스타일, 내 옷장으로.'},
+  {desc:'안 입는 옷은 순환시키세요.<br>누군가에게 꼭 맞는 옷이 됩니다.'},
+];
+let curSlide=0,slideAuto=null;
+
+function goSlide(n){
+  document.querySelectorAll('.hero-slide').forEach((s,i)=>{
+    s.classList.toggle('on',i===n);
+  });
+  document.querySelectorAll('.hero-dot').forEach((d,i)=>{
+    d.classList.toggle('on',i===n);
+  });
+  document.getElementById('slideNum').textContent=String(n+1).padStart(2,'0');
+  document.getElementById('heroDesc').style.opacity='0';
+  setTimeout(()=>{
+    document.getElementById('heroDesc').innerHTML=slideData[n].desc;
+    document.getElementById('heroDesc').style.opacity='1';
+  },200);
+  curSlide=n;
+}
+
+function startSlideAuto(){
+  slideAuto=setInterval(()=>{
+    goSlide((curSlide+1)%3);
+  },4000);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  startSlideAuto();
+});
+
+function showBetaToast(){
+  const t=document.getElementById('betaToast');
+  const bg=document.getElementById('betaToastBg');
+  const card=document.getElementById('betaToastCard');
+  t.style.display='flex';
+  document.body.style.overflow='hidden';
+  setTimeout(()=>{
+    bg.style.background='rgba(0,0,0,0.6)';
+    bg.style.transition='background 0.4s';
+    card.style.transform='translateY(0)';
+  },10);
+  track('beta_toast_open');
+}
+function closeBetaToast(){
+  const t=document.getElementById('betaToast');
+  const bg=document.getElementById('betaToastBg');
+  const card=document.getElementById('betaToastCard');
+  bg.style.background='rgba(0,0,0,0)';
+  card.style.transform='translateY(100%)';
+  setTimeout(()=>{
+    t.style.display='none';
+    document.body.style.overflow='';
+  },450);
+}
+
+// 투표
+const VOTE_KEY='codyfit-votes';
+const voteKeys=['vote-ai-codi','vote-auction','vote-match','vote-price','vote-style'];
+let myVote=localStorage.getItem('cf-my-vote');
+
+async function doVote(el,idx){
+  if(myVote!==null){showMsgToast('이미 투표하셨어요 😊');return;}
+  const items=document.querySelectorAll('.vote-item');
+  items.forEach(i=>i.classList.remove('voted'));
+  el.classList.add('voted');
+  const key=voteKeys[idx];
+  
+  // 로컬 UI 업데이트
+  const bar=el.querySelector('.vote-bar');
+  const cnt=el.querySelector('.vote-count');
+  const cur=parseInt(bar.style.width)||0;
+  const newW=Math.min(cur+3,99);
+  bar.style.width=newW+'%';
+  cnt.textContent=newW+'%';
+  myVote=String(idx);
+  localStorage.setItem('cf-my-vote',myVote);
+
+  // storage 저장
+  try{
+    let data={};
+    try{const r=await window.storage.get(VOTE_KEY,true);if(r)data=JSON.parse(r.value);}catch(e){}
+    data[key]=(data[key]||0)+1;
+    await window.storage.set(VOTE_KEY,JSON.stringify(data),true);
+  }catch(e){console.log('storage unavailable')}
+
+  showMsgToast('🗳️ 투표 완료! 소중한 의견 감사해요');
+  track('vote_'+idx);
+}
+
+// 이미 투표한 경우 표시
+if(myVote!==null){
+  document.addEventListener('DOMContentLoaded',()=>{
+    const items=document.querySelectorAll('.vote-item');
+    if(items[parseInt(myVote)])items[parseInt(myVote)].classList.add('voted');
+  });
+}
+
+// WISHBOARD
+let curMood='✨';
+function pickMood(el,mood){
+  document.querySelectorAll('.mood-pick').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  curMood=mood;
+  track('mood_'+mood);
+}
+
+const gbNicks=['스타일러','패셔니스타','옷덕후','ootd_kr','closet_lover','minime'];
+function submitGb(){
+  const text=document.getElementById('gbText').value.trim();
+  if(!text){showMsgToast('✏️ 하고 싶은 말을 적어주세요!');return;}
+  const name=document.getElementById('gbName').value.trim()||gbNicks[Math.floor(Math.random()*gbNicks.length)];
+  const div=document.createElement('div');
+  div.className='gb-item';
+  div.style.animation='gbIn 0.4s cubic-bezier(.16,1,.3,1)';
+  div.innerHTML=`<div class="gb-header"><span class="gb-mood">${curMood}</span><span class="gb-nick">${name}</span><span class="gb-time">방금 전</span></div><div class="gb-text">${text}</div>`;
+  const list=document.getElementById('gbList');
+  list.insertBefore(div,list.firstChild);
+  document.getElementById('gbText').value='';
+  document.getElementById('gbName').value='';
+  showMsgToast('💌 WISHBOARD에 남겨졌어요! 감사해요 :)');
+  track('wishboard_submit');
+  if(window.saveWishboard) saveWishboard(name, curMood, text);
+}
+
+// 등록 과정 토글
+function toggleHow(){
+  const box=document.getElementById('howItWorks');
+  const btn=document.getElementById('howBtn');
+  const on=box.style.display==='none';
+  box.style.display=on?'block':'none';
+  btn.textContent=on?'접기 ↑':'등록 과정이 궁금해요 →';
+  track('how_it_works_'+(on?'open':'close'));
+}
+
+// Clarity
+function track(e){if(window.clarity)clarity('event',e);}
+document.querySelectorAll('[data-c]').forEach(el=>{
+  el.addEventListener('click',()=>track('click_'+el.dataset.c));
+});
+</script>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAlZ0L-XXB7iM7InYTUL8Z3Xb62RWyWqOw",
+    authDomain: "cood-f1975.firebaseapp.com",
+    projectId: "cood-f1975",
+    storageBucket: "cood-f1975.firebasestorage.app",
+    messagingSenderId: "979750785228",
+    appId: "1:979750785228:web:44581eac2b9da933bdb269",
+    measurementId: "G-3J6V0PMED0"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 사전 신청 저장 함수
+  window.saveSignup = async function(email, phone) {
+    try {
+      await addDoc(collection(db, "signups"), {
+        email: email || "",
+        phone: phone || "",
+        createdAt: serverTimestamp()
+      });
+      return true;
+    } catch(e) {
+      console.error("Firebase 저장 오류:", e);
+      return false;
+    }
+  };
+
+  // wishboard 저장 함수
+  window.saveWishboard = async function(nick, mood, text) {
+    try {
+      await addDoc(collection(db, "wishboard"), {
+        nick: nick,
+        mood: mood,
+        text: text,
+        createdAt: serverTimestamp()
+      });
+      return true;
+    } catch(e) {
+      console.error("Firebase 저장 오류:", e);
+      return false;
+    }
+  };
+
+  console.log("Firebase 연결 완료 ✓");
+</script>
+</body>
+</html>
