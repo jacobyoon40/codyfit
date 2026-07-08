@@ -349,7 +349,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
   <div class="search-actions">
     <a class="search-btn ghost nav-pulse" href="#vote-section" onclick="showMsgToast('🗳️ 어떤 기능이 필요하세요?')" data-c="nav-vote">🗳️ 투표</a>
     <a class="search-btn ghost nav-glow" href="#wish-section" onclick="showMsgToast('💌 위시보드로 이동해요')" data-c="nav-wish">✦ WISHBOARD</a>
-    <a class="search-btn ghost" href="#upload" onclick="showMsgToast('👗 옷장 등록하러 가볼게요!')" data-c="nav-upload">옷장 등록</a>
+    <a class="search-btn ghost" href="#upload" onclick="showMsgToast('👗 옷장 등록하러 가볼게요!')" data-c="nav-upload" style="border-color:var(--rose);color:var(--rose);animation:navpulse 2s ease-in-out infinite">옷장 등록 ✦</a>
     <a class="search-btn primary" href="#" onclick="showBetaToast();return false;" data-c="nav-cta">베타 신청 ✦</a>
   </div>
 </div>
@@ -555,7 +555,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
 <section class="sec upload-sec" id="upload">
   <div class="sec-inner">
     <div class="rv">
-      <div class="sec-label">AI WARDROBE</div>
+      <div class="sec-label" style="font-size:11px;background:var(--rose);color:#fff;display:inline-block;padding:4px 10px;border-radius:100px;margin-bottom:16px">✦ 지금 바로 해보세요</div>
       <h2 class="sec-h2 light">사진 한 장으로<br>옷장이 완성됩니다</h2>
       <p class="sec-desc light">AI가 색상, 스타일, 소재, 사이즈를 자동으로 분석합니다</p>
     </div>
@@ -570,7 +570,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
       <div class="upload-body">
 
         <!-- 업로드 존 -->
-        <div class="upload-zone" id="uploadZone" data-c="upload-zone">
+        <div class="upload-zone" id="uploadZone" data-c="upload-zone" style="border-color:rgba(184,105,122,0.4);border-width:2px">
           <input type="file" class="upload-input" id="fileInput" accept="image/*" onchange="handleUpload(event)" data-c="upload-input">
           <div class="upload-icon">📷</div>
           <div class="upload-title">사진을 올리거나 드래그하세요</div>
@@ -995,7 +995,7 @@ function handleUpload(e){
     document.getElementById('aiAnalyzing').classList.add('on');
     document.getElementById('aiPreviewImg').src=src;
     document.getElementById('demoBarLabel').textContent='AI 분석 중...';
-    track('upload_photo');
+    track('upload_photo'); if(window.saveUploadAttempt) window.saveUploadAttempt();
     runAiAnalysis(src);
   };
   reader.readAsDataURL(file);
@@ -1520,6 +1520,15 @@ document.querySelectorAll('[data-c]').forEach(el=>{
       console.error("Firebase 저장 오류:", e);
       return false;
     }
+  };
+
+  // 업로드 시도 저장
+  window.saveUploadAttempt = async function() {
+    try {
+      await addDoc(collection(db, "upload_attempts"), {
+        createdAt: serverTimestamp()
+      });
+    } catch(e) { console.error(e); }
   };
 
   // 투표 저장 함수
