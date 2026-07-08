@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codyfit Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--black:#0a0a0a;--white:#fff;--rose:#b8697a;--rose-light:rgba(184,105,122,0.1);--g100:#f5f5f5;--g200:#e8e8e8;--g400:#aaa;--g600:#666;--g800:#333;--card:#1a1a1a;--border:rgba(255,255,255,0.08)}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--black);color:var(--white);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* 헤더 */
+.header{padding:20px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.header-logo{font-size:13px;font-weight:900;letter-spacing:0.2em;color:var(--white)}
+.header-badge{font-size:11px;font-weight:700;padding:4px 10px;background:var(--rose-light);color:var(--rose);border-radius:100px;border:1px solid rgba(184,105,122,0.2)}
+.header-refresh{font-size:12px;color:var(--g400);cursor:pointer;border:none;background:none;font-family:inherit;display:flex;align-items:center;gap:6px;transition:color 0.2s}
+.header-refresh:hover{color:var(--white)}
+
+/* 레이아웃 */
+.main{padding:32px;max-width:1100px;margin:0 auto}
+
+/* 통계 카드 */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 24px}
+.stat-label{font-size:11px;font-weight:700;letter-spacing:0.15em;color:var(--g400);margin-bottom:10px}
+.stat-num{font-size:36px;font-weight:900;letter-spacing:-1px;color:var(--white)}
+.stat-sub{font-size:12px;color:var(--g400);margin-top:4px;font-weight:300}
+.stat-card.rose{border-color:rgba(184,105,122,0.3);background:rgba(184,105,122,0.06)}
+.stat-card.rose .stat-num{color:var(--rose)}
+
+/* 섹션 타이틀 */
+.sec-title{font-size:11px;font-weight:700;letter-spacing:0.2em;color:var(--g400);margin-bottom:16px}
+
+/* 투표 차트 */
+.vote-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px}
+.vote-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.vote-row:last-child{margin-bottom:0}
+.vote-name{font-size:13px;font-weight:500;color:var(--white);width:120px;flex-shrink:0}
+.vote-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden}
+.vote-bar{height:100%;background:var(--rose);border-radius:100px;transition:width 0.8s cubic-bezier(.16,1,.3,1)}
+.vote-pct{font-size:12px;font-weight:700;color:var(--rose);width:36px;text-align:right;flex-shrink:0}
+.vote-cnt{font-size:11px;color:var(--g400);width:28px;text-align:right;flex-shrink:0}
+
+/* 위시보드 */
+.wish-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px}
+.wish-list{display:flex;flex-direction:column;gap:10px;max-height:480px;overflow-y:auto}
+.wish-list::-webkit-scrollbar{width:4px}
+.wish-list::-webkit-scrollbar-track{background:transparent}
+.wish-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:100px}
+.wish-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.wish-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.wish-mood{font-size:16px}
+.wish-nick{font-size:12px;font-weight:700;color:rgba(255,255,255,0.7)}
+.wish-time{font-size:11px;color:var(--g400);margin-left:auto}
+.wish-text{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;font-weight:300}
+.empty{text-align:center;padding:40px;color:var(--g400);font-size:13px}
+
+/* 로딩 */
+.loading{text-align:center;padding:60px;color:var(--g400)}
+.spinner{width:24px;height:24px;border:2px solid rgba(255,255,255,0.1);border-top-color:var(--rose);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 그리드 */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:768px){.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">CF · ADMIN</div>
+  <button class="header-refresh" onclick="loadAll()">↻ 새로고침</button>
+  <div class="header-badge">내부용</div>
+</div>
+
+<div class="main">
+
+  <!-- 통계 -->
+  <div class="stats-row">
+    <div class="stat-card rose">
+      <div class="stat-label">TOTAL VOTES</div>
+      <div class="stat-num" id="totalVotes">—</div>
+      <div class="stat-sub">누적 투표 수</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">WISHBOARD</div>
+      <div class="stat-num" id="totalWish">—</div>
+      <div class="stat-sub">위시 메시지</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">TOP VOTE</div>
+      <div class="stat-num" id="topVote" style="font-size:18px;padding-top:6px">—</div>
+      <div class="stat-sub">가장 많이 선택된 기능</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- 투표 -->
+    <div>
+      <div class="sec-title">VOTE BREAKDOWN</div>
+      <div class="vote-section" id="voteSection">
+        <div class="loading"><div class="spinner"></div>불러오는 중...</div>
+      </div>
+    </div>
+
+    <!-- 위시보드 -->
+    <div>
+      <div class="sec-title">WISHBOARD MESSAGES</div>
+      <div class="wish-section">
+        <div class="wish-list" id="wishList">
+          <div class="loading"><div class="spinner"></div>불러오는 중...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAlZ0L-XXB7iM7InYTUL8Z3Xb62RWyWqOw",
+  authDomain: "cood-f1975.firebaseapp.com",
+  projectId: "cood-f1975",
+  storageBucket: "cood-f1975.firebasestorage.app",
+  messagingSenderId: "979750785228",
+  appId: "1:979750785228:web:44581eac2b9da933bdb269"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const VOTE_LABELS = {
+  'vote-ai-codi': '✦ AI 코디 추천',
+  'vote-auction': '🏷️ 중고 옥션',
+  'vote-match': '🔗 콘텐츠 매칭',
+  'vote-price': '💸 최저가 연결',
+  'vote-style': '🎨 스타일 진단'
+};
+
+window.loadAll = async function() {
+  await Promise.all([loadVotes(), loadWishboard()]);
+};
+
+async function loadVotes() {
+  const sec = document.getElementById('voteSection');
+  try {
+    const snap = await getDocs(collection(db, 'votes'));
+    const counts = {};
+    snap.forEach(doc => {
+      const k = doc.data().key;
+      counts[k] = (counts[k] || 0) + 1;
+    });
+
+    const total = Object.values(counts).reduce((a, b) => a + b, 0);
+    document.getElementById('totalVotes').textContent = total;
+
+    // 상위 투표
+    const top = Object.entries(counts).sort((a,b) => b[1]-a[1])[0];
+    if (top) document.getElementById('topVote').textContent = VOTE_LABELS[top[0]] || top[0];
+
+    if (total === 0) {
+      sec.innerHTML = '<div class="empty">아직 투표 데이터가 없습니다</div>';
+      return;
+    }
+
+    const order = ['vote-ai-codi','vote-auction','vote-match','vote-price','vote-style'];
+    sec.innerHTML = order.map(k => {
+      const cnt = counts[k] || 0;
+      const pct = total ? Math.round(cnt / total * 100) : 0;
+      return `<div class="vote-row">
+        <div class="vote-name">${VOTE_LABELS[k]}</div>
+        <div class="vote-bar-wrap"><div class="vote-bar" style="width:0%" data-pct="${pct}"></div></div>
+        <div class="vote-pct">${pct}%</div>
+        <div class="vote-cnt">${cnt}표</div>
+      </div>`;
+    }).join('');
+
+    // 애니메이션
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.vote-bar').forEach(bar => {
+        setTimeout(() => { bar.style.width = bar.dataset.pct + '%'; }, 100);
+      });
+    });
+
+  } catch(e) {
+    sec.innerHTML = '<div class="empty">데이터 로드 실패</div>';
+    console.error(e);
+  }
+}
+
+async function loadWishboard() {
+  const list = document.getElementById('wishList');
+  try {
+    const q = query(collection(db, 'wishboard'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    document.getElementById('totalWish').textContent = snap.size;
+
+    if (snap.empty) {
+      list.innerHTML = '<div class="empty">아직 위시보드 메시지가 없습니다</div>';
+      return;
+    }
+
+    list.innerHTML = '';
+    snap.forEach(doc => {
+      const d = doc.data();
+      const time = d.createdAt ? timeAgo(d.createdAt.toDate()) : '';
+      const div = document.createElement('div');
+      div.className = 'wish-item';
+      div.innerHTML = `<div class="wish-header">
+        <span class="wish-mood">${d.mood || '✨'}</span>
+        <span class="wish-nick">${d.nick || '익명'}</span>
+        <span class="wish-time">${time}</span>
+      </div>
+      <div class="wish-text">${d.text}</div>`;
+      list.appendChild(div);
+    });
+
+  } catch(e) {
+    list.innerHTML = '<div class="empty">데이터 로드 실패</div>';
+    console.error(e);
+  }
+}
+
+function timeAgo(date) {
+  const diff = (Date.now() - date) / 1000;
+  if (diff < 60) return '방금 전';
+  if (diff < 3600) return Math.floor(diff/60) + '분 전';
+  if (diff < 86400) return Math.floor(diff/3600) + '시간 전';
+  return Math.floor(diff/86400) + '일 전';
+}
+
+loadAll();
+</script>
+</body>
+</html>
