@@ -950,10 +950,11 @@ function secretClick(){
 // 플로팅
 window.addEventListener('scroll',()=>{
   document.getElementById('floatBtn').classList.toggle('show',window.scrollY>500);
-  document.getElementById('floatNav').classList.toggle('show',window.scrollY>200);
+  document.getElementById('floatNav').classList.add('show');
 });
 
 // reveal
+document.getElementById('floatNav').classList.add('show');
 const obs=new IntersectionObserver(es=>{
   es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');obs.unobserve(e.target)}});
 },{threshold:0.1});
