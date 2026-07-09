@@ -314,6 +314,36 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
 .gb-text{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;font-weight:300}
 
 
+
+/* ── 가격비교 모달 ── */
+.buy-link-btn{background:linear-gradient(135deg,#ff6b35,#f7c59f);color:#fff;border:none;border-radius:100px;padding:8px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;box-shadow:0 2px 8px rgba(255,107,53,0.4);animation:buypulse 2s ease-in-out infinite}
+@keyframes buypulse{0%,100%{box-shadow:0 2px 8px rgba(255,107,53,0.4)}50%{box-shadow:0 4px 16px rgba(255,107,53,0.7)}}
+.price-compare-sheet{background:#fff;border-radius:24px 24px 0 0;padding:0 0 32px;max-height:90vh;overflow-y:auto}
+.pcs-header{padding:20px 20px 0;border-bottom:1px solid #f0f0f0;padding-bottom:16px}
+.pcs-title{font-size:17px;font-weight:900;color:#111;margin-bottom:4px}
+.pcs-sub{font-size:12px;color:#999}
+.pcs-item-thumb{width:52px;height:52px;border-radius:10px;object-fit:cover}
+.pcs-keyword{display:flex;align-items:center;gap:8px;padding:12px 20px;background:#f8f8f8;margin:0 0 4px}
+.pcs-keyword span{font-size:12px;color:#666}
+.pcs-keyword strong{font-size:13px;color:#111;font-weight:700}
+.pcs-section-title{font-size:11px;font-weight:800;letter-spacing:0.15em;color:#999;padding:16px 20px 8px}
+.pcs-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid #f5f5f5;cursor:pointer;transition:background 0.15s}
+.pcs-row:hover{background:#f9f9f9}
+.pcs-row-logo{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.pcs-row-info{flex:1}
+.pcs-row-name{font-size:13px;font-weight:600;color:#111;margin-bottom:2px}
+.pcs-row-detail{font-size:11px;color:#999}
+.pcs-row-price{text-align:right}
+.pcs-row-num{font-size:16px;font-weight:900;color:#111}
+.pcs-row-ship{font-size:10px;color:#999;margin-top:1px}
+.pcs-best{border-left:3px solid #03c75a}
+.pcs-best .pcs-row-num{color:#03c75a}
+.pcs-badge{font-size:10px;font-weight:800;padding:2px 7px;border-radius:100px;margin-left:6px}
+.pcs-badge.best{background:#e8faf0;color:#03c75a}
+.pcs-badge.match{background:#e8f0fe;color:#1a73e8}
+.pcs-badge.hot{background:#fff0ec;color:#ff6b35}
+.pcs-cta{margin:16px 20px 0;background:#111;color:#fff;border:none;border-radius:100px;padding:16px;width:calc(100% - 40px);font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+
 /* ── 플로팅 네비게이션 ── */
 .float-nav{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;opacity:0;transition:opacity 0.4s}
 .float-nav.show{opacity:1}
@@ -527,6 +557,90 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
 </section>
 
 <!-- 매칭 시트 -->
+<!-- 가격비교 모달 -->
+<div class="overlay" id="priceOverlay" onclick="closeOverlay('priceOverlay')">
+  <div class="sheet price-compare-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="pcs-header">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <img class="pcs-item-thumb" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=120&q=80&fit=crop" alt="">
+        <div>
+          <div class="pcs-title">데님 자켓</div>
+          <div class="pcs-sub">내 옷장에 없는 아이템 · 최저가 비교 중</div>
+        </div>
+      </div>
+      <div class="pcs-keyword">
+        <span>🎯 내 옷장 매칭 기준</span>
+        <strong>흰 셔츠 96% + 네이비 슬랙스 88%</strong>
+      </div>
+    </div>
+
+    <div class="pcs-section-title">💰 최저가 비교</div>
+
+    <div class="pcs-row pcs-best" onclick="track('buy-naver')">
+      <div class="pcs-row-logo" style="background:#e8f5e9">
+        <span style="color:#03c75a;font-size:13px">N</span>
+      </div>
+      <div class="pcs-row-info">
+        <div class="pcs-row-name">네이버쇼핑 <span class="pcs-badge best">최저가</span></div>
+        <div class="pcs-row-detail">리바이스 507 데님 자켓 · M · 인디고</div>
+      </div>
+      <div class="pcs-row-price">
+        <div class="pcs-row-num">₩67,900</div>
+        <div class="pcs-row-ship">무료배송</div>
+      </div>
+    </div>
+
+    <div class="pcs-row" onclick="track('buy-coupang')">
+      <div class="pcs-row-logo" style="background:#fff0ec">
+        <span style="color:#ff6b35;font-size:11px">CP</span>
+      </div>
+      <div class="pcs-row-info">
+        <div class="pcs-row-name">쿠팡 <span class="pcs-badge hot">로켓배송</span></div>
+        <div class="pcs-row-detail">데님 자켓 유사상품 · M · 다크블루</div>
+      </div>
+      <div class="pcs-row-price">
+        <div class="pcs-row-num">₩72,000</div>
+        <div class="pcs-row-ship">내일 도착</div>
+      </div>
+    </div>
+
+    <div class="pcs-row" onclick="track('buy-musinsa')">
+      <div class="pcs-row-logo" style="background:#f0f0f0">
+        <span style="color:#111;font-size:11px">무신</span>
+      </div>
+      <div class="pcs-row-info">
+        <div class="pcs-row-name">무신사</div>
+        <div class="pcs-row-detail">커버낫 데님 자켓 · M · 블루</div>
+      </div>
+      <div class="pcs-row-price">
+        <div class="pcs-row-num">₩89,000</div>
+        <div class="pcs-row-ship">2,500원</div>
+      </div>
+    </div>
+
+    <div class="pcs-section-title">✦ 내 옷장 매칭 최적 상품</div>
+
+    <div class="pcs-row" onclick="track('buy-match-1')">
+      <div class="pcs-row-logo" style="background:#e8f0fe">
+        <span style="color:#1a73e8;font-size:11px">AI</span>
+      </div>
+      <div class="pcs-row-info">
+        <div class="pcs-row-name">AI 추천 <span class="pcs-badge match">96% 매칭</span></div>
+        <div class="pcs-row-detail">흰 셔츠 + 네이비 슬랙스와 최적 조합</div>
+      </div>
+      <div class="pcs-row-price">
+        <div class="pcs-row-num">₩67,900</div>
+        <div class="pcs-row-ship">네이버쇼핑</div>
+      </div>
+    </div>
+
+    <button class="pcs-cta" onclick="track('buy-cta');showBetaToast()" data-c="price-cta">
+      내 옷장 등록하고 더 정확한 매칭받기
+    </button>
+  </div>
+</div>
+
 <div class="overlay" id="matchOverlay" onclick="closeOverlay('matchOverlay')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
@@ -545,7 +659,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
     <div class="match-item" data-c="match-3">
       <div class="match-thumb" style="background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:18px">?</div>
       <div class="match-info"><div class="match-name" id="matchItemName">아이템</div><div class="match-sub">내 옷장에 없음 → 최저가 연결</div></div>
-      <div class="match-badge no">구매 연결</div>
+      <button class="buy-link-btn" onclick="openPriceCompare()" data-c="match-buy">🛒 최저가 찾기</button>
     </div>
     <button class="sheet-cta" onclick="track('match-cta');showBetaToast()" data-c="match-cta">내 옷장 등록하고 정확하게 받기</button>
   </div>
@@ -993,6 +1107,10 @@ function openMatch(item){
 }
 
 // 오버레이 닫기
+function openPriceCompare(){
+  document.getElementById('priceOverlay').classList.add('active');
+  track('price-compare-open');
+}
 function closeOverlay(id){
   document.getElementById(id).classList.remove('on');
   document.body.style.overflow='';
