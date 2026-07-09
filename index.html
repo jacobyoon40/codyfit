@@ -1354,7 +1354,20 @@ function openBid(name,price,newPrice,img){
   document.getElementById('bidNewP').textContent='₩'+newPrice.toLocaleString();
   document.getElementById('bidSimilarP').textContent='₩'+Math.round(newPrice*0.85).toLocaleString();
   document.getElementById('bidSaveP').textContent=Math.round((1-price/newPrice)*100)+'% 절약';
-  document.getElementById('bidQuickBtns').innerHTML='';
+  const qb=document.getElementById('bidQuickBtns');
+  qb.innerHTML='';
+  [{d:500,label:'시작가+500'},{d:1000,label:'시작가+1,000'},{d:3000,label:'시작가+3,000'},{d:5000,label:'시작가+5,000'}].forEach(({d,label})=>{
+    const b=document.createElement('button');
+    b.className='bid-quick-btn';
+    b.textContent=label;
+    b.onclick=()=>{
+      document.querySelectorAll('.bid-quick-btn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      document.getElementById('bidInputVal').value=price+d;
+      track('bid_quick_'+d);
+    };
+    qb.appendChild(b);
+  });
   document.getElementById('bidOverlay').classList.add('on','active');
   document.body.style.overflow='hidden';
   track('bid_open_'+name);
