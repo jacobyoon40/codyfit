@@ -1022,6 +1022,16 @@ function secretClick(){
 </footer>
 
 <script>
+// price.html에서 넘어온 경우 입찰 시트 자동 열기
+const _bp = new URLSearchParams(location.search);
+if(_bp.get('bid')){
+  const _n=_bp.get('bid'), _p=parseInt(_bp.get('price')), _np=parseInt(_bp.get('newPrice')), _i=_bp.get('img');
+  setTimeout(()=>{
+    document.querySelector('#auction')?.scrollIntoView({behavior:'smooth'});
+    setTimeout(()=>openBid(_n,_p,_np,_i),600);
+  },300);
+}
+
 // 플로팅
 window.addEventListener('scroll',()=>{
   document.getElementById('floatBtn').classList.toggle('show',window.scrollY>500);

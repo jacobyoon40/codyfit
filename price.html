@@ -126,7 +126,7 @@ a{text-decoration:none;color:inherit}
   </div>
 
   <!-- 카드 1: 경쟁 증가 중 -->
-  <a class="auction-card" href="/#auction">
+  <a class="auction-card" href="javascript:void(0)" onclick="openBidPage('빈티지 데님 자켓',38000,120000,'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=120&q=80&fit=crop')">
     <div class="acard-img">
       <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=120&q=80&fit=crop" alt="" onerror="this.style.background='#333';this.src=''">
       <span class="grade" style="background:#e8184a">A급</span>
@@ -152,7 +152,7 @@ a{text-decoration:none;color:inherit}
   </a>
 
   <!-- 카드 2: 경쟁 없음 + 마감임박 -->
-  <a class="auction-card urgent" href="/#auction">
+  <a class="auction-card urgent" href="javascript:void(0)" onclick="openBidPage('데님 셔츠 자켓',15000,52000,'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=120&q=80&fit=crop')">
     <div class="acard-img">
       <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=120&q=80&fit=crop" alt="" onerror="this.style.background='#333';this.src=''">
       <span class="grade" style="background:#ff6b35">B급</span>
@@ -178,7 +178,7 @@ a{text-decoration:none;color:inherit}
   </a>
 
   <div class="auction-footer">
-    <a class="auction-more" href="/#auction">옥션 전체 보기 →</a>
+    <a class="auction-more" href="/">옥션 전체 보기 →</a>
   </div>
 </div>
 
@@ -264,8 +264,8 @@ a{text-decoration:none;color:inherit}
       <span class="shop-name">매칭 최적 상품</span>
       <span class="sbadge ai">96% 매칭</span>
     </div>
-    <div class="price-detail">흰 셔츠 + 네이비 슬랙스와 완벽 조합</div>
-    <div class="ship-info" style="color:#6d28d9">내 스타일 기준 최적 선택</div>
+    <div class="price-detail">이 자켓과 함께 입으면 좋은 상품</div>
+    <div class="ship-info" style="color:#6d28d9">내 옷장 흰 셔츠·슬랙스와 96% 매칭</div>
   </div>
   <div class="price-col">
     <div class="price-num green">₩67,900</div>
@@ -282,6 +282,18 @@ a{text-decoration:none;color:inherit}
 
 <div class="toast" id="toast">베타 오픈 시 알림드릴게요!</div>
 
+<script>
+function openBidPage(name, price, newPrice, img) {
+  // 메인 페이지로 이동하면서 입찰 시트 자동 열기
+  const params = new URLSearchParams({
+    bid: name,
+    price: price,
+    newPrice: newPrice,
+    img: img
+  });
+  window.location.href = '/?' + params.toString() + '#auction';
+}
+</script>
 <script>
 const params = new URLSearchParams(location.search);
 const name = params.get('name');
