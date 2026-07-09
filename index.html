@@ -666,6 +666,30 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
   </div>
 </section>
 
+<div class="overlay" id="matchOverlay" onclick="closeOverlay('matchOverlay')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="matchTitle">내 옷장 매칭</div>
+    <div class="sheet-sub">이 아이템이 내 옷장과 어울리는지 확인해보세요</div>
+    <div class="match-item" data-c="match-1">
+      <div class="match-thumb"><img onerror="this.onerror=null;this.style.background='#f0f0f0';this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'" src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=120&q=80&fit=crop" alt="" loading="lazy"></div>
+      <div class="match-info"><div class="match-name">흰 셔츠</div><div class="match-sub">내 옷장 · 코튼 · M</div></div>
+      <div class="match-badge yes">96% 매칭</div>
+    </div>
+    <div class="match-item" data-c="match-2">
+      <div class="match-thumb"><img onerror="this.onerror=null;this.style.background='#f0f0f0';this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'" src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=120&q=80&fit=crop" alt="" loading="lazy"></div>
+      <div class="match-info"><div class="match-name">네이비 슬랙스</div><div class="match-sub">내 옷장 · 폴리 · M</div></div>
+      <div class="match-badge yes">88% 매칭</div>
+    </div>
+    <div class="match-item" data-c="match-3">
+      <div class="match-thumb" style="background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:18px">?</div>
+      <div class="match-info"><div class="match-name" id="matchItemName">아이템</div><div class="match-sub">내 옷장에 없음 → 최저가 연결</div></div>
+      <button class="buy-link-btn" onclick="openPriceCompare(document.getElementById('matchItemName').textContent)" data-c="match-buy">✦ 내 옷장에 맞는 최저가</button>
+    </div>
+    <button class="sheet-cta" onclick="track('match-cta');showBetaToast()" data-c="match-cta">내 옷장 등록하고 정확하게 받기</button>
+  </div>
+</div>
+
 <!-- 가격 제안 시트 -->
 <div class="overlay" id="offerOverlay" onclick="closeOverlay('offerOverlay')">
   <div class="sheet" onclick="event.stopPropagation()">
