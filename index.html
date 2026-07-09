@@ -319,8 +319,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
 
 
 /* ── 가격비교 모달 ── */
-.buy-link-btn{background:linear-gradient(135deg,#ff6b35,#f7c59f);color:#fff;border:none;border-radius:100px;padding:8px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;box-shadow:0 2px 8px rgba(255,107,53,0.4);animation:buypulse 2s ease-in-out infinite}
-@keyframes buypulse{0%,100%{box-shadow:0 2px 8px rgba(255,107,53,0.4)}50%{box-shadow:0 4px 16px rgba(255,107,53,0.7)}}
+.buy-link-btn{background:#111;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:5px;letter-spacing:-0.2px}
 .price-compare-sheet{background:#fff;border-radius:24px 24px 0 0;padding:0 0 32px;max-height:90vh;overflow-y:auto}
 .pcs-header{padding:20px 20px 0;border-bottom:1px solid #f0f0f0;padding-bottom:16px}
 .pcs-title{font-size:17px;font-weight:900;color:#111;margin-bottom:4px}
@@ -562,21 +561,134 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
 <!-- 매칭 시트 -->
 <!-- 가격비교 모달 -->
 <div class="overlay" id="priceOverlay" onclick="closeOverlay('priceOverlay')">
-  <div class="sheet price-compare-sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="pcs-header">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <img class="pcs-item-thumb" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=120&q=80&fit=crop" alt="">
+  <div class="sheet" style="background:#f5f5f5;padding:0;max-height:92vh;overflow-y:auto;border-radius:20px 20px 0 0" onclick="event.stopPropagation()">
+    <div class="sheet-handle" style="background:rgba(0,0,0,0.15);margin:10px auto 0"></div>
+
+    <!-- 상품 헤더 -->
+    <div style="background:#fff;padding:16px 20px 14px;border-bottom:1px solid #eee">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <img id="pcImg" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=120&q=80&fit=crop" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0" alt="">
         <div>
-          <div class="pcs-title">데님 자켓</div>
-          <div class="pcs-sub">내 옷장에 없는 아이템 · 최저가 비교 중</div>
+          <div id="pcName" style="font-size:15px;font-weight:800;color:#111;margin-bottom:2px">데님 자켓</div>
+          <div style="font-size:11px;color:#888">내 옷장과의 매칭 기준 최저가 검색</div>
         </div>
       </div>
-      <div class="pcs-keyword">
-        <span>🎯 내 옷장 매칭 기준</span>
-        <strong>흰 셔츠 96% + 네이비 슬랙스 88%</strong>
+      <!-- 매칭 태그 -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:700;background:#e8f5e9;color:#2e7d32;padding:4px 10px;border-radius:6px">✓ 흰 셔츠 96% 매칭</span>
+        <span style="font-size:11px;font-weight:700;background:#e8f5e9;color:#2e7d32;padding:4px 10px;border-radius:6px">✓ 네이비 슬랙스 88% 매칭</span>
       </div>
     </div>
+
+    <!-- 최저가 섹션 -->
+    <div style="padding:12px 16px 6px">
+      <div style="font-size:11px;font-weight:800;color:#888;letter-spacing:0.1em">최저가 비교</div>
+    </div>
+
+    <!-- 네이버 - 최저가 -->
+    <div onclick="window.open('https://search.shopping.naver.com/search/all?query=데님+자켓','_blank');track('buy-naver')" style="background:#fff;margin:0 0 2px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;border-left:3px solid #03c75a">
+      <div style="width:40px;height:40px;background:#e8f5e9;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="font-size:16px;font-weight:900;color:#03c75a">N</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+          <span style="font-size:13px;font-weight:700;color:#111">네이버쇼핑</span>
+          <span style="font-size:10px;font-weight:800;background:#03c75a;color:#fff;padding:2px 7px;border-radius:4px">최저가</span>
+        </div>
+        <div style="font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">리바이스 507 데님 자켓 · M · 인디고블루</div>
+        <div style="font-size:11px;color:#03c75a;margin-top:2px">무료배송 · ★ 4.8 (리뷰 2,341)</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:18px;font-weight:900;color:#111">₩67,900</div>
+        <div style="font-size:10px;color:#03c75a;margin-top:1px">↑ 43% 절약</div>
+      </div>
+    </div>
+
+    <!-- 쿠팡 -->
+    <div onclick="window.open('https://www.coupang.com/np/search?q=데님+자켓','_blank');track('buy-coupang')" style="background:#fff;margin:0 0 2px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer">
+      <div style="width:40px;height:40px;background:#fff0ec;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="font-size:11px;font-weight:900;color:#ff4500">CP</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+          <span style="font-size:13px;font-weight:700;color:#111">쿠팡</span>
+          <span style="font-size:10px;font-weight:800;background:#ff4500;color:#fff;padding:2px 7px;border-radius:4px">로켓배송</span>
+        </div>
+        <div style="font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">데님 자켓 유사상품 · M · 다크블루</div>
+        <div style="font-size:11px;color:#ff4500;margin-top:2px">내일(7/10) 도착 보장</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:18px;font-weight:900;color:#111">₩72,000</div>
+        <div style="font-size:10px;color:#999;margin-top:1px">배송비 무료</div>
+      </div>
+    </div>
+
+    <!-- 무신사 -->
+    <div onclick="window.open('https://www.musinsa.com/search/goods?q=데님+자켓','_blank');track('buy-musinsa')" style="background:#fff;margin:0 0 2px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer">
+      <div style="width:40px;height:40px;background:#f0f0f0;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="font-size:11px;font-weight:900;color:#111">무신사</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+          <span style="font-size:13px;font-weight:700;color:#111">무신사</span>
+        </div>
+        <div style="font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">커버낫 데님 자켓 · M · 블루</div>
+        <div style="font-size:11px;color:#999;margin-top:2px">배송비 ₩2,500</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:18px;font-weight:900;color:#111">₩89,000</div>
+        <div style="font-size:10px;color:#999;margin-top:1px">정가 대비</div>
+      </div>
+    </div>
+
+    <!-- 다나와 -->
+    <div onclick="window.open('https://search.danawa.com/dsearch.php?query=데님+자켓','_blank');track('buy-danawa')" style="background:#fff;margin:0 0 12px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer">
+      <div style="width:40px;height:40px;background:#e8f0fe;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="font-size:11px;font-weight:900;color:#1a73e8">다나와</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+          <span style="font-size:13px;font-weight:700;color:#111">다나와</span>
+          <span style="font-size:10px;font-weight:800;background:#e8f0fe;color:#1a73e8;padding:2px 7px;border-radius:4px">가격비교</span>
+        </div>
+        <div style="font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">전체 최저가 비교 · 여러 쇼핑몰 한 번에</div>
+        <div style="font-size:11px;color:#1a73e8;margin-top:2px">최대 20개 쇼핑몰 비교</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:14px;font-weight:700;color:#1a73e8">바로가기 →</div>
+      </div>
+    </div>
+
+    <!-- AI 추천 섹션 -->
+    <div style="padding:0 16px 6px">
+      <div style="font-size:11px;font-weight:800;color:#888;letter-spacing:0.1em">✦ 내 옷장 기준 AI 추천</div>
+    </div>
+    <div style="background:#fff;margin:0 0 2px;padding:16px 20px;display:flex;align-items:center;gap:14px">
+      <div style="width:40px;height:40px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="font-size:11px;font-weight:900;color:#fff">AI</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+          <span style="font-size:13px;font-weight:700;color:#111">매칭 최적 상품</span>
+          <span style="font-size:10px;font-weight:800;background:#f0ebff;color:#764ba2;padding:2px 7px;border-radius:4px">96% 매칭</span>
+        </div>
+        <div style="font-size:11px;color:#888">흰 셔츠 + 네이비 슬랙스와 완벽 조합</div>
+        <div style="font-size:11px;color:#764ba2;margin-top:2px">내 스타일 기준 최적 선택</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:18px;font-weight:900;color:#111">₩67,900</div>
+        <div style="font-size:10px;color:#999;margin-top:1px">네이버쇼핑</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div style="padding:16px 20px 32px;background:#f5f5f5">
+      <button onclick="track('price-cta');showBetaToast()" style="width:100%;padding:16px;background:#111;color:#fff;font-size:15px;font-weight:800;border:none;border-radius:14px;cursor:pointer;font-family:inherit" data-c="price-cta">
+        내 옷장 등록하고 정확한 매칭 받기
+      </button>
+    </div>
+  </div>
+</div>
 
     <div class="pcs-section-title">💰 최저가 비교</div>
 
