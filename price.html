@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>최저가 비교 · Codyfit</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f5f5f5;color:#111;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* 헤더 */
+.header{background:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #eee;position:sticky;top:0;z-index:100}
+.back-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:none;font-size:20px;color:#111;flex-shrink:0}
+.header-title{font-size:15px;font-weight:800;color:#111}
+
+/* 상품 카드 */
+.product-card{background:#fff;margin:12px 16px;border-radius:16px;padding:16px;display:flex;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.product-thumb{width:72px;height:72px;border-radius:12px;object-fit:cover;flex-shrink:0}
+.product-name{font-size:16px;font-weight:800;color:#111;margin-bottom:4px}
+.product-sub{font-size:12px;color:#888;margin-bottom:8px}
+.match-tags{display:flex;gap:6px;flex-wrap:wrap}
+.match-tag{font-size:11px;font-weight:700;background:#e8f5e9;color:#2e7d32;padding:3px 9px;border-radius:6px}
+
+/* 섹션 */
+.section-label{font-size:11px;font-weight:800;color:#999;letter-spacing:0.12em;padding:16px 20px 8px}
+
+/* 가격 행 */
+.price-row{background:#fff;margin:0 0 2px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background 0.15s;text-decoration:none}
+.price-row:active{background:#f9f9f9}
+.price-row.best{border-left:3px solid #03c75a}
+.shop-logo{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;font-size:12px}
+.price-info{flex:1;min-width:0}
+.shop-name-row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.shop-name{font-size:14px;font-weight:700;color:#111}
+.badge{font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px}
+.badge.best{background:#03c75a;color:#fff}
+.badge.rocket{background:#ff4500;color:#fff}
+.badge.compare{background:#e8f0fe;color:#1a73e8}
+.badge.ai{background:#f0ebff;color:#6d28d9}
+.product-detail{font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px}
+.ship-info{font-size:11px}
+.price-col{text-align:right;flex-shrink:0}
+.price-num{font-size:18px;font-weight:900;color:#111;letter-spacing:-0.5px}
+.price-num.green{color:#03c75a}
+.price-save{font-size:10px;color:#03c75a;margin-top:1px}
+.price-ship{font-size:10px;color:#999;margin-top:1px}
+.arrow{font-size:14px;color:#ccc;margin-left:4px;flex-shrink:0}
+
+/* CTA */
+.cta-wrap{padding:20px 16px 40px}
+.cta-btn{width:100%;padding:17px;background:#111;color:#fff;font-size:15px;font-weight:800;border:none;border-radius:14px;cursor:pointer;font-family:inherit}
+
+/* 구분선 */
+.divider{height:8px;background:#f5f5f5}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <div class="header-title" id="pageTitle">최저가 비교</div>
+</div>
+
+<!-- 상품 정보 -->
+<div class="product-card">
+  <img class="product-thumb" id="productThumb" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&q=80&fit=crop" alt="">
+  <div>
+    <div class="product-name" id="productName">데님 자켓</div>
+    <div class="product-sub" id="productSub">내 옷장에 없는 아이템 · 최저가 비교</div>
+    <div class="match-tags">
+      <span class="match-tag">✓ 흰 셔츠 96% 매칭</span>
+      <span class="match-tag">✓ 네이비 슬랙스 88% 매칭</span>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- 최저가 비교 -->
+<div class="section-label">💰 최저가 비교</div>
+
+<a class="price-row best" id="naverRow" href="#" onclick="openShop('naver')">
+  <div class="shop-logo" style="background:#e8f5e9"><span style="color:#03c75a;font-size:18px;font-weight:900">N</span></div>
+  <div class="price-info">
+    <div class="shop-name-row">
+      <span class="shop-name">네이버쇼핑</span>
+      <span class="badge best">최저가</span>
+    </div>
+    <div class="product-detail" id="naverDetail">리바이스 507 데님 자켓 · M · 인디고블루</div>
+    <div class="ship-info" style="color:#03c75a">무료배송 · ★ 4.8 (리뷰 2,341)</div>
+  </div>
+  <div class="price-col">
+    <div class="price-num green" id="naverPrice">₩67,900</div>
+    <div class="price-save" id="naverSave">↑ 43% 절약</div>
+  </div>
+  <span class="arrow">›</span>
+</a>
+
+<a class="price-row" href="#" onclick="openShop('coupang')">
+  <div class="shop-logo" style="background:#fff0ec"><span style="color:#ff4500;font-size:11px;font-weight:900">CP</span></div>
+  <div class="price-info">
+    <div class="shop-name-row">
+      <span class="shop-name">쿠팡</span>
+      <span class="badge rocket">로켓배송</span>
+    </div>
+    <div class="product-detail">데님 자켓 유사상품 · M · 다크블루</div>
+    <div class="ship-info" style="color:#ff4500">내일 도착 보장 · 무료배송</div>
+  </div>
+  <div class="price-col">
+    <div class="price-num">₩72,000</div>
+    <div class="price-ship">배송비 무료</div>
+  </div>
+  <span class="arrow">›</span>
+</a>
+
+<a class="price-row" href="#" onclick="openShop('musinsa')">
+  <div class="shop-logo" style="background:#f0f0f0"><span style="color:#111;font-size:10px;font-weight:900">무신사</span></div>
+  <div class="price-info">
+    <div class="shop-name-row">
+      <span class="shop-name">무신사</span>
+    </div>
+    <div class="product-detail">커버낫 데님 자켓 · M · 블루</div>
+    <div class="ship-info" style="color:#999">배송비 ₩2,500</div>
+  </div>
+  <div class="price-col">
+    <div class="price-num">₩89,000</div>
+    <div class="price-ship">₩2,500</div>
+  </div>
+  <span class="arrow">›</span>
+</a>
+
+<a class="price-row" href="#" onclick="openShop('danawa')">
+  <div class="shop-logo" style="background:#e8f0fe"><span style="color:#1a73e8;font-size:10px;font-weight:900">다나와</span></div>
+  <div class="price-info">
+    <div class="shop-name-row">
+      <span class="shop-name">다나와</span>
+      <span class="badge compare">가격비교</span>
+    </div>
+    <div class="product-detail">전체 최저가 · 20개 쇼핑몰 비교</div>
+    <div class="ship-info" style="color:#1a73e8">더 많은 쇼핑몰 보기</div>
+  </div>
+  <div class="price-col">
+    <div class="price-num" style="font-size:14px;color:#1a73e8">비교하기 →</div>
+  </div>
+</a>
+
+<div class="divider" style="margin-top:8px"></div>
+
+<!-- AI 추천 -->
+<div class="section-label">✦ 내 옷장 기준 AI 추천</div>
+
+<a class="price-row" href="#" onclick="openShop('naver')">
+  <div class="shop-logo" style="background:linear-gradient(135deg,#667eea,#764ba2)"><span style="color:#fff;font-size:12px;font-weight:900">AI</span></div>
+  <div class="price-info">
+    <div class="shop-name-row">
+      <span class="shop-name">매칭 최적 상품</span>
+      <span class="badge ai">96% 매칭</span>
+    </div>
+    <div class="product-detail">흰 셔츠 + 네이비 슬랙스와 완벽 조합</div>
+    <div class="ship-info" style="color:#6d28d9">내 스타일 기준 최적 선택</div>
+  </div>
+  <div class="price-col">
+    <div class="price-num green">₩67,900</div>
+    <div class="price-ship">네이버쇼핑</div>
+  </div>
+  <span class="arrow">›</span>
+</a>
+
+<div class="cta-wrap">
+  <button class="cta-btn" onclick="showToast()">
+    내 옷장 등록하고 더 정확한 매칭받기
+  </button>
+</div>
+
+<!-- 토스트 -->
+<div id="toast" style="display:none;position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:14px 24px;border-radius:100px;font-size:13px;font-weight:700;z-index:999;white-space:nowrap">베타 오픈 시 알림드릴게요!</div>
+
+<script>
+// URL 파라미터로 상품 정보 받기
+const params = new URLSearchParams(location.search);
+const name = params.get('name') || '데님 자켓';
+const thumb = params.get('thumb') || 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&q=80&fit=crop';
+
+document.getElementById('pageTitle').textContent = name + ' · 최저가 비교';
+document.getElementById('productName').textContent = name;
+document.getElementById('productThumb').src = thumb;
+document.getElementById('naverDetail').textContent = name + ' · M · 인디고블루';
+
+const shops = {
+  naver: `https://search.shopping.naver.com/search/all?query=${encodeURIComponent(name)}`,
+  coupang: `https://www.coupang.com/np/search?q=${encodeURIComponent(name)}`,
+  musinsa: `https://www.musinsa.com/search/goods?q=${encodeURIComponent(name)}`,
+  danawa: `https://search.danawa.com/dsearch.php?query=${encodeURIComponent(name)}`
+};
+
+function openShop(key) {
+  window.open(shops[key], '_blank');
+  return false;
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2500);
+}
+</script>
+</body>
+</html>

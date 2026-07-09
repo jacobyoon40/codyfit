@@ -774,7 +774,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
     <div class="match-item" data-c="match-3">
       <div class="match-thumb" style="background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:18px">?</div>
       <div class="match-info"><div class="match-name" id="matchItemName">아이템</div><div class="match-sub">내 옷장에 없음 → 최저가 연결</div></div>
-      <button class="buy-link-btn" onclick="openPriceCompare()" data-c="match-buy">🛒 최저가 찾기</button>
+      <button class="buy-link-btn" onclick="openPriceCompare(document.getElementById('matchItemName').textContent)" data-c="match-buy">🛒 최저가 찾기</button>
     </div>
     <button class="sheet-cta" onclick="track('match-cta');showBetaToast()" data-c="match-cta">내 옷장 등록하고 정확하게 받기</button>
   </div>
@@ -1207,9 +1207,11 @@ function openMatch(item){
 }
 
 // 오버레이 닫기
-function openPriceCompare(){
-  document.getElementById('priceOverlay').classList.add('active');
+function openPriceCompare(name, thumb){
   track('price-compare-open');
+  const n = name || document.getElementById('matchItemName').textContent || '아이템';
+  const t = thumb || '';
+  window.location.href = 'price.html?name='+encodeURIComponent(n)+'&thumb='+encodeURIComponent(t);
 }
 function closeOverlay(id){
   document.getElementById(id).classList.remove('on');
