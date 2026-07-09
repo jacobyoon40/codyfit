@@ -79,58 +79,61 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f5f5f5;colo
 <div class="divider"></div>
 
 <!-- Codyfit 옥션 강조 블록 -->
-<div style="margin:12px 16px 0;background:linear-gradient(135deg,#1a1a1a 0%,#2d1a1f 100%);border-radius:20px;overflow:hidden">
+<div style="margin:12px 16px 0;background:linear-gradient(135deg,#111 0%,#1f0a10 100%);border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(232,24,74,0.2)">
 
-  <div style="padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between">
+  <!-- 헤더 -->
+  <div style="padding:14px 20px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07)">
     <div style="display:flex;align-items:center;gap:8px">
-      <span style="font-size:13px;font-weight:900;color:#fff;letter-spacing:0.05em">🔨 CODYFIT 옥션</span>
-      <span style="font-size:10px;font-weight:800;background:#e8184a;color:#fff;padding:3px 8px;border-radius:100px;animation:pulse 1.5s infinite">LIVE</span>
+      <span style="font-size:14px;font-weight:900;color:#fff;letter-spacing:0.03em">🔨 CODYFIT 옥션</span>
+      <span style="font-size:10px;font-weight:900;background:#e8184a;color:#fff;padding:3px 9px;border-radius:100px;animation:pulse 1.2s infinite;letter-spacing:0.05em">LIVE</span>
     </div>
-    <span style="font-size:11px;color:rgba(255,255,255,0.4)">내 옷장 매칭 중고 매물</span>
+    <span style="font-size:11px;color:rgba(255,255,255,0.35)">내 옷장 매칭 중고 매물</span>
   </div>
 
-  <!-- 옥션 카드 1 -->
-  <a href="/#auction" style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:rgba(255,255,255,0.05);margin:0 0 2px;text-decoration:none;transition:background 0.15s" onclick="return true">
+  <!-- 카드 1 -->
+  <a href="/#auction" style="display:flex;align-items:center;gap:14px;padding:16px 20px 14px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.06)">
     <div style="position:relative;flex-shrink:0">
-      <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=120&q=80&fit=crop" style="width:56px;height:56px;border-radius:12px;object-fit:cover">
-      <span style="position:absolute;top:-4px;right:-4px;background:#e8184a;color:#fff;font-size:9px;font-weight:900;padding:2px 5px;border-radius:100px">A급</span>
+      <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=120&q=80&fit=crop" style="width:60px;height:60px;border-radius:12px;object-fit:cover;border:2px solid rgba(232,24,74,0.4)">
+      <span style="position:absolute;-top:6px;right:-6px;top:-6px;background:#e8184a;color:#fff;font-size:9px;font-weight:900;padding:2px 6px;border-radius:100px">A급</span>
     </div>
     <div style="flex:1;min-width:0">
-      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px">빈티지 데님 자켓</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:6px">M · 인디고 · 상태 A급</div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:11px;font-weight:700;color:#ff9b9b">🔨 12명 입찰 중</span>
-        <span style="font-size:10px;color:rgba(255,255,255,0.35)">2일 8시간 남음</span>
+      <div style="font-size:14px;font-weight:900;color:#fff;margin-bottom:2px">빈티지 데님 자켓</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:7px">M · 인디고 · 상태 A급</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:12px;font-weight:800;color:#ff9b9b">🔨 12명 입찰 중</span>
+        <span style="font-size:10px;color:rgba(255,255,255,0.3)">2일 8시간 남음</span>
       </div>
     </div>
     <div style="text-align:right;flex-shrink:0">
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px">입찰가 비공개</div>
-      <div style="background:#e8184a;color:#fff;font-size:12px;font-weight:800;padding:7px 14px;border-radius:100px">입찰하기</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:2px">시작가</div>
+      <div style="font-size:17px;font-weight:900;color:#fff;margin-bottom:8px">₩38,000</div>
+      <div style="background:linear-gradient(135deg,#e8184a,#ff6b35);color:#fff;font-size:12px;font-weight:900;padding:8px 14px;border-radius:100px;white-space:nowrap;box-shadow:0 4px 12px rgba(232,24,74,0.4)">지금 입찰 →</div>
     </div>
   </a>
 
-  <!-- 옥션 카드 2 - 마감임박 -->
-  <a href="/#auction" style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:rgba(255,107,53,0.08);margin:0 0 0;text-decoration:none;border-top:1px solid rgba(255,255,255,0.06)" onclick="return true">
+  <!-- 카드 2 마감임박 -->
+  <a href="/#auction" style="display:flex;align-items:center;gap:14px;padding:16px 20px 14px;text-decoration:none;background:rgba(255,107,53,0.06)">
     <div style="position:relative;flex-shrink:0">
-      <img src="https://images.unsplash.com/photo-1594938298603-c8148c4b4233?w=120&q=80&fit=crop" style="width:56px;height:56px;border-radius:12px;object-fit:cover">
-      <span style="position:absolute;top:-4px;right:-4px;background:#ff6b35;color:#fff;font-size:9px;font-weight:900;padding:2px 5px;border-radius:100px">B급</span>
+      <img src="https://images.unsplash.com/photo-1594938298603-c8148c4b4233?w=120&q=80&fit=crop" style="width:60px;height:60px;border-radius:12px;object-fit:cover;border:2px solid rgba(255,107,53,0.5)">
+      <span style="position:absolute;right:-6px;top:-6px;background:#ff6b35;color:#fff;font-size:9px;font-weight:900;padding:2px 6px;border-radius:100px">B급</span>
     </div>
     <div style="flex:1;min-width:0">
-      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px">데님 셔츠 자켓</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:6px">M · 워시드블루 · 상태 B급</div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:11px;font-weight:700;color:#ff9b9b">🔨 5명 입찰 중</span>
-        <span style="font-size:10px;font-weight:800;color:#ff6b35;animation:pulse 1s infinite">⏱ 4시간 남음</span>
+      <div style="font-size:14px;font-weight:900;color:#fff;margin-bottom:2px">데님 셔츠 자켓</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:7px">M · 워시드블루 · 상태 B급</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:12px;font-weight:800;color:#ff9b9b">🔨 5명 입찰 중</span>
+        <span style="font-size:11px;font-weight:900;color:#ff6b35;animation:pulse 0.8s infinite">⏱ 4시간 남음!</span>
       </div>
     </div>
     <div style="text-align:right;flex-shrink:0">
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px">입찰가 비공개</div>
-      <div style="background:#ff6b35;color:#fff;font-size:12px;font-weight:800;padding:7px 14px;border-radius:100px">마감임박</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:2px">시작가</div>
+      <div style="font-size:17px;font-weight:900;color:#fff;margin-bottom:8px">₩15,000</div>
+      <div style="background:#ff6b35;color:#fff;font-size:12px;font-weight:900;padding:8px 14px;border-radius:100px;white-space:nowrap;box-shadow:0 4px 12px rgba(255,107,53,0.4);animation:pulse 1.5s infinite">마감임박! →</div>
     </div>
   </a>
 
-  <div style="padding:12px 20px;text-align:center">
-    <a href="/#auction" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none">옥션 전체 보기 →</a>
+  <div style="padding:12px 20px 14px;text-align:center">
+    <a href="/#auction" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;letter-spacing:0.05em">옥션 전체 보기 →</a>
   </div>
 </div>
 
