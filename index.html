@@ -1023,7 +1023,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
       <div class="bid-min" id="bidMinText">최소 입찰가: 현재가 + ₩500</div>
     </div>
     <div class="bid-quick" id="bidQuickBtns"></div>
-    <div class="bid-compare" id="bidCompareBox">
+    <div class="bid-compare" id="bidCompareBox" style="display:none">
       <div class="bid-compare-title">💡 가격 비교</div>
       <div class="bid-compare-row"><span>새제품 정가</span><span id="bidNewP"></span></div>
       <div class="bid-compare-row"><span>유사제품 평균</span><span id="bidSimilarP"></span></div>
@@ -1354,20 +1354,7 @@ function openBid(name,price,newPrice,img){
   document.getElementById('bidNewP').textContent='₩'+newPrice.toLocaleString();
   document.getElementById('bidSimilarP').textContent='₩'+Math.round(newPrice*0.85).toLocaleString();
   document.getElementById('bidSaveP').textContent=Math.round((1-price/newPrice)*100)+'% 절약';
-  const qb=document.getElementById('bidQuickBtns');
-  qb.innerHTML='';
-  [500,1000,3000,5000].forEach(d=>{
-    const b=document.createElement('button');
-    b.className='bid-quick-btn';
-    b.textContent='+₩'+d.toLocaleString();
-    b.onclick=()=>{
-      document.querySelectorAll('.bid-quick-btn').forEach(x=>x.classList.remove('on'));
-      b.classList.add('on');
-      document.getElementById('bidInputVal').value=price+d;
-      track('bid_quick_'+d);
-    };
-    qb.appendChild(b);
-  });
+  document.getElementById('bidQuickBtns').innerHTML='';
   document.getElementById('bidOverlay').classList.add('on','active');
   document.body.style.overflow='hidden';
   track('bid_open_'+name);
