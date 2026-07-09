@@ -59,7 +59,7 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f5f5f5;colo
 
 <div class="header">
   <button class="back-btn" onclick="history.back()">←</button>
-  <div class="header-title" id="pageTitle">최저가 비교</div>
+  <div class="header-title" id="pageTitle">내 옷장 매칭 최저가</div>
 </div>
 
 <!-- 상품 정보 -->
@@ -67,7 +67,7 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f5f5f5;colo
   <img class="product-thumb" id="productThumb" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&q=80&fit=crop" alt="">
   <div>
     <div class="product-name" id="productName">데님 자켓</div>
-    <div class="product-sub" id="productSub">내 옷장에 없는 아이템 · 최저가 비교</div>
+    <div class="product-sub" id="productSub">내 옷장 기준 매칭 최저가</div>
     <div class="match-tags">
       <span class="match-tag">✓ 흰 셔츠 96% 매칭</span>
       <span class="match-tag">✓ 네이비 슬랙스 88% 매칭</span>
@@ -78,7 +78,7 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f5f5f5;colo
 <div class="divider"></div>
 
 <!-- 최저가 비교 -->
-<div class="section-label">💰 최저가 비교</div>
+<div class="section-label">✦ 내 옷장 매칭 기준 최저가</div>
 
 <a class="price-row best" id="naverRow" href="#" onclick="openShop('naver')">
   <div class="shop-logo" style="background:#e8f5e9"><span style="color:#03c75a;font-size:18px;font-weight:900">N</span></div>
@@ -182,7 +182,7 @@ const params = new URLSearchParams(location.search);
 const name = params.get('name') || '데님 자켓';
 const thumb = params.get('thumb') || 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&q=80&fit=crop';
 
-document.getElementById('pageTitle').textContent = name + ' · 최저가 비교';
+document.getElementById('pageTitle').textContent = name + ' · 매칭 최저가';
 document.getElementById('productName').textContent = name;
 document.getElementById('productThumb').src = thumb;
 document.getElementById('naverDetail').textContent = name + ' · M · 인디고블루';
