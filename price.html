@@ -3,72 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>최저가 비교 · Codyfit</title>
+<title>매칭 최저가 · Codyfit</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f5f5f5;color:#111;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f5f5f5;color:#111;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{text-decoration:none;color:inherit}
 
-/* 헤더 */
 .header{background:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #eee;position:sticky;top:0;z-index:100}
-.back-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:none;font-size:20px;color:#111;flex-shrink:0}
+.back{width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:none;font-size:20px;color:#111}
 .header-title{font-size:15px;font-weight:800;color:#111}
 
-/* 상품 카드 */
-.product-card{background:#fff;margin:12px 16px;border-radius:16px;padding:16px;display:flex;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
-.product-thumb{width:72px;height:72px;border-radius:12px;object-fit:cover;flex-shrink:0}
-.product-name{font-size:16px;font-weight:800;color:#111;margin-bottom:4px}
+/* 상품카드 */
+.product-card{background:#fff;margin:12px 16px;border-radius:16px;padding:16px;display:flex;gap:14px;box-shadow:0 1px 6px rgba(0,0,0,0.07)}
+.product-thumb{width:72px;height:72px;border-radius:12px;object-fit:cover;flex-shrink:0;background:#f0f0f0}
+.product-name{font-size:16px;font-weight:900;color:#111;margin-bottom:3px}
 .product-sub{font-size:12px;color:#888;margin-bottom:8px}
 .match-tags{display:flex;gap:6px;flex-wrap:wrap}
 .match-tag{font-size:11px;font-weight:700;background:#e8f5e9;color:#2e7d32;padding:3px 9px;border-radius:6px}
 
-/* 섹션 */
-.section-label{font-size:11px;font-weight:800;color:#999;letter-spacing:0.12em;padding:16px 20px 8px}
+/* 옥션 블록 */
+.auction-block{margin:12px 16px 0;background:linear-gradient(160deg,#1e1b2e,#2d1f2f,#1e1520);border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(184,105,122,0.2)}
+.auction-header{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07)}
+.auction-title{font-size:14px;font-weight:900;color:#fff;display:flex;align-items:center;gap:8px}
+.live-badge{font-size:10px;font-weight:900;background:#e8184a;color:#fff;padding:3px 9px;border-radius:100px;animation:pulse 1.2s infinite}
+.auction-sub{font-size:11px;color:rgba(255,255,255,0.35)}
+
+.auction-card{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer}
+.auction-card:last-of-type{border-bottom:none}
+.auction-card.urgent{background:rgba(255,107,53,0.07)}
+.acard-img{position:relative;flex-shrink:0}
+.acard-img img{width:60px;height:60px;border-radius:12px;object-fit:cover}
+.acard-img .grade{position:absolute;top:-6px;right:-6px;font-size:9px;font-weight:900;color:#fff;padding:2px 6px;border-radius:100px}
+.acard-info{flex:1;min-width:0}
+.acard-name{font-size:14px;font-weight:900;color:#fff;margin-bottom:2px}
+.acard-sub{font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:7px}
+.acard-status{display:flex;flex-direction:column;gap:4px}
+.bidders{display:flex;align-items:center;gap:6px}
+.bidders-num{font-size:12px;font-weight:900;color:#ff9b9b}
+.bidders-badge{font-size:10px;font-weight:800;padding:2px 7px;border-radius:100px}
+.badge-up{background:rgba(255,107,53,0.2);color:#ff9b9b;animation:pulse 1s infinite}
+.badge-solo{background:rgba(110,231,183,0.15);color:#6ee7b7}
+.time-row{font-size:11px;font-weight:700}
+.time-urgent{color:#ff6b35;animation:pulse 0.8s infinite}
+.time-normal{color:rgba(255,255,255,0.35)}
+.acard-price{text-align:right;flex-shrink:0}
+.start-label{font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:2px}
+.start-price{font-size:17px;font-weight:900;color:#fff;margin-bottom:3px}
+.expect-label{font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:1px}
+.expect-price{font-size:12px;font-weight:800;color:#fbbf24;margin-bottom:8px}
+.bid-btn{display:block;color:#fff;font-size:12px;font-weight:900;padding:8px 14px;border-radius:100px;white-space:nowrap;text-align:center}
+.bid-btn.hot{background:linear-gradient(135deg,#e8184a,#ff6b35);box-shadow:0 4px 12px rgba(232,24,74,0.4)}
+.bid-btn.urgent{background:#ff6b35;box-shadow:0 4px 12px rgba(255,107,53,0.4);animation:pulse 1.5s infinite}
+
+.auction-footer{padding:12px 20px 14px;text-align:center}
+.auction-more{font-size:12px;color:rgba(255,255,255,0.35)}
+
+/* 구분 */
+.divider{height:8px;background:#f5f5f5;margin:16px 0 0}
+.section-label{font-size:11px;font-weight:800;color:#999;letter-spacing:0.12em;padding:16px 20px 8px;background:#fff}
 
 /* 가격 행 */
-.price-row{background:#fff !important;margin:0 0 2px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background 0.15s;text-decoration:none;color:#111}
-.price-row:active{background:#f9f9f9}
+.price-row{background:#fff;margin:0;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;border-bottom:1px solid #f0f0f0}
+.price-row:active{background:#fafafa}
 .price-row.best{border-left:3px solid #03c75a}
 .shop-logo{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;font-size:12px}
 .price-info{flex:1;min-width:0}
 .shop-name-row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
 .shop-name{font-size:14px;font-weight:700;color:#111}
-.badge{font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px}
-.badge.best{background:#03c75a;color:#fff}
-.badge.rocket{background:#ff4500;color:#fff}
-.badge.compare{background:#e8f0fe;color:#1a73e8}
-.badge.ai{background:#f0ebff;color:#6d28d9}
-.product-detail{font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px}
+.sbadge{font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px}
+.sbadge.best{background:#03c75a;color:#fff}
+.sbadge.rocket{background:#ff4500;color:#fff}
+.sbadge.compare{background:#e8f0fe;color:#1a73e8}
+.sbadge.ai{background:#f0ebff;color:#6d28d9}
+.price-detail{font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px}
 .ship-info{font-size:11px}
 .price-col{text-align:right;flex-shrink:0}
 .price-num{font-size:18px;font-weight:900;color:#111;letter-spacing:-0.5px}
 .price-num.green{color:#03c75a}
 .price-save{font-size:10px;color:#03c75a;margin-top:1px}
 .price-ship{font-size:10px;color:#999;margin-top:1px}
-.arrow{font-size:14px;color:#ccc;margin-left:4px;flex-shrink:0}
+.arrow{font-size:16px;color:#ccc;margin-left:4px;flex-shrink:0}
 
 /* CTA */
-.cta-wrap{padding:20px 16px 40px}
+.cta-wrap{padding:20px 16px 48px;background:#f5f5f5}
 .cta-btn{width:100%;padding:17px;background:#111;color:#fff;font-size:15px;font-weight:800;border:none;border-radius:14px;cursor:pointer;font-family:inherit}
 
-/* 구분선 */
-.divider{height:8px;background:#f5f5f5}
+/* 토스트 */
+.toast{display:none;position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:14px 24px;border-radius:100px;font-size:13px;font-weight:700;z-index:999;white-space:nowrap}
+
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <button class="back-btn" onclick="history.back()">←</button>
+  <button class="back" onclick="history.back()">←</button>
   <div class="header-title" id="pageTitle">내 옷장 매칭 최저가</div>
 </div>
 
 <!-- 상품 정보 -->
 <div class="product-card">
-  <img onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'" class="product-thumb" id="productThumb" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&q=80&fit=crop" alt="">
+  <img class="product-thumb" id="productThumb" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&q=80&fit=crop" alt="" onerror="this.style.background='#f0f0f0';this.src=''">
   <div>
     <div class="product-name" id="productName">데님 자켓</div>
-    <div class="product-sub" id="productSub">내 옷장 기준 매칭 최저가</div>
+    <div class="product-sub">내 옷장 기준 매칭 최저가</div>
     <div class="match-tags">
       <span class="match-tag">✓ 흰 셔츠 96% 매칭</span>
       <span class="match-tag">✓ 네이비 슬랙스 88% 매칭</span>
@@ -76,123 +115,119 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f5f5f5;colo
   </div>
 </div>
 
-<div class="divider"></div>
-
-<!-- Codyfit 옥션 강조 블록 -->
-<div style="margin:12px 16px 0;background:linear-gradient(160deg,#1e1b2e 0%,#2d1f2f 60%,#1e1520 100%);border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(184,105,122,0.25)">
-
-  <!-- 헤더 -->
-  <div style="padding:14px 20px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07)">
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font-size:14px;font-weight:900;color:#fff;letter-spacing:0.03em">🔨 CODYFIT 옥션</span>
-      <span style="font-size:10px;font-weight:900;background:#e8184a;color:#fff;padding:3px 9px;border-radius:100px;animation:pulse 1.2s infinite;letter-spacing:0.05em">LIVE</span>
+<!-- CODYFIT 옥션 -->
+<div class="auction-block">
+  <div class="auction-header">
+    <div class="auction-title">
+      🔨 CODYFIT 옥션
+      <span class="live-badge">LIVE</span>
     </div>
-    <span style="font-size:11px;color:rgba(255,255,255,0.35)">내 옷장 매칭 중고 매물</span>
+    <span class="auction-sub">내 옷장 매칭 중고 매물</span>
   </div>
 
-  <!-- 카드 1 -->
-  <a href="/#auction" style="display:flex;align-items:center;gap:14px;padding:16px 20px 14px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.06)">
-    <div style="position:relative;flex-shrink:0">
-      <img onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'" src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=120&q=80&fit=crop" style="width:60px;height:60px;border-radius:12px;object-fit:cover;border:2px solid rgba(232,24,74,0.4)">
-      <span style="position:absolute;-top:6px;right:-6px;top:-6px;background:#e8184a;color:#fff;font-size:9px;font-weight:900;padding:2px 6px;border-radius:100px">A급</span>
+  <!-- 카드 1: 경쟁 증가 중 -->
+  <a class="auction-card" href="/#auction">
+    <div class="acard-img">
+      <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=120&q=80&fit=crop" alt="" onerror="this.style.background='#333';this.src=''">
+      <span class="grade" style="background:#e8184a">A급</span>
     </div>
-    <div style="flex:1;min-width:0">
-      <div style="font-size:14px;font-weight:900;color:#fff;margin-bottom:2px">빈티지 데님 자켓</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:7px">M · 인디고 · 상태 A급</div>
-      <div style="display:flex;flex-direction:column;gap:5px">
-        <div style="display:flex;align-items:center;gap:6px">
-          <span style="font-size:12px;font-weight:900;color:#ff9b9b">🔨 12명 입찰 중</span>
-          <span style="font-size:10px;font-weight:800;background:rgba(255,107,53,0.2);color:#ff9b9b;padding:2px 7px;border-radius:100px;animation:pulse 1s infinite">↑ 증가 중</span>
+    <div class="acard-info">
+      <div class="acard-name">빈티지 데님 자켓</div>
+      <div class="acard-sub">M · 인디고 · 상태 A급</div>
+      <div class="acard-status">
+        <div class="bidders">
+          <span class="bidders-num">🔨 12명 입찰 중</span>
+          <span class="bidders-badge badge-up">↑ 증가 중</span>
         </div>
-        <div style="display:flex;align-items:center;gap:5px">
-          <span style="font-size:10px;color:rgba(255,255,255,0.35)">⏱ 2일 8시간 남음</span>
-        </div>
+        <span class="time-row time-normal">⏱ 2일 8시간 남음</span>
       </div>
     </div>
-    <div style="text-align:right;flex-shrink:0">
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:2px">시작가</div>
-      <div style="font-size:17px;font-weight:900;color:#fff;margin-bottom:8px">₩38,000</div>
-      <div style="background:linear-gradient(135deg,#e8184a,#ff6b35);color:#fff;font-size:12px;font-weight:900;padding:8px 14px;border-radius:100px;white-space:nowrap;box-shadow:0 4px 12px rgba(232,24,74,0.4)">지금 입찰 →</div>
+    <div class="acard-price">
+      <div class="start-label">시작가</div>
+      <div class="start-price">₩38,000</div>
+      <div class="expect-label">💬 보통 이 가격에 많이 입찰해요</div>
+      <div class="expect-price">₩52,000 ~ ₩67,000</div>
+      <span class="bid-btn hot">지금 입찰 →</span>
     </div>
   </a>
 
-  <!-- 카드 2 마감임박 -->
-  <a href="/#auction" style="display:flex;align-items:center;gap:14px;padding:16px 20px 14px;text-decoration:none;background:rgba(255,107,53,0.08);backdrop-filter:blur(4px)">
-    <div style="position:relative;flex-shrink:0">
-      <img onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'" src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=120&q=80&fit=crop" style="width:60px;height:60px;border-radius:12px;object-fit:cover;border:2px solid rgba(255,107,53,0.5)">
-      <span style="position:absolute;right:-6px;top:-6px;background:#ff6b35;color:#fff;font-size:9px;font-weight:900;padding:2px 6px;border-radius:100px">B급</span>
+  <!-- 카드 2: 경쟁 없음 + 마감임박 -->
+  <a class="auction-card urgent" href="/#auction">
+    <div class="acard-img">
+      <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=120&q=80&fit=crop" alt="" onerror="this.style.background='#333';this.src=''">
+      <span class="grade" style="background:#ff6b35">B급</span>
     </div>
-    <div style="flex:1;min-width:0">
-      <div style="font-size:14px;font-weight:900;color:#fff;margin-bottom:2px">데님 셔츠 자켓</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:7px">M · 워시드블루 · 상태 B급</div>
-      <div style="display:flex;flex-direction:column;gap:5px">
-        <div style="display:flex;align-items:center;gap:6px">
-          <span style="font-size:12px;font-weight:900;color:#6ee7b7">🔨 현재 경쟁 없음</span>
-          <span style="font-size:10px;font-weight:800;background:rgba(110,231,183,0.15);color:#6ee7b7;padding:2px 7px;border-radius:100px">단독 입찰 가능</span>
+    <div class="acard-info">
+      <div class="acard-name">데님 셔츠 자켓</div>
+      <div class="acard-sub">M · 워시드블루 · 상태 B급</div>
+      <div class="acard-status">
+        <div class="bidders">
+          <span class="bidders-num" style="color:#6ee7b7">🔨 현재 경쟁 없음</span>
+          <span class="bidders-badge badge-solo">단독 입찰 가능</span>
         </div>
-        <div style="display:flex;align-items:center;gap:5px">
-          <span style="font-size:11px;font-weight:900;color:#ff6b35;animation:pulse 0.8s infinite">⏱ 4시간 남음!</span>
-        </div>
+        <span class="time-row time-urgent">⏱ 4시간 남음!</span>
       </div>
     </div>
-    <div style="text-align:right;flex-shrink:0">
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:2px">시작가</div>
-      <div style="font-size:17px;font-weight:900;color:#fff;margin-bottom:8px">₩15,000</div>
-      <div style="background:#ff6b35;color:#fff;font-size:12px;font-weight:900;padding:8px 14px;border-radius:100px;white-space:nowrap;box-shadow:0 4px 12px rgba(255,107,53,0.4);animation:pulse 1.5s infinite">마감임박! →</div>
+    <div class="acard-price">
+      <div class="start-label">시작가</div>
+      <div class="start-price">₩15,000</div>
+      <div class="expect-label">💬 보통 이 가격에 많이 입찰해요</div>
+      <div class="expect-price">₩18,000 ~ ₩24,000</div>
+      <span class="bid-btn urgent">마감임박! →</span>
     </div>
   </a>
 
-  <div style="padding:12px 20px 14px;text-align:center">
-    <a href="/#auction" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;letter-spacing:0.05em">옥션 전체 보기 →</a>
+  <div class="auction-footer">
+    <a class="auction-more" href="/#auction">옥션 전체 보기 →</a>
   </div>
 </div>
 
-<div class="divider" style="margin:16px 0 0"></div>
+<div class="divider"></div>
 
 <!-- 외부 최저가 -->
-<div style="background:#fff"><div class="section-label">💰 외부 최저가 비교 <span style="font-size:10px;font-weight:600;color:#03c75a">· 위 옥션이 더 저렴할 수 있어요</span></div>
+<div class="section-label">💰 외부 최저가 비교 <span style="font-size:10px;font-weight:600;color:#03c75a">· 위 옥션이 더 저렴할 수 있어요</span></div>
 
-<a class="price-row best" id="naverRow" href="#" onclick="openShop('naver')">
+<a class="price-row best" href="https://search.shopping.naver.com/search/all?query=데님+자켓" target="_blank">
   <div class="shop-logo" style="background:#e8f5e9"><span style="color:#03c75a;font-size:18px;font-weight:900">N</span></div>
   <div class="price-info">
     <div class="shop-name-row">
       <span class="shop-name">네이버쇼핑</span>
-      <span class="badge best">최저가</span>
+      <span class="sbadge best">최저가</span>
     </div>
-    <div class="product-detail" id="naverDetail">리바이스 507 데님 자켓 · M · 인디고블루</div>
-    <div class="ship-info" style="color:#03c75a">무료배송 · ★ 4.8 (리뷰 2,341)</div>
+    <div class="price-detail">리바이스 507 데님 자켓 · M · 인디고블루</div>
+    <div class="ship-info" style="color:#03c75a">무료배송 · ★ 4.8 (2,341)</div>
   </div>
   <div class="price-col">
-    <div class="price-num green" id="naverPrice">₩67,900</div>
-    <div class="price-save" id="naverSave">↑ 43% 절약</div>
+    <div class="price-num green">₩67,900</div>
+    <div class="price-save">↑ 43% 절약</div>
   </div>
   <span class="arrow">›</span>
 </a>
 
-<a class="price-row" href="#" onclick="openShop('coupang')">
+<a class="price-row" href="https://www.coupang.com/np/search?q=데님+자켓" target="_blank">
   <div class="shop-logo" style="background:#fff0ec"><span style="color:#ff4500;font-size:11px;font-weight:900">CP</span></div>
   <div class="price-info">
     <div class="shop-name-row">
       <span class="shop-name">쿠팡</span>
-      <span class="badge rocket">로켓배송</span>
+      <span class="sbadge rocket">로켓배송</span>
     </div>
-    <div class="product-detail">데님 자켓 유사상품 · M · 다크블루</div>
+    <div class="price-detail">데님 자켓 유사상품 · M · 다크블루</div>
     <div class="ship-info" style="color:#ff4500">내일 도착 보장 · 무료배송</div>
   </div>
   <div class="price-col">
     <div class="price-num">₩72,000</div>
-    <div class="price-ship">배송비 무료</div>
+    <div class="price-ship">무료배송</div>
   </div>
   <span class="arrow">›</span>
 </a>
 
-<a class="price-row" href="#" onclick="openShop('musinsa')">
+<a class="price-row" href="https://www.musinsa.com/search/goods?q=데님+자켓" target="_blank">
   <div class="shop-logo" style="background:#f0f0f0"><span style="color:#111;font-size:10px;font-weight:900">무신사</span></div>
   <div class="price-info">
     <div class="shop-name-row">
       <span class="shop-name">무신사</span>
     </div>
-    <div class="product-detail">커버낫 데님 자켓 · M · 블루</div>
+    <div class="price-detail">커버낫 데님 자켓 · M · 블루</div>
     <div class="ship-info" style="color:#999">배송비 ₩2,500</div>
   </div>
   <div class="price-col">
@@ -202,14 +237,14 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f5f5f5;colo
   <span class="arrow">›</span>
 </a>
 
-<a class="price-row" href="#" onclick="openShop('danawa')">
+<a class="price-row" href="https://search.danawa.com/dsearch.php?query=데님+자켓" target="_blank">
   <div class="shop-logo" style="background:#e8f0fe"><span style="color:#1a73e8;font-size:10px;font-weight:900">다나와</span></div>
   <div class="price-info">
     <div class="shop-name-row">
       <span class="shop-name">다나와</span>
-      <span class="badge compare">가격비교</span>
+      <span class="sbadge compare">가격비교</span>
     </div>
-    <div class="product-detail">전체 최저가 · 20개 쇼핑몰 비교</div>
+    <div class="price-detail">전체 최저가 · 20개 쇼핑몰 비교</div>
     <div class="ship-info" style="color:#1a73e8">더 많은 쇼핑몰 보기</div>
   </div>
   <div class="price-col">
@@ -217,19 +252,19 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f5f5f5;colo
   </div>
 </a>
 
-<div class="divider" style="margin-top:8px"></div>
+<div class="divider"></div>
 
 <!-- AI 추천 -->
-</div><div style="background:#fff"><div class="section-label">✦ 내 옷장 기준 AI 추천</div>
+<div class="section-label">✦ 내 옷장 기준 AI 추천</div>
 
-<a class="price-row" href="#" onclick="openShop('naver')">
+<a class="price-row" href="https://search.shopping.naver.com/search/all?query=데님+자켓" target="_blank">
   <div class="shop-logo" style="background:linear-gradient(135deg,#667eea,#764ba2)"><span style="color:#fff;font-size:12px;font-weight:900">AI</span></div>
   <div class="price-info">
     <div class="shop-name-row">
       <span class="shop-name">매칭 최적 상품</span>
-      <span class="badge ai">96% 매칭</span>
+      <span class="sbadge ai">96% 매칭</span>
     </div>
-    <div class="product-detail">흰 셔츠 + 네이비 슬랙스와 완벽 조합</div>
+    <div class="price-detail">흰 셔츠 + 네이비 슬랙스와 완벽 조합</div>
     <div class="ship-info" style="color:#6d28d9">내 스타일 기준 최적 선택</div>
   </div>
   <div class="price-col">
@@ -239,43 +274,23 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f5f5f5;colo
   <span class="arrow">›</span>
 </a>
 
-</div><div class="cta-wrap" style="background:#f5f5f5">
-  <button class="cta-btn" onclick="showToast()">
+<div class="cta-wrap">
+  <button class="cta-btn" onclick="document.getElementById('toast').style.display='block';setTimeout(()=>document.getElementById('toast').style.display='none',2500)">
     내 옷장 등록하고 더 정확한 매칭받기
   </button>
 </div>
 
-<!-- 토스트 -->
-<div id="toast" style="display:none;position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:14px 24px;border-radius:100px;font-size:13px;font-weight:700;z-index:999;white-space:nowrap">베타 오픈 시 알림드릴게요!</div>
+<div class="toast" id="toast">베타 오픈 시 알림드릴게요!</div>
 
 <script>
-// URL 파라미터로 상품 정보 받기
 const params = new URLSearchParams(location.search);
-const name = params.get('name') || '데님 자켓';
-const thumb = params.get('thumb') || 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&q=80&fit=crop';
-
-document.getElementById('pageTitle').textContent = name + ' · 매칭 최저가';
-document.getElementById('productName').textContent = name;
-document.getElementById('productThumb').src = thumb;
-document.getElementById('naverDetail').textContent = name + ' · M · 인디고블루';
-
-const shops = {
-  naver: `https://search.shopping.naver.com/search/all?query=${encodeURIComponent(name)}`,
-  coupang: `https://www.coupang.com/np/search?q=${encodeURIComponent(name)}`,
-  musinsa: `https://www.musinsa.com/search/goods?q=${encodeURIComponent(name)}`,
-  danawa: `https://search.danawa.com/dsearch.php?query=${encodeURIComponent(name)}`
-};
-
-function openShop(key) {
-  window.open(shops[key], '_blank');
-  return false;
+const name = params.get('name');
+const thumb = params.get('thumb');
+if(name) {
+  document.getElementById('pageTitle').textContent = name + ' · 매칭 최저가';
+  document.getElementById('productName').textContent = name;
 }
-
-function showToast() {
-  const t = document.getElementById('toast');
-  t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 2500);
-}
+if(thumb) document.getElementById('productThumb').src = thumb;
 </script>
 </body>
 </html>
