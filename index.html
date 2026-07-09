@@ -1015,7 +1015,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
     <div class="sheet-handle"></div>
     <div class="bid-preview">
       <div class="bid-thumb"><img id="bidImg" src="" alt="" loading="lazy"></div>
-      <div><div class="bid-name" id="bidItemName"></div><div class="bid-current"><span id="bidCurrent">입찰가 비공개</span></div></div>
+      <div><div class="bid-name" id="bidItemName"></div><div class="bid-current">시작가 <span id="bidCurrent"></span></div></div>
     </div>
     <div class="bid-input-wrap">
       <div class="bid-input-label">입찰 금액 입력</div>
@@ -1337,10 +1337,10 @@ function openBid(name,price,newPrice,img){
   const bidKey='bid_done_'+name;
   document.getElementById('bidItemName').textContent=name;
   document.getElementById('bidImg').src=img;
-  document.getElementById('bidCurrent').textContent='입찰가 비공개';
+  document.getElementById('bidCurrent').textContent='₩'+price.toLocaleString();
   document.getElementById('bidInputVal').value='';
-  document.getElementById('bidInputVal').placeholder='입찰 금액 입력';
-  document.getElementById('bidMinText').textContent='입찰가는 비공개로 처리됩니다';
+  document.getElementById('bidInputVal').placeholder='₩'+(price+500).toLocaleString()+' 이상';
+  document.getElementById('bidMinText').textContent='내 입찰가는 비공개 처리됩니다';
   // 이미 입찰했으면 수정 불가
   if(localStorage.getItem(bidKey)){
     document.getElementById('bidInputVal').disabled=true;
