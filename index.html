@@ -559,7 +559,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
     </div>
   </div>
 
-  <div class="auction-grid rv">
+  <div class="auction-grid">
 
     <div class="auction-card" data-c="a-card-1">
       <img onerror="this.onerror=null;this.style.background='#f0f0f0';this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'" class="auction-card-img" src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=85&auto=format&fit=crop" alt="가죽 자켓" loading="lazy">
@@ -852,14 +852,19 @@ function secretClick(){
 </footer>
 
 <script>
-// price.html에서 넘어온 경우 입찰 시트 자동 열기
+// price.html에서 넘어온 경우 입찰 시트 자동 열기 (1회만)
 const _bp = new URLSearchParams(location.search);
-if(_bp.get('bid')){
+if(_bp.get('bid') && !sessionStorage.getItem('bid_shown')){
+  sessionStorage.setItem('bid_shown','1');
   const _n=_bp.get('bid'), _p=parseInt(_bp.get('price')), _np=parseInt(_bp.get('newPrice')), _i=_bp.get('img');
+  // URL 파라미터 제거
+  history.replaceState(null,'',location.pathname+'#auction');
   setTimeout(()=>{
     document.querySelector('#auction')?.scrollIntoView({behavior:'smooth'});
     setTimeout(()=>openBid(_n,_p,_np,_i),600);
   },300);
+} else {
+  sessionStorage.removeItem('bid_shown');
 }
 
 // 플로팅
