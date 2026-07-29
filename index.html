@@ -170,6 +170,22 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--black)
 .ai-match-item span{font-size:10px;color:rgba(255,255,255,0.4)}
 .btn-add-wardrobe{width:100%;padding:14px;background:var(--white);color:var(--black);font-size:14px;font-weight:700;border:none;border-radius:100px;cursor:pointer;font-family:inherit;transition:opacity 0.2s}
 .btn-add-wardrobe:active{opacity:0.8}
+.btn-add-wardrobe:disabled{opacity:0.4;cursor:not-allowed}
+.btn-add-wardrobe.saved{background:#4caf50;color:#fff}
+
+/* ── 내 옷장 ── */
+.my-wardrobe-sec{background:var(--cream)}
+.wardrobe-count{font-size:12px;color:var(--g400);font-weight:500;margin-top:-8px;margin-bottom:16px}
+.wardrobe-grid{padding:0 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(min-width:600px){.wardrobe-grid{padding:0 32px;grid-template-columns:repeat(5,1fr)}}
+.wardrobe-item{position:relative;border-radius:14px;overflow:hidden;background:var(--white);border:0.5px solid var(--g200);aspect-ratio:1}
+.wardrobe-item img{width:100%;height:100%;object-fit:cover;display:block}
+.wardrobe-item-name{position:absolute;left:0;right:0;bottom:0;padding:6px 8px;font-size:10px;font-weight:600;color:#fff;background:linear-gradient(to top,rgba(0,0,0,0.65),transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wardrobe-item-remove{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;border:none;font-size:13px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.wardrobe-empty{padding:0 20px;text-align:center}
+@media(min-width:600px){.wardrobe-empty{padding:0 32px}}
+.wardrobe-empty-icon{font-size:32px;margin-bottom:10px}
+.wardrobe-empty-text{font-size:13px;color:var(--g400);font-weight:300;line-height:1.6}
 
 /* ── 옥션 ── */
 .auction-sec{background:var(--cream)}
@@ -531,6 +547,87 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
       </div>
     </div>
 
+  </div>
+</section>
+
+<!-- 옷장 등록 -->
+<section class="sec upload-sec" id="upload">
+  <div class="sec-inner rv">
+    <div class="sec-label" style="color:rgba(255,255,255,0.4)">WARDROBE</div>
+    <h2 class="sec-h2" style="color:var(--white)">내 옷장을<br>등록해보세요</h2>
+    <p class="sec-desc" style="color:rgba(255,255,255,0.5)">사진 한 장이면 끝. AI가 배경을 지우고 태그를 붙여요</p>
+
+    <div class="upload-demo">
+      <div class="upload-demo-bar">
+        <span class="demo-dot" style="background:#ff5f57"></span>
+        <span class="demo-dot" style="background:#febc2e"></span>
+        <span class="demo-dot" style="background:#28c840"></span>
+        <span id="demoBarLabel" style="margin-left:8px;font-size:11px;color:rgba(255,255,255,0.35);font-weight:500">옷장 등록하기</span>
+      </div>
+      <div class="upload-body">
+
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" class="upload-input" accept="image/*" onchange="handleUpload(event)">
+          <div class="upload-icon">📷</div>
+          <div class="upload-title">옷 사진을 올려보세요</div>
+          <div class="upload-sub">배경 자동 제거 · AI 태그 분석까지 자동으로</div>
+        </div>
+
+        <div class="ai-analyzing" id="aiAnalyzing">
+          <div class="ai-preview-img">
+            <img id="aiPreviewImg" src="">
+            <div class="scan-bar" id="scanBar"></div>
+          </div>
+          <div class="ai-steps">
+            <div class="ai-step" id="step1">
+              <div class="ai-step-icon active">✦</div>
+              <div><div class="ai-step-text">배경 제거 중</div><div class="ai-step-sub">브라우저에서 바로 처리해요</div></div>
+            </div>
+            <div class="ai-step" id="step2">
+              <div class="ai-step-icon pending">◎</div>
+              <div><div class="ai-step-text">이미지 인식</div><div class="ai-step-sub">아이템 형태를 파악해요</div></div>
+            </div>
+            <div class="ai-step" id="step3">
+              <div class="ai-step-icon pending">◎</div>
+              <div><div class="ai-step-text">스타일 · 색상 태그 분석</div><div class="ai-step-sub">Claude가 분석해요</div></div>
+            </div>
+            <div class="ai-step" id="step4">
+              <div class="ai-step-icon pending">◎</div>
+              <div><div class="ai-step-text">옷장 저장 준비 완료</div><div class="ai-step-sub"></div></div>
+            </div>
+          </div>
+          <div class="ai-progress-bar"><div class="ai-progress-fill" id="progressFill"></div></div>
+        </div>
+
+        <div class="ai-result" id="aiResult">
+          <div class="ai-result-header">
+            <div class="ai-result-thumb"><img id="resultImg" src=""></div>
+            <div>
+              <div class="ai-result-name" id="resultName">아이템</div>
+              <div class="ai-result-sub">배경 제거 완료 · 내 옷장에 저장할 수 있어요</div>
+            </div>
+          </div>
+          <div class="ai-tags-wrap" id="resultTags"></div>
+          <button class="btn-add-wardrobe" id="saveWardrobeBtn" onclick="commitToWardrobe()">내 옷장에 저장하기</button>
+          <button class="btn-add-wardrobe" style="background:transparent;color:rgba(255,255,255,0.4);margin-top:8px" onclick="resetUpload()">다른 옷 등록하기</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 내 옷장 -->
+<section class="sec my-wardrobe-sec" id="myWardrobe">
+  <div class="sec-inner rv">
+    <div class="sec-label">MY WARDROBE</div>
+    <h2 class="sec-h2 dark">내가 등록한 옷</h2>
+    <div class="wardrobe-count" id="wardrobeCount">불러오는 중...</div>
+  </div>
+  <div class="wardrobe-grid" id="wardrobeGrid"></div>
+  <div class="wardrobe-empty" id="wardrobeEmpty" style="display:none">
+    <div class="wardrobe-empty-icon">🧺</div>
+    <div class="wardrobe-empty-text">아직 등록한 옷이 없어요<br>위에서 사진을 올려보세요</div>
   </div>
 </section>
 
@@ -932,7 +1029,53 @@ function closeOverlay(id){
   document.body.style.overflow='';
 }
 
-// AI 업로드
+// AI 업로드 — 배경 제거 + 실제 옷장 저장
+let pendingWardrobeItem=null;
+let _bgRemovalPromise=null;
+
+function getDeviceId(){
+  let id=localStorage.getItem('cf-device-id');
+  if(!id){ id='dev_'+Date.now()+'_'+Math.random().toString(36).slice(2,10); localStorage.setItem('cf-device-id',id); }
+  return id;
+}
+
+// @imgly/background-removal — 브라우저에서 직접 실행되는 배경 제거 모델 (서버/API 키 불필요)
+function loadBgRemoval(){
+  if(!_bgRemovalPromise){
+    _bgRemovalPromise=import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm');
+  }
+  return _bgRemovalPromise;
+}
+
+function blobToResizedDataURL(blob,maxDim){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    const url=URL.createObjectURL(blob);
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      if(w>=h){ if(w>maxDim){h=Math.round(h*maxDim/w);w=maxDim;} }
+      else { if(h>maxDim){w=Math.round(w*maxDim/h);h=maxDim;} }
+      const canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('이미지 로드 실패'));};
+    img.src=url;
+  });
+}
+
+function markStepDone(id){
+  const icon=document.getElementById(id).querySelector('.ai-step-icon');
+  icon.className='ai-step-icon done'; icon.textContent='✓';
+}
+function markStepActive(id){
+  const icon=document.getElementById(id).querySelector('.ai-step-icon');
+  icon.className='ai-step-icon active'; icon.textContent='✦';
+}
+function setProgress(pct){ document.getElementById('progressFill').style.width=pct+'%'; }
+
 function handleUpload(e){
   const file=e.target.files[0];
   if(!file)return;
@@ -943,42 +1086,45 @@ function handleUpload(e){
     document.getElementById('aiResult').classList.remove('on');
     document.getElementById('aiAnalyzing').classList.remove('on');
     document.getElementById('aiAnalyzing').classList.add('on');
+    document.getElementById('scanBar').style.display='block';
     document.getElementById('aiPreviewImg').src=src;
     document.getElementById('demoBarLabel').textContent='AI 분석 중...';
     track('upload_photo'); if(window.saveUploadAttempt) window.saveUploadAttempt();
-    runAiAnalysis(src);
+    runAiAnalysis(file,src);
   };
   reader.readAsDataURL(file);
 }
 
-async function runAiAnalysis(imgSrc){
-  const steps=[
-    {id:'step1',label:'이미지 인식 완료',progress:25},
-    {id:'step2',label:'스타일 분류 완료',progress:50},
-    {id:'step3',label:'색상 분석 완료',progress:75},
-    {id:'step4',label:'코디 매칭 완료',progress:100},
-  ];
+async function runAiAnalysis(file,originalSrc){
+  ['step1','step2','step3','step4'].forEach((id,i)=>{
+    const icon=document.getElementById(id).querySelector('.ai-step-icon');
+    icon.className='ai-step-icon '+(i===0?'active':'pending');
+    icon.textContent=i===0?'✦':'◎';
+  });
+  setProgress(0);
 
-  // 단계별 애니메이션
-  for(let i=0;i<steps.length;i++){
-    await delay(900);
-    const s=steps[i];
-    const el=document.getElementById(s.id);
-    el.querySelector('.ai-step-icon').className='ai-step-icon done';
-    el.querySelector('.ai-step-icon').textContent='✓';
-    if(i<steps.length-1){
-      const next=document.getElementById(steps[i+1].id);
-      next.querySelector('.ai-step-icon').className='ai-step-icon active';
-      next.querySelector('.ai-step-icon').textContent='✦';
-    }
-    document.getElementById('progressFill').style.width=s.progress+'%';
-  }
-
-  await delay(500);
-
-  // Claude API 실제 호출
+  // 1단계 — 실제 배경 제거 (브라우저 내 처리, 최초 1회는 모델 다운로드로 다소 시간이 걸릴 수 있음)
+  let finalImg=originalSrc;
   try{
-    const base64=imgSrc.split(',')[1];
+    const {removeBackground}=await loadBgRemoval();
+    const bgBlob=await removeBackground(file);
+    finalImg=await blobToResizedDataURL(bgBlob,640);
+    document.getElementById('aiPreviewImg').src=finalImg;
+  }catch(err){
+    console.error('배경 제거 실패, 원본 이미지로 진행:',err);
+  }
+  markStepDone('step1'); markStepActive('step2'); setProgress(25);
+  await delay(300);
+  markStepDone('step2'); markStepActive('step3'); setProgress(55);
+
+  // 2단계 — Claude Vision 태그 분석 (API 프록시 연동 전이라 실패 시 기본 태그로 대체)
+  let name='분석 완료', tags=[
+    {text:'업로드된 아이템',type:'style'},
+    {text:'AI 태그 완료',type:'color'},
+    {text:'매칭 준비됨',type:'size'}
+  ];
+  try{
+    const base64=originalSrc.split(',')[1];
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -997,15 +1143,16 @@ async function runAiAnalysis(imgSrc){
     const data=await res.json();
     const text=data.content[0].text;
     const json=JSON.parse(text.replace(/```json|```/g,'').trim());
-    showResult(imgSrc,json.name,json.tags);
+    name=json.name; tags=json.tags;
   }catch(err){
-    // 폴백
-    showResult(imgSrc,'분석 완료',[
-      {text:'업로드된 아이템',type:'style'},
-      {text:'AI 태그 완료',type:'color'},
-      {text:'매칭 준비됨',type:'size'}
-    ]);
+    console.error('AI 분석 실패, 기본 태그로 대체:',err);
   }
+  markStepDone('step3'); markStepActive('step4'); setProgress(80);
+  await delay(300);
+  markStepDone('step4'); setProgress(100);
+  await delay(200);
+
+  showResult(finalImg,name,tags);
 }
 
 function resetUpload(){
@@ -1015,10 +1162,12 @@ function resetUpload(){
   const fi=document.getElementById('fileInput');
   if(fi)fi.value='';
   document.getElementById('demoBarLabel').textContent='옷장 등록하기';
-  document.getElementById('progressFill').style.width='0';
+  setProgress(0);
+  pendingWardrobeItem=null;
+  const btn=document.getElementById('saveWardrobeBtn');
+  btn.disabled=false; btn.textContent='내 옷장에 저장하기'; btn.classList.remove('saved');
   ['step1','step2','step3','step4'].forEach((id,i)=>{
-    const el=document.getElementById(id);
-    const icon=el.querySelector('.ai-step-icon');
+    const icon=document.getElementById(id).querySelector('.ai-step-icon');
     icon.className='ai-step-icon '+(i===0?'active':'pending');
     icon.textContent=i===0?'✦':'◎';
   });
@@ -1034,14 +1183,56 @@ function showResult(imgSrc,name,tags){
   document.getElementById('demoBarLabel').textContent='분석 완료 ✓';
   const wrap=document.getElementById('resultTags');
   wrap.innerHTML='';
-  tags.forEach((t,i)=>{
+  (tags||[]).forEach((t,i)=>{
     const el=document.createElement('span');
     el.className='ai-tag '+(t.type||'style');
     el.textContent=t.text;
     el.style.animationDelay=(i*0.08)+'s';
     wrap.appendChild(el);
   });
+  pendingWardrobeItem={imgSrc,name,tags:tags||[]};
   track('ai_analysis_complete');
+}
+
+// 저장 버튼 → 실제 Firestore 저장
+async function commitToWardrobe(){
+  if(!pendingWardrobeItem)return;
+  const btn=document.getElementById('saveWardrobeBtn');
+  btn.disabled=true; btn.textContent='저장 중...';
+  const ok=window.saveWardrobeItem ? await window.saveWardrobeItem(pendingWardrobeItem) : false;
+  if(ok){
+    btn.textContent='내 옷장에 저장됨 ✓'; btn.classList.add('saved');
+    track('wardrobe_saved');
+    document.getElementById('myWardrobe')?.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }else{
+    btn.disabled=false; btn.textContent='저장 실패, 다시 시도';
+  }
+}
+
+// 내 옷장 그리드 렌더 (module 스크립트에서 데이터 로드/변경 시 호출)
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+function renderWardrobeGrid(items){
+  const grid=document.getElementById('wardrobeGrid');
+  const empty=document.getElementById('wardrobeEmpty');
+  const countEl=document.getElementById('wardrobeCount');
+  if(!grid)return;
+  countEl.textContent=items.length+'개 등록됨';
+  if(items.length===0){
+    grid.innerHTML=''; empty.style.display='block'; return;
+  }
+  empty.style.display='none';
+  grid.innerHTML=items.map(it=>`
+    <div class="wardrobe-item" data-id="${it.id}">
+      <img src="${it.imageData}" loading="lazy">
+      <button class="wardrobe-item-remove" onclick="removeWardrobeItem('${it.id}')" title="삭제">×</button>
+      <div class="wardrobe-item-name">${escapeHtml(it.name)||'아이템'}</div>
+    </div>
+  `).join('');
+}
+async function removeWardrobeItem(id){
+  if(!confirm('이 옷을 옷장에서 삭제할까요?'))return;
+  const ok=window.deleteWardrobeItem ? await window.deleteWardrobeItem(id) : false;
+  if(ok) track('wardrobe_delete');
 }
 
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
@@ -1452,7 +1643,7 @@ document.querySelectorAll('[data-c]').forEach(el=>{
 <!-- Firebase -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAlZ0L-XXB7iM7InYTUL8Z3Xb62RWyWqOw",
@@ -1520,6 +1711,59 @@ document.querySelectorAll('[data-c]').forEach(el=>{
       return false;
     }
   };
+
+  // ── 내 옷장 (wardrobe_items) — 기기 단위 저장/조회/삭제 ──
+  let currentWardrobeItems=[];
+
+  window.saveWardrobeItem=async function(item){
+    try{
+      const ownerId=getDeviceId();
+      const docRef=await addDoc(collection(db,"wardrobe_items"),{
+        ownerId: ownerId,
+        imageData: item.imgSrc,
+        name: item.name || "아이템",
+        tags: item.tags || [],
+        createdAt: serverTimestamp()
+      });
+      currentWardrobeItems.unshift({id:docRef.id, ownerId, imageData:item.imgSrc, name:item.name, tags:item.tags});
+      renderWardrobeGrid(currentWardrobeItems);
+      return true;
+    }catch(e){
+      console.error("옷장 저장 오류:", e);
+      return false;
+    }
+  };
+
+  window.deleteWardrobeItem=async function(id){
+    try{
+      await deleteDoc(doc(db,"wardrobe_items", id));
+      currentWardrobeItems=currentWardrobeItems.filter(x=>x.id!==id);
+      renderWardrobeGrid(currentWardrobeItems);
+      return true;
+    }catch(e){
+      console.error("옷장 삭제 오류:", e);
+      alert("삭제에 실패했어요. 다시 시도해주세요.");
+      return false;
+    }
+  };
+
+  (async function initWardrobe(){
+    try{
+      const q=query(collection(db,"wardrobe_items"), where("ownerId","==",getDeviceId()));
+      const snap=await getDocs(q);
+      currentWardrobeItems=snap.docs.map(d=>({id:d.id, ...d.data()}));
+      currentWardrobeItems.sort((a,b)=>{
+        const at=a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0;
+        const bt=b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0;
+        return bt-at;
+      });
+      renderWardrobeGrid(currentWardrobeItems);
+    }catch(e){
+      console.error("옷장 로드 오류:", e);
+      const countEl=document.getElementById('wardrobeCount');
+      if(countEl) countEl.textContent="불러오기 실패";
+    }
+  })();
 
   console.log("Firebase 연결 완료 ✓");
 </script>
