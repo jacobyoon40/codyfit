@@ -1125,22 +1125,13 @@ async function runAiAnalysis(file,originalSrc){
   ];
   try{
     const base64=originalSrc.split(',')[1];
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/api/analyze',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:1000,
-        messages:[{
-          role:'user',
-          content:[
-            {type:'image',source:{type:'base64',media_type:'image/jpeg',data:base64}},
-            {type:'text',text:'이 옷 사진을 분석해서 JSON으로만 답해줘. {"name":"옷 이름","tags":[{"text":"태그","type":"color|style|size"}],"style":"전체 스타일 설명 한 줄"}'}
-          ]
-        }]
-      })
+      body:JSON.stringify({image:base64,mediaType:'image/jpeg'})
     });
     const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'분석 실패');
     const text=data.content[0].text;
     const json=JSON.parse(text.replace(/```json|```/g,'').trim());
     name=json.name; tags=json.tags;
