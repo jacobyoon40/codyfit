@@ -197,13 +197,6 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--black)
 .meta-swatch{width:16px;height:16px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,0.25);box-shadow:0 0 6px rgba(255,255,255,0.15)}
 .meta-label{font-size:9px;color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:0.03em;text-transform:uppercase}
 .meta-value{font-size:12.5px;color:var(--white);font-weight:700;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.meta-input{font-size:12.5px;color:var(--white);font-weight:700;margin-top:1px;background:transparent;border:none;outline:none;width:100%;font-family:inherit;padding:0;cursor:text}
-.meta-input::placeholder{color:rgba(255,255,255,0.3)}
-.meta-select{font-size:12px;color:var(--white);font-weight:700;margin-top:1px;background:transparent;border:none;outline:none;width:100%;font-family:inherit;padding:0;cursor:pointer;-webkit-appearance:none;appearance:none}
-.meta-select option{color:var(--black);background:var(--white)}
-.ai-result-name{font-size:15px;font-weight:700;color:var(--white);background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.2);outline:none;width:100%;font-family:inherit;padding:0 0 2px;cursor:text}
-.ai-result-name::placeholder{color:rgba(255,255,255,0.4)}
-.meta-chip:focus-within{border-color:rgba(255,255,255,0.25);background:linear-gradient(135deg,rgba(255,255,255,0.09),rgba(255,255,255,0.04))}
 
 /* ── 옷장 카드 색상 인디케이터 ── */
 .wardrobe-item-dot{position:absolute;left:6px;bottom:6px;width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,0.7);box-shadow:0 1px 4px rgba(0,0,0,0.3)}
@@ -647,8 +640,8 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
           <div class="ai-result-header">
             <div class="ai-result-thumb"><img id="resultImg" src=""></div>
             <div>
-              <input class="ai-result-name" id="resultName" type="text" value="아이템" placeholder="아이템 이름">
-              <div class="ai-result-sub">AI가 분석한 정보를 직접 수정할 수 있어요</div>
+              <div class="ai-result-name" id="resultName">아이템</div>
+              <div class="ai-result-sub">배경 제거 완료 · 내 옷장에 저장할 수 있어요</div>
             </div>
           </div>
           <div class="meta-grid" id="resultMetaGrid"></div>
@@ -1182,36 +1175,23 @@ function colorNameToHex(name){
   const found=COLOR_MAP.find(([k])=>name.includes(k));
   return found?found[1]:'linear-gradient(135deg,#999,#ccc)';
 }
-// 메타 정보 그리드 렌더 (업로드 결과 카드용, 다크 테마, 편집 가능)
-const CAT_OPTIONS=['상의','하의','아우터','원피스','신발','가방','액세서리','기타'];
-const TPO_OPTIONS=['데일리','출근룩','모임/외출','데이트','운동','여행','집콕','격식'];
-const SEASON_OPTIONS=['봄/가을','여름','겨울','사계절'];
-function makeSelect(id,options,value){
-  const matched=options.find(o=>o===value||value.includes(o));
-  const extra=(!matched&&value&&value!=='-')?`<option value="${escapeHtml(value)}" selected>${escapeHtml(value)}</option>`:'';
-  return `<select class="meta-select" id="${id}">${options.map(o=>`<option value="${escapeHtml(o)}"${o===matched?' selected':''}>${o}</option>`).join('')}${extra}</select>`;
-}
+// 메타 정보 그리드 렌더 (업로드 결과 카드용, 다크 테마)
 function renderMetaGrid(meta){
   const rows=[
-    {id:'meta-category',label:'카테고리',select:true,options:CAT_OPTIONS,value:meta.category||'-'},
-    {id:'meta-color',swatch:true,label:'색상',value:meta.color||'-'},
-    {id:'meta-tpo',label:'TPO',select:true,options:TPO_OPTIONS,value:meta.tpo||'-'},
-    {id:'meta-material',label:'소재',value:meta.material||'-'},
-    {id:'meta-style',label:'스타일',value:meta.style||'-'},
-    {id:'meta-season',label:'계절',select:true,options:SEASON_OPTIONS,value:meta.season||'-'},
-    {id:'meta-priceRange',label:'예상가',value:meta.priceRange||'-'}
+    {label:'카테고리',value:meta.category||'-'},
+    {swatch:true,label:'색상',value:meta.color||'-'},
+    {label:'TPO',value:meta.tpo||'-'},
+    {label:'스타일',value:meta.style||'-'},
+    {label:'소재',value:meta.material||'-'},
+    {label:'계절',value:meta.season||'-'},
+    {label:'예상가',value:meta.priceRange||'-'}
   ];
-  return rows.map((r,i)=>{
-    const input=r.select
-      ? makeSelect(r.id,r.options,r.value)
-      : `<input class="meta-input" id="${r.id}" type="text" value="${escapeHtml(r.value)}" placeholder="-">`;
-    return `
-      <div class="meta-chip" style="animation-delay:${(i*0.06).toFixed(2)}s">
-        ${r.swatch?`<span class="meta-swatch" id="meta-color-swatch" style="background:${colorNameToHex(r.value)}"></span>`:''}
-        <div style="flex:1;min-width:0"><div class="meta-label">${r.label}</div>${input}</div>
-      </div>
-    `;
-  }).join('');
+  return rows.map((r,i)=>`
+    <div class="meta-chip" style="animation-delay:${(i*0.06).toFixed(2)}s">
+      ${r.swatch?`<span class="meta-swatch" style="background:${colorNameToHex(r.value)}"></span>`:''}
+      <div><div class="meta-label">${r.label}</div><div class="meta-value">${escapeHtml(r.value)}</div></div>
+    </div>
+  `).join('');
 }
 
 async function runAiAnalysis(file,originalSrc){
@@ -1305,15 +1285,9 @@ function showResult(imgSrc,meta){
   const result=document.getElementById('aiResult');
   result.classList.remove('on'); void result.offsetWidth; result.classList.add('on'); // 재생 시 애니메이션 재시작
   document.getElementById('resultImg').src=imgSrc;
-  document.getElementById('resultName').value=meta.name;
+  document.getElementById('resultName').textContent=meta.name;
   document.getElementById('demoBarLabel').textContent='분석 완료 ✓';
   document.getElementById('resultMetaGrid').innerHTML=renderMetaGrid(meta);
-  // 색상 입력 변경 시 스와치 실시간 업데이트
-  const colorInput=document.getElementById('meta-color');
-  if(colorInput) colorInput.addEventListener('input',function(){
-    const swatch=document.getElementById('meta-color-swatch');
-    if(swatch) swatch.style.background=colorNameToHex(this.value);
-  });
   const wrap=document.getElementById('resultTags');
   wrap.innerHTML='';
   (meta.tags||[]).forEach((t,i)=>{
@@ -1327,24 +1301,12 @@ function showResult(imgSrc,meta){
   track('ai_analysis_complete');
 }
 
-// 저장 버튼 → 수정된 메타데이터를 읽어 Firestore 저장
+// 저장 버튼 → 실제 Firestore 저장
 async function commitToWardrobe(){
   if(!pendingWardrobeItem)return;
   const btn=document.getElementById('saveWardrobeBtn');
   btn.disabled=true; btn.textContent='저장 중...';
-  const edited={
-    imgSrc: pendingWardrobeItem.imgSrc,
-    name: document.getElementById('resultName')?.value?.trim() || pendingWardrobeItem.name,
-    category: document.getElementById('meta-category')?.value || pendingWardrobeItem.category,
-    color: document.getElementById('meta-color')?.value?.trim() || pendingWardrobeItem.color,
-    tpo: document.getElementById('meta-tpo')?.value || pendingWardrobeItem.tpo,
-    material: document.getElementById('meta-material')?.value?.trim() || pendingWardrobeItem.material,
-    style: document.getElementById('meta-style')?.value?.trim() || pendingWardrobeItem.style,
-    season: document.getElementById('meta-season')?.value || pendingWardrobeItem.season,
-    priceRange: document.getElementById('meta-priceRange')?.value?.trim() || pendingWardrobeItem.priceRange,
-    tags: pendingWardrobeItem.tags
-  };
-  const ok=window.saveWardrobeItem ? await window.saveWardrobeItem(edited) : false;
+  const ok=window.saveWardrobeItem ? await window.saveWardrobeItem(pendingWardrobeItem) : false;
   if(ok){
     btn.textContent='내 옷장에 저장됨 ✓'; btn.classList.add('saved');
     track('wardrobe_saved');
