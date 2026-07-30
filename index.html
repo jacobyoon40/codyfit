@@ -1547,7 +1547,7 @@ async function runAiAnalysis(file,originalSrc){
       if(info.query){
         chip.style.cursor='pointer';
         chip.onclick=()=>{
-          const url='price.html?q='+encodeURIComponent(info.query)+'&name='+encodeURIComponent(meta.name);
+          const url='price.html?q='+encodeURIComponent(info.query)+'&name='+encodeURIComponent(meta.name)+'&category='+encodeURIComponent(meta.category||'')+'&color='+encodeURIComponent(meta.color||'');
           window.location.href=url;
         };
       }
@@ -1653,7 +1653,7 @@ function openWardrobeDetail(id){
     {label:'계절',value:item.season||'-'},
     {label:'참고 시세',value:item.referencePrice||(item.priceRange&&item.priceRange!=='-'?item.priceRange:'-'),
      subtext:item.referenceCount>0?`유사 상품 ${item.referenceCount}건 기준`:'',
-     link:item.referenceQuery?('price.html?q='+encodeURIComponent(item.referenceQuery)+'&name='+encodeURIComponent(item.name||'')):''}
+     link:item.referenceQuery?('price.html?q='+encodeURIComponent(item.referenceQuery)+'&name='+encodeURIComponent(item.name||'')+'&category='+encodeURIComponent(item.category||'')+'&color='+encodeURIComponent(item.color||'')):''}
   ];
   const metaHtml=rows.map(r=>`
     <div class="wd-meta-chip"${r.link?` style="cursor:pointer" onclick="window.location.href='${r.link}'"`:''}>
