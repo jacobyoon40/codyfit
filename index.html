@@ -761,14 +761,12 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
 
 <!-- 날씨 추천 카드 -->
 <section class="sec my-wardrobe-sec" style="padding-top:24px;padding-bottom:0">
-  <!-- 위치 허용 유도 카드 -->
   <div class="weather-card" id="weatherPermCard" style="display:none;flex-direction:column;gap:10px">
     <div class="weather-temp">날씨 맞춤 추천</div>
     <div class="weather-label" style="margin-bottom:2px">오늘 뭐 입을지 골라드릴게요</div>
     <div style="font-size:12px;color:#888;line-height:1.7">위치를 허용하면 지금 계신 곳 날씨에 맞춰 옷장에서 딱 맞는 조합을 추천해드려요. 날씨 확인 외에는 사용하지 않아요.</div>
     <button id="weatherPermBtn" style="align-self:flex-start;padding:10px 18px;background:#111;color:#fff;border:none;border-radius:100px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:4px">위치 허용하고 추천받기</button>
   </div>
-  <!-- 날씨 결과 카드 -->
   <div class="weather-card" id="weatherCard">
     <div class="weather-left">
       <div class="weather-temp" id="weatherTemp"></div>
@@ -1638,11 +1636,11 @@ function renderWardrobeGrid(items){
   const countEl=document.getElementById('wardrobeCount');
   if(!grid)return;
   countEl.textContent=items.length+'개 등록됨';
+  document.dispatchEvent(new CustomEvent('wardrobeLoaded'));
   if(items.length===0){
     grid.innerHTML=''; empty.style.display='block'; return;
   }
   empty.style.display='none';
-  document.dispatchEvent(new CustomEvent('wardrobeLoaded'));
   grid.innerHTML=items.map(it=>`
     <div class="wardrobe-item" data-id="${it.id}" onclick="openWardrobeDetail('${it.id}')">
       <img src="${it.imageData}" loading="lazy">
@@ -2175,7 +2173,7 @@ document.querySelectorAll('[data-c]').forEach(el=>{
             nickname = userDoc.data().nickname || nickname;
             window._currentUserSince = userDoc.data().createdAt || null;
           }
-        } catch(e) { console.warn('[Auth] 닉네임 조회 실패 (폴백 사용):', e.message); }
+        } catch(e) { console.warn('[Auth] 닉네임 조회 실패:', e.message); }
         window._currentUid = user.uid;
         window._currentNickname = nickname;
         if (window.updateLoginUI) window.updateLoginUI(nickname);
@@ -2187,7 +2185,7 @@ document.querySelectorAll('[data-c]').forEach(el=>{
         showWardrobeLoginPrompt();
       }
     } catch(e) {
-      console.warn('[Auth] 상태 처리 오류 — 로그아웃 상태로 폴백:', e.message);
+      console.warn('[Auth] 상태 처리 오류 — 로그아웃 폴백:', e.message);
       window._currentUid = null;
       window._currentNickname = null;
       try { if (window.updateLoginUI) window.updateLoginUI(null); } catch(_) {}
@@ -2275,10 +2273,7 @@ document.querySelectorAll('[data-c]').forEach(el=>{
       });
       renderWardrobeGrid(currentWardrobeItems);
     }catch(e){
-      console.warn("옷장 로드 실패 (폴백: 빈 옷장 표시):", e.message);
-      currentWardrobeItems=[];
-      // renderWardrobeGrid 호출로 wardrobeLoaded 이벤트 발송 + 빈 상태 표시
-      // (날씨 카드 등 wardrobeLoaded를 기다리는 코드가 멈추지 않도록)
+      console.warn("옷장 로드 실패 (폴백: 빈 옷장):", e.message);
       try { renderWardrobeGrid([]); } catch(_) {}
     }
   }
@@ -2333,28 +2328,22 @@ document.querySelectorAll('[data-c]').forEach(el=>{
 
   console.log("Firebase 연결 완료 ✓");
 </script>
-
 <script>
-// Firebase SDK 또는 Firestore가 차단(ERR_BLOCKED_BY_CLIENT)되어
-// onAuthStateChanged가 영원히 발화하지 않는 경우 대비 폴백.
-// 5초 안에 _firebaseReady가 true로 안 바뀌면 로그아웃 상태로 강제 전환.
 window._firebaseReady = window._firebaseReady || false;
 setTimeout(function(){
   if(window._firebaseReady) return;
-  console.warn('[Codyfit] Firebase 초기화 타임아웃 — 오프라인/차단 모드로 폴백합니다');
+  console.warn('[Codyfit] Firebase 초기화 타임아웃 — 오프라인/차단 모드 폴백');
   window._currentUid = null;
   window._currentNickname = null;
   try{ if(window.updateLoginUI) window.updateLoginUI(null); }catch(_){}
-  // wardrobeLoginPrompt 표시
-  var prompt = document.getElementById('wardrobeLoginPrompt');
-  if(prompt) prompt.style.display = 'block';
+  var promptEl = document.getElementById('wardrobeLoginPrompt');
+  if(promptEl) promptEl.style.display = 'block';
   var countEl = document.getElementById('wardrobeCount');
   if(countEl) countEl.textContent = '';
-  var grid = document.getElementById('wardrobeGrid');
-  if(grid) grid.innerHTML = '';
-  var empty = document.getElementById('wardrobeEmpty');
-  if(empty) empty.style.display = 'none';
-  // wardrobeLoaded 이벤트 발송 (날씨 카드 등 unblock)
+  var gridEl = document.getElementById('wardrobeGrid');
+  if(gridEl) gridEl.innerHTML = '';
+  var emptyEl = document.getElementById('wardrobeEmpty');
+  if(emptyEl) emptyEl.style.display = 'none';
   try{ document.dispatchEvent(new CustomEvent('wardrobeLoaded')); }catch(_){}
   window._firebaseReady = true;
 }, 5000);
@@ -2414,95 +2403,98 @@ function navigateToPrice(url){
 }
 
 // ── 날씨 기반 추천 ──
-(async function initWeather(){
-  const CACHE_KEY='cf-weather';
-  const permCard=document.getElementById('weatherPermCard');
-  const resultCard=document.getElementById('weatherCard');
+(function initWeather(){
+  var CACHE_KEY='cf-weather';
+  var permCard=document.getElementById('weatherPermCard');
+  var resultCard=document.getElementById('weatherCard');
 
-  function renderWeatherCard(temp,rain){
-    const season=temp>=23?'여름':temp>=10?'봄/가을':'겨울';
-    function tryRender(){
-      const items=wardrobeItemsCache;
-      if(!items||items.length===0) return;
-      function seasonMatch(s){
-        if(!s||s==='사계절') return true;
-        if(season==='여름') return s.includes('여름')||s.includes('봄/여름');
-        if(season==='겨울') return s.includes('겨울');
-        return s.includes('봄')||s.includes('가을')||s.includes('봄/가을')||s.includes('봄/여름');
-      }
-      let pool=items.filter(it=>seasonMatch(it.season));
-      if(pool.length===0) return;
-      if(rain){
-        const outers=pool.filter(it=>it.category==='아우터');
-        if(outers.length>0) pool=[...outers,...pool.filter(it=>it.category!=='아우터')];
-      }
-      const PAIRS=[['상의','하의'],['상의','아우터'],['원피스','신발'],['원피스','가방'],['상의','신발']];
-      let pick=null;
-      for(const [a,b] of PAIRS){
-        const ia=pool.find(it=>it.category===a);
-        const ib=pool.find(it=>it.category===b);
-        if(ia&&ib){ pick=[ia,ib]; break; }
-      }
-      if(!pick) pick=[pool[0]];
-      const tempStr=temp%1===0?temp+'°C':temp.toFixed(1)+'°C';
-      const rainText=rain?' · 비 소식 있어요':'';
-      const seasonLabel={'여름':'오늘은 더운 날이에요','봄/가을':'선선한 날씨네요','겨울':'오늘은 추워요'}[season];
-      document.getElementById('weatherTemp').textContent=`현재 ${tempStr}${rainText}`;
-      document.getElementById('weatherLabel').textContent=`${seasonLabel}, 이 조합 어떨까요?`;
-      document.getElementById('weatherItems').innerHTML=pick.map(it=>`<span class="weather-item-chip">${escapeHtml(it.name||it.category)}</span>`).join('');
-      document.getElementById('weatherThumbs').innerHTML=pick.map(it=>`<img class="weather-thumb" src="${it.imageData||it.imgSrc||''}" alt="">`).join('');
-      resultCard.classList.add('show');
-    }
-    setTimeout(tryRender,800);
-    document.addEventListener('wardrobeLoaded',tryRender);
+  function seasonMatch(season, s){
+    if(!s||s==='사계절') return true;
+    if(season==='여름') return s.includes('여름')||s.includes('봄/여름');
+    if(season==='겨울') return s.includes('겨울');
+    return s.includes('봄')||s.includes('가을')||s.includes('봄/가을')||s.includes('봄/여름');
   }
 
-  async function fetchAndRender(){
-    try{
-      const {lat,lon}=await new Promise((resolve,reject)=>{
-        if(!navigator.geolocation){ resolve({lat:37.5665,lon:126.9780}); return; }
-        navigator.geolocation.getCurrentPosition(
-          p=>resolve({lat:p.coords.latitude,lon:p.coords.longitude}),
-          err=>reject(err),
-          {timeout:8000}
-        );
-      });
-      const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,precipitation`);
-      if(!res.ok) throw new Error('weather api');
-      const data=await res.json();
-      const temp=data.current.temperature_2m;
-      const rain=data.current.precipitation>0;
-      sessionStorage.setItem(CACHE_KEY,JSON.stringify({temp,rain}));
-      permCard.style.display='none';
-      renderWeatherCard(temp,rain);
-    }catch(e){
-      permCard.style.display='none'; // 거부 또는 오류 → 카드 숨김
+  function renderWeatherCard(temp, rain){
+    var season=temp>=23?'여름':temp>=10?'봄/가을':'겨울';
+    var items=wardrobeItemsCache;
+    if(!items||items.length===0) return;
+    var pool=items.filter(function(it){ return seasonMatch(season, it.season); });
+    if(pool.length===0) return;
+    if(rain){
+      var outers=pool.filter(function(it){ return it.category==='아우터'; });
+      if(outers.length>0) pool=outers.concat(pool.filter(function(it){ return it.category!=='아우터'; }));
     }
+    var PAIRS=[['상의','하의'],['상의','아우터'],['원피스','신발'],['원피스','가방'],['상의','신발']];
+    var pick=null;
+    for(var i=0;i<PAIRS.length;i++){
+      var ia=pool.find(function(it){ return it.category===PAIRS[i][0]; });
+      var ib=pool.find(function(it){ return it.category===PAIRS[i][1]; });
+      if(ia&&ib){ pick=[ia,ib]; break; }
+    }
+    if(!pick) pick=[pool[0]];
+    var tempStr=temp%1===0?temp+'°C':temp.toFixed(1)+'°C';
+    var rainText=rain?' · 비 소식 있어요':'';
+    var seasonLabel={'여름':'오늘은 더운 날이에요','봄/가을':'선선한 날씨네요','겨울':'오늘은 추워요'}[season];
+    document.getElementById('weatherTemp').textContent='현재 '+tempStr+rainText;
+    document.getElementById('weatherLabel').textContent=seasonLabel+', 이 조합 어떨까요?';
+    document.getElementById('weatherItems').innerHTML=pick.map(function(it){ return '<span class="weather-item-chip">'+escapeHtml(it.name||it.category)+'</span>'; }).join('');
+    document.getElementById('weatherThumbs').innerHTML=pick.map(function(it){ return '<img class="weather-thumb" src="'+(it.imageData||it.imgSrc||'')+'" alt="">'; }).join('');
+    resultCard.classList.add('show');
   }
 
-  // 캐시 있으면 권한 카드 건너뛰고 바로 결과 렌더
-  const cached=sessionStorage.getItem(CACHE_KEY);
+  function fetchAndRender(){
+    if(!navigator.geolocation){ return; }
+    navigator.geolocation.getCurrentPosition(
+      function(pos){
+        var lat=pos.coords.latitude, lon=pos.coords.longitude;
+        fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,precipitation')
+          .then(function(res){ return res.ok?res.json():Promise.reject(); })
+          .then(function(data){
+            var temp=data.current.temperature_2m;
+            var rain=data.current.precipitation>0;
+            try{ sessionStorage.setItem(CACHE_KEY,JSON.stringify({temp:temp,rain:rain})); }catch(e){}
+            if(permCard) permCard.style.display='none';
+            renderWeatherCard(temp, rain);
+          })
+          .catch(function(){ if(permCard) permCard.style.display='none'; });
+      },
+      function(){ if(permCard) permCard.style.display='none'; },
+      {timeout:6000}
+    );
+  }
+
+  // 캐시 있으면 바로 렌더 (wardrobeLoaded 대기)
+  var cached=null;
+  try{ cached=JSON.parse(sessionStorage.getItem(CACHE_KEY)||'null'); }catch(e){}
+
   if(cached){
-    try{ const c=JSON.parse(cached); renderWeatherCard(c.temp,c.rain); }catch(e){}
+    function tryRenderCached(){
+      if(wardrobeItemsCache&&wardrobeItemsCache.length>0){
+        renderWeatherCard(cached.temp, cached.rain);
+      }
+    }
+    setTimeout(tryRenderCached, 800);
+    document.addEventListener('wardrobeLoaded', tryRenderCached);
     return;
   }
 
-  // 권한 상태 확인
-  let permState='prompt';
-  if(navigator.permissions){
-    try{ permState=(await navigator.permissions.query({name:'geolocation'})).state; }catch(e){}
+  // 캐시 없음 — 옷장 로드 후 위치 허용 카드 표시
+  var permShown=false;
+  function tryShowPerm(){
+    if(permShown) return;
+    if(!wardrobeItemsCache||wardrobeItemsCache.length===0) return;
+    permShown=true;
+    if(permCard) permCard.style.display='flex';
+    var btn=document.getElementById('weatherPermBtn');
+    if(btn) btn.onclick=function(){
+      this.disabled=true;
+      this.textContent='위치 확인 중...';
+      fetchAndRender();
+    };
   }
-
-  if(permState==='denied') return; // 이미 거부 — 조용히 숨김
-  if(permState==='granted'){ fetchAndRender(); return; } // 이미 허용 — 바로 fetch
-
-  // prompt 상태 — 유도 카드 표시
-  permCard.style.display='flex';
-  document.getElementById('weatherPermBtn').onclick=function(){
-    this.disabled=true;
-    this.textContent='위치 확인 중...';
-    fetchAndRender();
-  };
+  setTimeout(tryShowPerm, 800);
+  document.addEventListener('wardrobeLoaded', tryShowPerm);
 })();
 
 // ── 마이페이지 ──
