@@ -388,6 +388,27 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
 .float-btn{position:fixed;bottom:24px;left:20px;z-index:200;background:var(--white);color:var(--black);font-size:13px;font-weight:700;padding:12px 22px;border-radius:100px;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,0.4);transform:translateY(80px);opacity:0;transition:all 0.4s cubic-bezier(.16,1,.3,1)}
 .float-btn.show{transform:translateY(0);opacity:1}
 
+/* ── 로그인 ── */
+.login-btn{padding:8px 16px;background:transparent;border:1.5px solid rgba(200,169,110,0.6);color:#c8a96e;font-size:12px;font-weight:700;border-radius:100px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all 0.2s}
+.login-btn:active{background:rgba(200,169,110,0.15)}
+.user-status{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.user-nick{font-size:12px;font-weight:700;color:#c8a96e;cursor:pointer;white-space:nowrap}
+.logout-btn{font-size:11px;color:rgba(255,255,255,0.35);background:none;border:none;cursor:pointer;font-family:inherit;white-space:nowrap}
+.login-overlay{position:fixed;inset:0;background:rgba(10,10,10,0.8);backdrop-filter:blur(8px);z-index:600;display:none;align-items:center;justify-content:center;padding:20px}
+.login-overlay.on{display:flex}
+.login-card{background:var(--white);color:var(--black);width:100%;max-width:360px;border-radius:24px;padding:32px 28px;position:relative}
+.login-title{font-size:20px;font-weight:900;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--g600);margin-bottom:24px;line-height:1.5}
+.login-label{font-size:11px;font-weight:700;color:var(--g600);letter-spacing:0.05em;margin-bottom:6px}
+.login-input{width:100%;padding:13px 16px;border:1.5px solid var(--g200);border-radius:12px;font-size:15px;font-family:inherit;outline:none;color:var(--black);transition:border-color 0.2s;margin-bottom:14px}
+.login-input:focus{border-color:#c8a96e}
+.login-submit{width:100%;padding:15px;background:#111;color:#fff;font-size:15px;font-weight:800;border:none;border-radius:12px;cursor:pointer;font-family:inherit;margin-top:4px;transition:opacity 0.2s}
+.login-submit:disabled{opacity:0.5;cursor:not-allowed}
+.login-error{font-size:12px;color:#e8184a;margin-top:10px;min-height:16px;text-align:center}
+.login-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--g100);border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--g600)}
+.wardrobe-login-prompt{text-align:center;padding:40px 20px;color:var(--g600);font-size:14px;line-height:1.7}
+.wardrobe-login-btn{margin-top:16px;padding:12px 28px;background:#111;color:#fff;border:none;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+
 /* ── AI 스타일 상담 챗봇 ── */
 .chat-fab{position:fixed;bottom:24px;right:20px;z-index:200;background:linear-gradient(135deg,#c8a96e,#a8834e);color:#fff;font-size:13px;font-weight:800;padding:13px 22px;border-radius:100px;border:none;cursor:pointer;font-family:inherit;box-shadow:0 8px 28px rgba(200,169,110,0.45);display:flex;align-items:center;gap:7px;letter-spacing:-0.01em;transition:transform 0.2s,box-shadow 0.2s}
 .chat-fab:active{transform:scale(0.95)}
@@ -447,6 +468,10 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
     <a class="search-btn ghost nav-glow" href="#wish-section" onclick="showMsgToast('💌 위시보드로 이동해요')" data-c="nav-wish">✦ WISHBOARD</a>
     <a class="search-btn ghost" href="#upload" onclick="showMsgToast('👗 옷장 등록하러 가볼게요!')" data-c="nav-upload" style="border-color:var(--rose);color:var(--rose);animation:navpulse 2s ease-in-out infinite">옷장 등록 ✦</a>
     <a class="search-btn primary" href="#" onclick="showBetaToast();return false;" data-c="nav-cta">베타 신청 ✦</a>
+    <!-- 로그인 상태 표시 -->
+    <div id="loginArea">
+      <button class="login-btn" onclick="openLoginModal()">로그인</button>
+    </div>
   </div>
 </div>
 
@@ -696,6 +721,12 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
     <div class="sec-label">MY WARDROBE</div>
     <h2 class="sec-h2 dark">내가 등록한 옷</h2>
     <div class="wardrobe-count" id="wardrobeCount">불러오는 중...</div>
+  </div>
+  <div id="wardrobeLoginPrompt" style="display:none">
+    <div class="wardrobe-login-prompt">
+      로그인 후 내 옷장을 이용할 수 있어요.<br>닉네임과 비밀번호로 간편하게 시작하세요.
+      <br><button class="wardrobe-login-btn" onclick="openLoginModal()">로그인 / 시작하기</button>
+    </div>
   </div>
   <div class="wardrobe-grid" id="wardrobeGrid"></div>
   <div class="wardrobe-empty" id="wardrobeEmpty" style="display:none">
@@ -1985,7 +2016,8 @@ document.querySelectorAll('[data-c]').forEach(el=>{
 <!-- Firebase -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, setDoc, getDoc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAlZ0L-XXB7iM7InYTUL8Z3Xb62RWyWqOw",
@@ -1999,6 +2031,70 @@ document.querySelectorAll('[data-c]').forEach(el=>{
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  // 닉네임 → Firebase email 변환 (한글 포함 모든 문자 지원)
+  function nicknameToEmail(nick) {
+    const encoded = Array.from(nick.trim())
+      .map(c => /[a-zA-Z0-9]/.test(c) ? c.toLowerCase() : 'u' + c.codePointAt(0).toString(16))
+      .join('');
+    return encoded + '@codyfit.local';
+  }
+
+  // 로그인/가입 처리 (가입/로그인 겸용)
+  window._authSubmit = async function(nick, pw) {
+    const email = nicknameToEmail(nick);
+    try {
+      await signInWithEmailAndPassword(auth, email, pw);
+    } catch(e) {
+      if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
+        // 신규 가입
+        const cred = await createUserWithEmailAndPassword(auth, email, pw);
+        await setDoc(doc(db, 'users', cred.user.uid), {
+          nickname: nick.trim(),
+          createdAt: serverTimestamp()
+        });
+      } else if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+        throw new Error('닉네임 또는 비밀번호가 올바르지 않습니다.');
+      } else {
+        throw e;
+      }
+    }
+  };
+
+  window._authSignOut = async function() {
+    await signOut(auth);
+  };
+
+  // 로그인 상태 변화 → UI + 옷장 갱신
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      // 닉네임 Firestore에서 조회
+      let nickname = user.email?.split('@')[0] || '사용자';
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) nickname = userDoc.data().nickname || nickname;
+      } catch(e) {}
+      window._currentUid = user.uid;
+      window._currentNickname = nickname;
+      if (window.updateLoginUI) window.updateLoginUI(nickname);
+      await loadWardrobe(user.uid);
+    } else {
+      window._currentUid = null;
+      window._currentNickname = null;
+      if (window.updateLoginUI) window.updateLoginUI(null);
+      showWardrobeLoginPrompt();
+    }
+  });
+
+  function showWardrobeLoginPrompt() {
+    document.getElementById('wardrobeLoginPrompt').style.display = 'block';
+    document.getElementById('wardrobeGrid').innerHTML = '';
+    document.getElementById('wardrobeEmpty').style.display = 'none';
+    const countEl = document.getElementById('wardrobeCount');
+    if (countEl) countEl.textContent = '';
+    wardrobeItemsCache = [];
+  }
 
   // 사전 신청 저장 함수
   window.saveSignup = async function(email, phone) {
@@ -2054,12 +2150,33 @@ document.querySelectorAll('[data-c]').forEach(el=>{
     }
   };
 
-  // ── 내 옷장 (wardrobe_items) — 기기 단위 저장/조회/삭제 ──
+  // ── 내 옷장 (wardrobe_items) — uid 기반 저장/조회/삭제 ──
   let currentWardrobeItems=[];
 
-  window.saveWardrobeItem=async function(item){
+  async function loadWardrobe(uid) {
+    document.getElementById('wardrobeLoginPrompt').style.display = 'none';
     try{
-      const ownerId=getDeviceId();
+      const q=query(collection(db,"wardrobe_items"), where("ownerId","==",uid));
+      const snap=await getDocs(q);
+      currentWardrobeItems=snap.docs.map(d=>({id:d.id, ...d.data()}));
+      currentWardrobeItems.sort((a,b)=>{
+        const at=a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0;
+        const bt=b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0;
+        return bt-at;
+      });
+      renderWardrobeGrid(currentWardrobeItems);
+    }catch(e){
+      console.error("옷장 로드 오류:", e);
+      const countEl=document.getElementById('wardrobeCount');
+      if(countEl) countEl.textContent="불러오기 실패";
+    }
+  }
+
+  window.saveWardrobeItem=async function(item){
+    const uid=window._currentUid;
+    if(!uid){ openLoginModal(); return false; }
+    try{
+      const ownerId=uid;
       const docData={
         ownerId: ownerId,
         imageData: item.imgSrc,
@@ -2100,26 +2217,28 @@ document.querySelectorAll('[data-c]').forEach(el=>{
     }
   };
 
-  (async function initWardrobe(){
-    try{
-      const q=query(collection(db,"wardrobe_items"), where("ownerId","==",getDeviceId()));
-      const snap=await getDocs(q);
-      currentWardrobeItems=snap.docs.map(d=>({id:d.id, ...d.data()}));
-      currentWardrobeItems.sort((a,b)=>{
-        const at=a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0;
-        const bt=b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0;
-        return bt-at;
-      });
-      renderWardrobeGrid(currentWardrobeItems);
-    }catch(e){
-      console.error("옷장 로드 오류:", e);
-      const countEl=document.getElementById('wardrobeCount');
-      if(countEl) countEl.textContent="불러오기 실패";
-    }
-  })();
+  // 초기 상태: 로그인 전 prompt 표시 (onAuthStateChanged에서 갱신됨)
+  showWardrobeLoginPrompt();
 
   console.log("Firebase 연결 완료 ✓");
 </script>
+
+<!-- 로그인 모달 -->
+<div class="login-overlay" id="loginOverlay" onclick="if(event.target===this)closeLoginModal()">
+  <div class="login-card">
+    <button class="login-close" onclick="closeLoginModal()">✕</button>
+    <div class="login-title">내 옷장 시작하기</div>
+    <div class="login-sub">닉네임과 비밀번호를 입력하세요.<br>처음이면 자동으로 계정이 만들어져요.</div>
+    <div class="login-label">닉네임</div>
+    <input class="login-input" id="loginNick" type="text" placeholder="예: 홍길동" maxlength="20"
+      onkeydown="if(event.key==='Enter')document.getElementById('loginPw').focus()">
+    <div class="login-label">비밀번호</div>
+    <input class="login-input" id="loginPw" type="password" placeholder="6자 이상"
+      onkeydown="if(event.key==='Enter')submitLogin()">
+    <button class="login-submit" id="loginSubmit" onclick="submitLogin()">시작하기</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
 
 <!-- AI 스타일 상담 FAB -->
 <button class="chat-fab" id="chatFab" onclick="openChat()">
@@ -2147,6 +2266,55 @@ document.querySelectorAll('[data-c]').forEach(el=>{
 </div>
 
 <script>
+// ── 로그인 ──
+function openLoginModal() {
+  document.getElementById('loginOverlay').classList.add('on');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('loginError').textContent = '';
+  setTimeout(() => document.getElementById('loginNick').focus(), 200);
+}
+function closeLoginModal() {
+  document.getElementById('loginOverlay').classList.remove('on');
+  document.body.style.overflow = '';
+}
+async function submitLogin() {
+  const nick = document.getElementById('loginNick').value.trim();
+  const pw = document.getElementById('loginPw').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginSubmit');
+
+  if (!nick) { errEl.textContent = '닉네임을 입력해주세요.'; return; }
+  if (pw.length < 6) { errEl.textContent = '비밀번호는 6자 이상이어야 해요.'; return; }
+
+  btn.disabled = true;
+  btn.textContent = '로그인 중...';
+  errEl.textContent = '';
+
+  try {
+    await window._authSubmit(nick, pw);
+    closeLoginModal();
+    document.getElementById('loginNick').value = '';
+    document.getElementById('loginPw').value = '';
+  } catch(e) {
+    errEl.textContent = e.message || '로그인에 실패했어요. 다시 시도해주세요.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '시작하기';
+  }
+}
+window.updateLoginUI = function(nickname) {
+  const area = document.getElementById('loginArea');
+  if (!area) return;
+  if (nickname) {
+    area.innerHTML = `<div class="user-status">
+      <span class="user-nick" title="마이페이지">${escapeHtml(nickname)}님</span>
+      <button class="logout-btn" onclick="window._authSignOut()">로그아웃</button>
+    </div>`;
+  } else {
+    area.innerHTML = `<button class="login-btn" onclick="openLoginModal()">로그인</button>`;
+  }
+};
+
 // ── AI 스타일 상담 챗봇 ──
 let chatHistory = [];  // [{role:'user'|'assistant', content:string}]
 let chatStarted = false;
