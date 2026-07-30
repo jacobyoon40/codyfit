@@ -1110,6 +1110,27 @@ function blobToResizedDataURL(blob,maxDim){
   });
 }
 
+// 업로드 파일이 PNG/HEIC 등 어떤 형식이든 항상 JPEG로 안전하게 변환 (Claude Vision mediaType 불일치 방지)
+function dataURLToResizedJpeg(dataUrl,maxDim,quality){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      if(w>=h){ if(w>maxDim){h=Math.round(h*maxDim/w);w=maxDim;} }
+      else { if(h>maxDim){w=Math.round(w*maxDim/h);h=maxDim;} }
+      const canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      const ctx=canvas.getContext('2d');
+      ctx.fillStyle='#ffffff';
+      ctx.fillRect(0,0,w,h);
+      ctx.drawImage(img,0,0,w,h);
+      resolve(canvas.toDataURL('image/jpeg',quality));
+    };
+    img.onerror=()=>reject(new Error('이미지 로드 실패'));
+    img.src=dataUrl;
+  });
+}
+
 function markStepDone(id){
   const icon=document.getElementById(id).querySelector('.ai-step-icon');
   icon.className='ai-step-icon done'; icon.textContent='✓';
@@ -1207,7 +1228,8 @@ async function runAiAnalysis(file,originalSrc){
     ]
   };
   try{
-    const base64=originalSrc.split(',')[1];
+    const analysisImg=await dataURLToResizedJpeg(originalSrc,1024,0.85);
+    const base64=analysisImg.split(',')[1];
     const res=await fetch('/api/analyze',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
