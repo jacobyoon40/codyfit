@@ -207,8 +207,8 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--black)
 .wardrobe-detail-overlay.on{display:flex}
 @keyframes detailUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .wardrobe-detail-card{background:var(--white);color:var(--black);width:100%;max-width:480px;border-radius:24px 24px 0 0;overflow:hidden;animation:detailUp 0.35s cubic-bezier(.2,.8,.3,1)}
-.wd-img-wrap{position:relative;width:100%;aspect-ratio:1.3;background:var(--g100)}
-.wd-img-wrap img{width:100%;height:100%;object-fit:cover}
+.wd-img-wrap{position:relative;width:100%;aspect-ratio:0.85;background:var(--g100)}
+.wd-img-wrap img{width:100%;height:100%;object-fit:contain}
 .wd-img-scrim{position:absolute;left:0;right:0;bottom:0;height:70%;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent)}
 .wd-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.9);border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .wd-title{position:absolute;left:18px;right:18px;bottom:16px;color:#fff}
