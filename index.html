@@ -1628,7 +1628,7 @@ async function commitToWardrobe(){
 
 // 내 옷장 그리드 렌더 (module 스크립트에서 데이터 로드/변경 시 호출)
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
-let wardrobeItemsCache=[];
+var wardrobeItemsCache=[];
 function renderWardrobeGrid(items){
   wardrobeItemsCache=items;
   const grid=document.getElementById('wardrobeGrid');
