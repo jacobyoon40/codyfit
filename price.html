@@ -104,78 +104,17 @@ a{text-decoration:none;color:inherit}
 
 <!-- 상품 정보 -->
 <div class="product-card">
-  <img class="product-thumb" id="productThumb" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&q=80&fit=crop" alt="" onerror="this.style.background='#f0f0f0';this.src=''">
+  <!-- 중립 placeholder: 옷 실루엣 SVG (엉뚱한 브랜드 사진 대신) -->
+  <div id="productThumbWrap" style="width:72px;height:72px;border-radius:12px;background:#f0f0f0;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden">
+    <svg id="productThumbPlaceholder" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/>
+    </svg>
+    <img id="productThumb" src="" alt="" style="display:none;width:100%;height:100%;object-fit:contain">
+  </div>
   <div>
-    <div class="product-name" id="productName">데님 자켓</div>
+    <div class="product-name" id="productName">아이템</div>
     <div class="product-sub">내 옷장 기준 매칭 최저가</div>
     <div class="match-tags" id="matchTags"></div>
-  </div>
-</div>
-
-<!-- CODYFIT 옥션 -->
-<div class="auction-block">
-  <div class="auction-header">
-    <div class="auction-title">
-      🔨 CODYFIT 옥션
-      <span class="live-badge">LIVE</span>
-    </div>
-    <span class="auction-sub">내 옷장 매칭 중고 매물</span>
-  </div>
-
-  <!-- 카드 1: 경쟁 증가 중 -->
-  <a class="auction-card" href="javascript:void(0)" onclick="openBidPage('빈티지 데님 자켓',38000,120000,'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=120&q=80&fit=crop')">
-    <div class="acard-img">
-      <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=120&q=80&fit=crop" alt="" onerror="this.style.background='#333';this.src=''">
-      <span class="grade" style="background:#e8184a">A급</span>
-    </div>
-    <div class="acard-info">
-      <div class="acard-name">빈티지 데님 자켓</div>
-      <div class="acard-sub">M · 인디고 · 상태 A급</div>
-      <div class="acard-status">
-        <div class="bidders">
-          <span class="bidders-num">🔨 12명 입찰 중</span>
-          <span class="bidders-badge badge-up">↑ 증가 중</span>
-        </div>
-        <span class="time-row time-normal">⏱ 2일 8시간 남음</span>
-      </div>
-    </div>
-    <div class="acard-price">
-      <div class="start-label">시작가</div>
-      <div class="start-price">₩38,000</div>
-      <div class="expect-label">💬 보통 이 가격에 많이 입찰해요</div>
-      <div class="expect-price">₩52,000 ~ ₩67,000</div>
-      <span class="bid-btn hot">지금 입찰 →</span>
-    </div>
-  </a>
-
-  <!-- 카드 2: 경쟁 없음 + 마감임박 -->
-  <a class="auction-card urgent" href="javascript:void(0)" onclick="openBidPage('데님 셔츠 자켓',15000,52000,'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=120&q=80&fit=crop')">
-    <div class="acard-img">
-      <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=120&q=80&fit=crop" alt="" onerror="this.style.background='#333';this.src=''">
-      <span class="grade" style="background:#ff6b35">B급</span>
-    </div>
-    <div class="acard-info">
-      <div class="acard-name">데님 셔츠 자켓</div>
-      <div class="acard-sub">M · 워시드블루 · 상태 B급</div>
-      <div class="acard-status">
-        <div class="bidders">
-          <span class="bidders-num" style="color:#6ee7b7">🔨 현재 경쟁 없음</span>
-          <span class="bidders-badge badge-solo">단독 입찰 가능</span>
-        </div>
-        <span class="time-row time-urgent">⏱ 4시간 남음!</span>
-      </div>
-    </div>
-    <div class="acard-price">
-      <div class="start-label">시작가</div>
-      <div class="start-price">₩15,000</div>
-      <div class="expect-label">💬 보통 이 가격에 많이 입찰해요</div>
-      <div class="expect-price">₩18,000 ~ ₩24,000</div>
-      <span class="bid-btn urgent">마감임박! →</span>
-    </div>
-  </a>
-
-  <div class="auction-footer">
-    <a class="auction-more" href="/">옥션 전체 보기 →</a>
   </div>
 </div>
 
@@ -339,14 +278,24 @@ function submitBidLocal() {
 <script>
 const params = new URLSearchParams(location.search);
 const itemName = params.get('name') || '아이템';
-const thumb = params.get('thumb');
 const m1 = params.get('m1');
 const m2 = params.get('m2');
 const q = encodeURIComponent(itemName);
 
 document.getElementById('pageTitle').textContent = itemName + ' · 매칭 최저가';
 document.getElementById('productName').textContent = itemName;
-if(thumb) document.getElementById('productThumb').src = thumb;
+
+// sessionStorage에서 이미지 읽기 (1회성 — 읽은 후 삭제)
+// 뒤로가기/새로고침 시에는 값이 없어 중립 placeholder가 유지됨 (틀린 사진 없음)
+const savedImg = sessionStorage.getItem('cf-price-img');
+if(savedImg){
+  sessionStorage.removeItem('cf-price-img');
+  const imgEl = document.getElementById('productThumb');
+  const placeholder = document.getElementById('productThumbPlaceholder');
+  imgEl.src = savedImg;
+  imgEl.style.display = 'block';
+  if(placeholder) placeholder.style.display = 'none';
+}
 
 // match-tags: 전달된 옷장 매칭 아이템 표시
 const tagsEl = document.getElementById('matchTags');

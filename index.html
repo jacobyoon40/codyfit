@@ -1237,18 +1237,27 @@ function renderMatchList(item){
     </div>
   `;
   cta.style.display=wardrobeItemsCache.length<3?'block':'none';
-  // 최저가 연결 시 매칭 상위 2개 이름 전달용 저장
+  // 최저가 연결 시 매칭 상위 아이템 저장 (이름 + 객체 전체)
   window._matchTop=[top1?.name,top2?.name].filter(Boolean);
+  window._matchTopItems=[top1,top2].filter(Boolean);
 }
 
 // 오버레이 닫기
 function openPriceCompare(name){
   track('price-compare-open');
   const n=name||lastMatchTarget||'아이템';
+  const items=window._matchTopItems||[];
+  const top1=items[0];
+  // 썸네일: top1 wardrobe 아이템의 imageData를 sessionStorage에 1회성 저장
+  if(top1?.imageData) sessionStorage.setItem('cf-price-img',top1.imageData);
+  else sessionStorage.removeItem('cf-price-img');
   let url='price.html?name='+encodeURIComponent(n);
   const tops=window._matchTop||[];
   if(tops[0]) url+='&m1='+encodeURIComponent(tops[0]);
   if(tops[1]) url+='&m2='+encodeURIComponent(tops[1]);
+  // myClosetSection용 category/color (top1 기준)
+  if(top1?.category) url+='&category='+encodeURIComponent(top1.category);
+  if(top1?.color)    url+='&color='+encodeURIComponent(top1.color);
   window.location.href=url;
 }
 function closeOverlay(id){
@@ -1547,6 +1556,7 @@ async function runAiAnalysis(file,originalSrc){
       if(info.query){
         chip.style.cursor='pointer';
         chip.onclick=()=>{
+          if(pendingWardrobeItem?.imgSrc) sessionStorage.setItem('cf-price-img',pendingWardrobeItem.imgSrc);
           const url='price.html?q='+encodeURIComponent(info.query)+'&name='+encodeURIComponent(meta.name)+'&category='+encodeURIComponent(meta.category||'')+'&color='+encodeURIComponent(meta.color||'');
           window.location.href=url;
         };
@@ -1655,8 +1665,9 @@ function openWardrobeDetail(id){
      subtext:item.referenceCount>0?`유사 상품 ${item.referenceCount}건 기준`:'',
      link:item.referenceQuery?('price.html?q='+encodeURIComponent(item.referenceQuery)+'&name='+encodeURIComponent(item.name||'')+'&category='+encodeURIComponent(item.category||'')+'&color='+encodeURIComponent(item.color||'')):''}
   ];
+  window._priceNavImg=item.imageData||'';
   const metaHtml=rows.map(r=>`
-    <div class="wd-meta-chip"${r.link?` style="cursor:pointer" onclick="window.location.href='${r.link}'"`:''}>
+    <div class="wd-meta-chip"${r.link?` style="cursor:pointer" onclick="navigateToPrice('${r.link.replace(/'/g,'\\'')}')"`:''}>
       ${r.swatch?`<span class="meta-swatch" style="background:${colorNameToHex(r.value)}"></span>`:''}
       <div><div class="wd-meta-label">${r.label}</div><div class="wd-meta-value">${escapeHtml(r.value)}</div>${r.subtext?`<div style="font-size:9.5px;color:var(--g400);margin-top:1px">${escapeHtml(r.subtext)}</div>`:''}</div>
     </div>
@@ -2352,6 +2363,11 @@ document.querySelectorAll('[data-c]').forEach(el=>{
 </div>
 
 <script>
+function navigateToPrice(url){
+  if(window._priceNavImg) sessionStorage.setItem('cf-price-img', window._priceNavImg);
+  window.location.href=url;
+}
+
 // ── 날씨 기반 추천 ──
 (async function initWeather(){
   const CACHE_KEY='cf-weather';
