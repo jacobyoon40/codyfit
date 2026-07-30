@@ -388,6 +388,37 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
 .float-btn{position:fixed;bottom:24px;left:20px;z-index:200;background:var(--white);color:var(--black);font-size:13px;font-weight:700;padding:12px 22px;border-radius:100px;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,0.4);transform:translateY(80px);opacity:0;transition:all 0.4s cubic-bezier(.16,1,.3,1)}
 .float-btn.show{transform:translateY(0);opacity:1}
 
+/* ── 마이페이지 ── */
+.mypage-overlay{position:fixed;inset:0;background:rgba(10,10,10,0.7);backdrop-filter:blur(6px);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.mypage-overlay.on{display:flex}
+@keyframes mypageUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mypage-sheet{background:var(--cream);color:var(--black);width:100%;max-width:480px;max-height:90vh;border-radius:24px 24px 0 0;overflow-y:auto;animation:mypageUp 0.35s cubic-bezier(.2,.8,.3,1)}
+.mypage-sheet::-webkit-scrollbar{display:none}
+.mypage-header{padding:22px 20px 4px;display:flex;align-items:center;justify-content:space-between}
+.mypage-close{width:32px;height:32px;border-radius:50%;background:var(--g100);border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--g600)}
+.mypage-profile{padding:8px 20px 20px;border-bottom:1px solid var(--g200)}
+.mypage-nick{font-size:26px;font-weight:900;color:var(--black);margin-bottom:4px}
+.mypage-since{font-size:12px;color:var(--g600)}
+.mypage-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:18px 20px}
+.mypage-stat-chip{background:var(--white);border-radius:14px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.mypage-stat-label{font-size:10px;font-weight:700;color:var(--g600);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:5px}
+.mypage-stat-value{font-size:22px;font-weight:900;color:var(--black)}
+.mypage-stat-sub{font-size:11px;color:var(--g400);margin-top:2px}
+.mypage-chart-wrap{padding:0 20px 20px}
+.mypage-chart-title{font-size:11px;font-weight:700;color:var(--g600);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:12px}
+.mypage-chart-inner{display:flex;align-items:center;gap:20px}
+.mypage-chart-legend{flex:1;display:flex;flex-direction:column;gap:7px}
+.legend-row{display:flex;align-items:center;gap:8px;cursor:pointer}
+.legend-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.legend-name{font-size:12px;color:var(--black);flex:1;font-weight:500}
+.legend-pct{font-size:12px;font-weight:700;color:var(--g600)}
+.mypage-chart-hint{font-size:11px;color:var(--g400);margin-top:10px;min-height:16px}
+.mypage-chart-empty{font-size:13px;color:var(--g400);text-align:center;padding:20px 0}
+.mypage-shortcuts{display:flex;gap:8px;padding:0 20px 20px}
+.mypage-shortcut{flex:1;padding:13px;background:var(--white);border:1.5px solid var(--g200);border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--black);transition:all 0.15s;text-align:center}
+.mypage-shortcut:active{background:var(--black);color:var(--white);border-color:var(--black)}
+.mypage-logout{width:calc(100% - 40px);margin:0 20px 32px;padding:13px;background:var(--g100);color:var(--g800);border:none;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+
 /* ── 로그인 ── */
 .login-btn{padding:8px 16px;background:transparent;border:1.5px solid rgba(200,169,110,0.6);color:#c8a96e;font-size:12px;font-weight:700;border-radius:100px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all 0.2s}
 .login-btn:active{background:rgba(200,169,110,0.15)}
@@ -2094,7 +2125,10 @@ document.querySelectorAll('[data-c]').forEach(el=>{
       let nickname = user.email?.split('@')[0] || '사용자';
       try {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) nickname = userDoc.data().nickname || nickname;
+        if (userDoc.exists()) {
+          nickname = userDoc.data().nickname || nickname;
+          window._currentUserSince = userDoc.data().createdAt || null;
+        }
       } catch(e) {}
       window._currentUid = user.uid;
       window._currentNickname = nickname;
@@ -2244,6 +2278,11 @@ document.querySelectorAll('[data-c]').forEach(el=>{
   console.log("Firebase 연결 완료 ✓");
 </script>
 
+<!-- 마이페이지 오버레이 -->
+<div class="mypage-overlay" id="mypageOverlay" onclick="if(event.target===this)closeMyPage()">
+  <div class="mypage-sheet" id="mypageSheet"></div>
+</div>
+
 <!-- 로그인 모달 -->
 <div class="login-overlay" id="loginOverlay" onclick="if(event.target===this)closeLoginModal()">
   <div class="login-card">
@@ -2287,6 +2326,137 @@ document.querySelectorAll('[data-c]').forEach(el=>{
 </div>
 
 <script>
+// ── 마이페이지 ──
+function openMyPage() {
+  if (!window._currentNickname) { openLoginModal(); return; }
+  const sheet = document.getElementById('mypageSheet');
+  const items = wardrobeItemsCache;
+  const total = items.length;
+
+  // 최다 카테고리
+  const catCount = {};
+  items.forEach(it => { if(it.category) catCount[it.category] = (catCount[it.category]||0)+1; });
+  const topCat = Object.entries(catCount).sort((a,b)=>b[1]-a[1])[0];
+
+  // 가입일 텍스트
+  let sinceText = '';
+  try {
+    const ts = window._currentUserSince;
+    if (ts) {
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      sinceText = `${d.getFullYear()}년 ${d.getMonth()+1}월부터 함께했어요`;
+    }
+  } catch(e) {}
+
+  // 색상 분포 차트
+  const colorCount = {};
+  items.forEach(it => { if(it.color && it.color !== '-') colorCount[it.color] = (colorCount[it.color]||0)+1; });
+  const colorEntries = Object.entries(colorCount).sort((a,b)=>b[1]-a[1]);
+  const chartHtml = renderColorChart(colorEntries, total);
+
+  sheet.innerHTML = `
+    <div class="mypage-header">
+      <div style="font-size:13px;font-weight:700;color:var(--g600)">MY PAGE</div>
+      <button class="mypage-close" onclick="closeMyPage()">✕</button>
+    </div>
+    <div class="mypage-profile">
+      <div class="mypage-nick">${escapeHtml(window._currentNickname)}</div>
+      ${sinceText ? `<div class="mypage-since">${escapeHtml(sinceText)}</div>` : ''}
+    </div>
+    <div class="mypage-stats">
+      <div class="mypage-stat-chip">
+        <div class="mypage-stat-label">등록한 옷</div>
+        <div class="mypage-stat-value">${total}</div>
+        <div class="mypage-stat-sub">벌</div>
+      </div>
+      <div class="mypage-stat-chip">
+        <div class="mypage-stat-label">최다 카테고리</div>
+        <div class="mypage-stat-value" style="font-size:${topCat?'16px':'22px'};padding-top:${topCat?'5px':'0'}">${topCat ? escapeHtml(topCat[0]) : '-'}</div>
+        <div class="mypage-stat-sub">${topCat ? topCat[1]+'벌' : ''}</div>
+      </div>
+    </div>
+    <div class="mypage-chart-wrap">
+      <div class="mypage-chart-title">색상 분포</div>
+      ${chartHtml}
+    </div>
+    <div class="mypage-shortcuts">
+      <button class="mypage-shortcut" onclick="closeMyPage();document.getElementById('myWardrobe')?.scrollIntoView({behavior:'smooth'})">내 옷장 보기</button>
+      <button class="mypage-shortcut" onclick="closeMyPage();document.getElementById('wish-section')?.scrollIntoView({behavior:'smooth'})">위시보드 보기</button>
+    </div>
+    <button class="mypage-logout" onclick="window._authSignOut();closeMyPage()">로그아웃</button>
+  `;
+
+  document.getElementById('mypageOverlay').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMyPage() {
+  document.getElementById('mypageOverlay').classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+function showChartHint(i) {
+  const d = (window._chartData || [])[i];
+  if (!d) return;
+  const el = document.getElementById('chartHint');
+  if (el) el.textContent = `${d.name}: ${d.count}벌 (${d.pct}%)`;
+}
+
+function renderColorChart(colorEntries, total) {
+  if (total < 3) {
+    return `<div class="mypage-chart-empty">옷을 3벌 이상 등록하면 색상 분포를 분석해드려요.</div>`;
+  }
+
+  const counts = colorEntries.map(([,n]) => n);
+  const sum = counts.reduce((a,b)=>a+b, 0);
+
+  // 퍼센트 — largest remainder method (합계 정확히 100%)
+  const rawPcts = counts.map(c => c/sum*100);
+  const floors = rawPcts.map(Math.floor);
+  let remaining = 100 - floors.reduce((a,b)=>a+b, 0);
+  const remainders = rawPcts.map((p,i) => p - floors[i]);
+  const sortedIdx = remainders.map((_,i)=>i).sort((a,b)=>remainders[b]-remainders[a]);
+  const pcts = [...floors];
+  sortedIdx.slice(0, remaining).forEach(i => pcts[i]++);
+
+  window._chartData = colorEntries.map(([name, count], i) => ({name, count, pct: pcts[i]}));
+
+  const R = 60, CX = 80, CY = 80, SW = 26;
+  const circ = 2 * Math.PI * R;
+  let accum = 0;
+  const arcs = colorEntries.map(([name], i) => {
+    const hex = colorNameToHex(name) || '#ccc';
+    const dash = (pcts[i]/100) * circ;
+    const gap = circ - dash;
+    const dOffset = -(accum/100) * circ;
+    accum += pcts[i];
+    return `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${hex}" stroke-width="${SW}"
+      stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}"
+      stroke-dashoffset="${dOffset.toFixed(2)}"
+      style="cursor:pointer" onclick="showChartHint(${i})"/>`;
+  }).join('');
+
+  const legend = colorEntries.map(([name], i) => {
+    const hex = colorNameToHex(name) || '#ccc';
+    return `<div class="legend-row" onclick="showChartHint(${i})">
+      <div class="legend-swatch" style="background:${hex}"></div>
+      <span class="legend-name">${escapeHtml(name)}</span>
+      <span class="legend-pct">${pcts[i]}%</span>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="mypage-chart-inner">
+      <svg viewBox="0 0 160 160" width="140" height="140" style="flex-shrink:0;transform:rotate(-90deg)">
+        <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="var(--g200)" stroke-width="${SW}"/>
+        ${arcs}
+      </svg>
+      <div class="mypage-chart-legend">${legend}</div>
+    </div>
+    <div class="mypage-chart-hint" id="chartHint">조각을 탭하면 개수를 확인할 수 있어요</div>
+  `;
+}
+
 // ── 로그인 ──
 function openLoginModal() {
   document.getElementById('loginOverlay').classList.add('on');
@@ -2328,7 +2498,7 @@ window.updateLoginUI = function(nickname) {
   if (!area) return;
   if (nickname) {
     area.innerHTML = `<div class="user-status">
-      <span class="user-nick" title="마이페이지">${escapeHtml(nickname)}님</span>
+      <span class="user-nick" title="마이페이지" onclick="openMyPage()">${escapeHtml(nickname)}님</span>
       <button class="logout-btn" onclick="window._authSignOut()">로그아웃</button>
     </div>`;
   } else {
