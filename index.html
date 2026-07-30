@@ -2165,26 +2165,35 @@ document.querySelectorAll('[data-c]').forEach(el=>{
 
   // 로그인 상태 변화 → UI + 옷장 갱신
   onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      // 닉네임 Firestore에서 조회
-      let nickname = user.email?.split('@')[0] || '사용자';
-      try {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          nickname = userDoc.data().nickname || nickname;
-          window._currentUserSince = userDoc.data().createdAt || null;
-        }
-      } catch(e) {}
-      window._currentUid = user.uid;
-      window._currentNickname = nickname;
-      if (window.updateLoginUI) window.updateLoginUI(nickname);
-      await loadWardrobe(user.uid);
-    } else {
+    try {
+      if (user) {
+        // 닉네임 Firestore에서 조회
+        let nickname = user.email?.split('@')[0] || '사용자';
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            nickname = userDoc.data().nickname || nickname;
+            window._currentUserSince = userDoc.data().createdAt || null;
+          }
+        } catch(e) { console.warn('[Auth] 닉네임 조회 실패 (폴백 사용):', e.message); }
+        window._currentUid = user.uid;
+        window._currentNickname = nickname;
+        if (window.updateLoginUI) window.updateLoginUI(nickname);
+        await loadWardrobe(user.uid);
+      } else {
+        window._currentUid = null;
+        window._currentNickname = null;
+        if (window.updateLoginUI) window.updateLoginUI(null);
+        showWardrobeLoginPrompt();
+      }
+    } catch(e) {
+      console.warn('[Auth] 상태 처리 오류 — 로그아웃 상태로 폴백:', e.message);
       window._currentUid = null;
       window._currentNickname = null;
-      if (window.updateLoginUI) window.updateLoginUI(null);
-      showWardrobeLoginPrompt();
+      try { if (window.updateLoginUI) window.updateLoginUI(null); } catch(_) {}
+      try { showWardrobeLoginPrompt(); } catch(_) {}
     }
+    window._firebaseReady = true;
   });
 
   function showWardrobeLoginPrompt() {
@@ -2266,9 +2275,11 @@ document.querySelectorAll('[data-c]').forEach(el=>{
       });
       renderWardrobeGrid(currentWardrobeItems);
     }catch(e){
-      console.error("옷장 로드 오류:", e);
-      const countEl=document.getElementById('wardrobeCount');
-      if(countEl) countEl.textContent="불러오기 실패";
+      console.warn("옷장 로드 실패 (폴백: 빈 옷장 표시):", e.message);
+      currentWardrobeItems=[];
+      // renderWardrobeGrid 호출로 wardrobeLoaded 이벤트 발송 + 빈 상태 표시
+      // (날씨 카드 등 wardrobeLoaded를 기다리는 코드가 멈추지 않도록)
+      try { renderWardrobeGrid([]); } catch(_) {}
     }
   }
 
@@ -2321,6 +2332,32 @@ document.querySelectorAll('[data-c]').forEach(el=>{
   showWardrobeLoginPrompt();
 
   console.log("Firebase 연결 완료 ✓");
+</script>
+
+<script>
+// Firebase SDK 또는 Firestore가 차단(ERR_BLOCKED_BY_CLIENT)되어
+// onAuthStateChanged가 영원히 발화하지 않는 경우 대비 폴백.
+// 5초 안에 _firebaseReady가 true로 안 바뀌면 로그아웃 상태로 강제 전환.
+window._firebaseReady = window._firebaseReady || false;
+setTimeout(function(){
+  if(window._firebaseReady) return;
+  console.warn('[Codyfit] Firebase 초기화 타임아웃 — 오프라인/차단 모드로 폴백합니다');
+  window._currentUid = null;
+  window._currentNickname = null;
+  try{ if(window.updateLoginUI) window.updateLoginUI(null); }catch(_){}
+  // wardrobeLoginPrompt 표시
+  var prompt = document.getElementById('wardrobeLoginPrompt');
+  if(prompt) prompt.style.display = 'block';
+  var countEl = document.getElementById('wardrobeCount');
+  if(countEl) countEl.textContent = '';
+  var grid = document.getElementById('wardrobeGrid');
+  if(grid) grid.innerHTML = '';
+  var empty = document.getElementById('wardrobeEmpty');
+  if(empty) empty.style.display = 'none';
+  // wardrobeLoaded 이벤트 발송 (날씨 카드 등 unblock)
+  try{ document.dispatchEvent(new CustomEvent('wardrobeLoaded')); }catch(_){}
+  window._firebaseReady = true;
+}, 5000);
 </script>
 
 <!-- 마이페이지 오버레이 -->
