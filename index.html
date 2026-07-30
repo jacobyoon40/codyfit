@@ -197,6 +197,7 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--black)
 .meta-swatch{width:16px;height:16px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,0.25);box-shadow:0 0 6px rgba(255,255,255,0.15)}
 .meta-label{font-size:9px;color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:0.03em;text-transform:uppercase}
 .meta-value{font-size:12.5px;color:var(--white);font-weight:700;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta-subtext{font-size:9.5px;color:rgba(255,255,255,0.35);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ── 옷장 카드 색상 인디케이터 ── */
 .wardrobe-item-dot{position:absolute;left:6px;bottom:6px;width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,0.7);box-shadow:0 1px 4px rgba(0,0,0,0.3)}
@@ -1245,14 +1246,46 @@ function renderMetaGrid(meta){
     {label:'스타일',value:meta.style||'-'},
     {label:'소재',value:meta.material||'-'},
     {label:'계절',value:meta.season||'-'},
-    {label:'예상가',value:meta.priceRange||'-'}
+    {id:'chip-price',label:'참고 시세',value:meta.referencePrice||'조회 중...',
+     subtext:meta.referenceCount>0?`유사 상품 ${meta.referenceCount}건 기준`:''}
   ];
   return rows.map((r,i)=>`
-    <div class="meta-chip" style="animation-delay:${(i*0.06).toFixed(2)}s">
+    <div class="meta-chip"${r.id?` id="${r.id}"`:''}style="animation-delay:${(i*0.06).toFixed(2)}s">
       ${r.swatch?`<span class="meta-swatch" style="background:${colorNameToHex(r.value)}"></span>`:''}
-      <div><div class="meta-label">${r.label}</div><div class="meta-value">${escapeHtml(r.value)}</div></div>
+      <div style="min-width:0;flex:1">
+        <div class="meta-label">${r.label}</div>
+        <div class="meta-value">${escapeHtml(r.value)}</div>
+        ${r.subtext?`<div class="meta-subtext">${escapeHtml(r.subtext)}</div>`:'<div class="meta-subtext" style="min-height:12px"></div>'}
+      </div>
     </div>
   `).join('');
+}
+
+// 네이버 쇼핑 API로 유사 상품 참고 시세 조회 (실패해도 등록 흐름 차단 안 함)
+async function fetchReferencePrice(category, color, style){
+  try{
+    const parts=[category,color,style].filter(v=>v&&v!=='-'&&v!=='기타'&&v!=='사계절');
+    if(parts.length===0) return {price:'-',count:0};
+    const query=parts.join(' ');
+    const res=await fetch('/api/price?query='+encodeURIComponent(query));
+    if(!res.ok) return {price:'-',count:0};
+    const data=await res.json();
+    const items=(data.items||[]).slice(0,10);
+    if(items.length===0) return {price:'-',count:0};
+    const prices=items.map(it=>parseInt(it.lprice||'0')).filter(p=>p>0).sort((a,b)=>a-b);
+    if(prices.length===0) return {price:'-',count:0};
+    // 극단값 제거: 5개 이상이면 최저·최고 각 1개 제거
+    let trimmed=prices;
+    if(prices.length>=5) trimmed=prices.slice(1,-1);
+    else if(prices.length>=3) trimmed=prices.slice(1);
+    const lo=trimmed[0], hi=trimmed[trimmed.length-1];
+    const fmt=p=>p>=10000?Math.round(p/10000)+'만원':p.toLocaleString()+'원';
+    const priceStr=lo===hi?fmt(lo):`${fmt(lo)}~${fmt(hi)}`;
+    return {price:priceStr,count:items.length};
+  }catch(err){
+    console.error('참고 시세 조회 실패:',err);
+    return {price:'-',count:0};
+  }
 }
 
 async function runAiAnalysis(file,originalSrc){
@@ -1319,7 +1352,24 @@ async function runAiAnalysis(file,originalSrc){
   markStepDone('step4'); setProgress(100);
   await delay(200);
 
+  // 참고 시세는 '조회 중...' 초기값으로 먼저 결과 표시 (등록 흐름 비차단)
+  meta.referencePrice='조회 중...';
+  meta.referenceCount=0;
   showResult(finalImg,meta);
+
+  // 비동기 시세 조회 — 실패해도 pendingWardrobeItem은 이미 설정되어 있어 저장 가능
+  fetchReferencePrice(meta.category,meta.color,meta.style).then(info=>{
+    if(pendingWardrobeItem){
+      pendingWardrobeItem.referencePrice=info.price;
+      pendingWardrobeItem.referenceCount=info.count;
+    }
+    const chip=document.getElementById('chip-price');
+    if(chip){
+      chip.querySelector('.meta-value').textContent=info.price;
+      const sub=chip.querySelector('.meta-subtext');
+      if(sub) sub.textContent=info.count>0?`유사 상품 ${info.count}건 기준`:'';
+    }
+  });
 }
 
 function resetUpload(){
@@ -1417,12 +1467,13 @@ function openWardrobeDetail(id){
     {label:'스타일',value:item.style||'-'},
     {label:'소재',value:item.material||'-'},
     {label:'계절',value:item.season||'-'},
-    {label:'예상가',value:item.priceRange||'-'}
+    {label:'참고 시세',value:item.referencePrice||(item.priceRange&&item.priceRange!=='-'?item.priceRange:'-'),
+     subtext:item.referenceCount>0?`유사 상품 ${item.referenceCount}건 기준`:''}
   ];
   const metaHtml=rows.map(r=>`
     <div class="wd-meta-chip">
       ${r.swatch?`<span class="meta-swatch" style="background:${colorNameToHex(r.value)}"></span>`:''}
-      <div><div class="wd-meta-label">${r.label}</div><div class="wd-meta-value">${escapeHtml(r.value)}</div></div>
+      <div><div class="wd-meta-label">${r.label}</div><div class="wd-meta-value">${escapeHtml(r.value)}</div>${r.subtext?`<div style="font-size:9.5px;color:var(--g400);margin-top:1px">${escapeHtml(r.subtext)}</div>`:''}</div>
     </div>
   `).join('');
   const tagsHtml=(item.tags||[]).map(t=>`<span class="wd-tag">${escapeHtml(t.text)}</span>`).join('');
@@ -1945,6 +1996,8 @@ document.querySelectorAll('[data-c]').forEach(el=>{
         season: item.season || "-",
         priceRange: item.priceRange || "-",
         tags: item.tags || [],
+        referencePrice: item.referencePrice || '-',
+        referenceCount: item.referenceCount || 0,
         createdAt: serverTimestamp()
       };
       const docRef=await addDoc(collection(db,"wardrobe_items"),docData);
