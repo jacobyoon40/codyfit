@@ -605,7 +605,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
 
         <div class="upload-zone" id="uploadZone">
           <input type="file" id="fileInput" class="upload-input" accept="image/*" onchange="handleUpload(event)">
-          <div class="upload-icon">📷</div>
+          <div class="upload-icon">+</div>
           <div class="upload-title">옷 사진을 올려보세요</div>
           <div class="upload-sub">배경 자동 제거 · AI 태그 분석까지 자동으로</div>
         </div>
@@ -664,7 +664,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
   </div>
   <div class="wardrobe-grid" id="wardrobeGrid"></div>
   <div class="wardrobe-empty" id="wardrobeEmpty" style="display:none">
-    <div class="wardrobe-empty-icon">🧺</div>
+    <div class="wardrobe-empty-icon">—</div>
     <div class="wardrobe-empty-text">아직 등록한 옷이 없어요<br>위에서 사진을 올려보세요</div>
   </div>
 </section>
@@ -1175,22 +1175,20 @@ function colorNameToHex(name){
   const found=COLOR_MAP.find(([k])=>name.includes(k));
   return found?found[1]:'linear-gradient(135deg,#999,#ccc)';
 }
-const CATEGORY_ICON={'상의':'👕','하의':'👖','아우터':'🧥','원피스':'👗','신발':'👟','가방':'👜','액세서리':'💍'};
-function categoryIcon(cat){ return CATEGORY_ICON[cat]||'🏷️'; }
-
 // 메타 정보 그리드 렌더 (업로드 결과 카드용, 다크 테마)
 function renderMetaGrid(meta){
   const rows=[
-    {icon:categoryIcon(meta.category),label:'카테고리',value:meta.category||'-'},
+    {label:'카테고리',value:meta.category||'-'},
     {swatch:true,label:'색상',value:meta.color||'-'},
-    {icon:'🧵',label:'소재',value:meta.material||'-'},
-    {icon:'✨',label:'스타일',value:meta.style||'-'},
-    {icon:'🌤️',label:'계절',value:meta.season||'-'},
-    {icon:'💰',label:'예상가',value:meta.priceRange||'-'}
+    {label:'TPO',value:meta.tpo||'-'},
+    {label:'스타일',value:meta.style||'-'},
+    {label:'소재',value:meta.material||'-'},
+    {label:'계절',value:meta.season||'-'},
+    {label:'예상가',value:meta.priceRange||'-'}
   ];
   return rows.map((r,i)=>`
     <div class="meta-chip" style="animation-delay:${(i*0.06).toFixed(2)}s">
-      ${r.swatch?`<span class="meta-swatch" style="background:${colorNameToHex(r.value)}"></span>`:`<span class="meta-icon">${r.icon}</span>`}
+      ${r.swatch?`<span class="meta-swatch" style="background:${colorNameToHex(r.value)}"></span>`:''}
       <div><div class="meta-label">${r.label}</div><div class="meta-value">${escapeHtml(r.value)}</div></div>
     </div>
   `).join('');
@@ -1220,7 +1218,7 @@ async function runAiAnalysis(file,originalSrc){
 
   // 2단계 — Claude Vision으로 다양한 메타 정보 분석 (실패 시 기본값으로 대체)
   let meta={
-    name:'분석 완료', category:'기타', color:'멀티', material:'-', style:'캐주얼', season:'사계절', priceRange:'-',
+    name:'분석 완료', category:'기타', color:'멀티', tpo:'데일리', material:'-', style:'캐주얼', season:'사계절', priceRange:'-',
     tags:[
       {text:'업로드된 아이템',type:'style'},
       {text:'AI 태그 완료',type:'color'},
@@ -1245,6 +1243,7 @@ async function runAiAnalysis(file,originalSrc){
       name:json.name||meta.name,
       category:json.category||meta.category,
       color:json.color||meta.color,
+      tpo:json.tpo||meta.tpo,
       material:json.material||meta.material,
       style:json.style||meta.style,
       season:json.season||meta.season,
@@ -1335,7 +1334,7 @@ function renderWardrobeGrid(items){
     <div class="wardrobe-item" data-id="${it.id}" onclick="openWardrobeDetail('${it.id}')">
       <img src="${it.imageData}" loading="lazy">
       <button class="wardrobe-item-remove" onclick="event.stopPropagation();removeWardrobeItem('${it.id}')" title="삭제">×</button>
-      ${it.category?`<span class="wardrobe-item-cat">${categoryIcon(it.category)} ${escapeHtml(it.category)}</span>`:''}
+      ${it.category?`<span class="wardrobe-item-cat">${escapeHtml(it.category)}</span>`:''}
       <span class="wardrobe-item-dot" style="background:${colorNameToHex(it.color)}"></span>
     </div>
   `).join('');
@@ -1351,16 +1350,17 @@ function openWardrobeDetail(id){
   const item=wardrobeItemsCache.find(x=>x.id===id);
   if(!item)return;
   const rows=[
-    {icon:categoryIcon(item.category),label:'카테고리',value:item.category||'-'},
+    {label:'카테고리',value:item.category||'-'},
     {swatch:true,label:'색상',value:item.color||'-'},
-    {icon:'🧵',label:'소재',value:item.material||'-'},
-    {icon:'✨',label:'스타일',value:item.style||'-'},
-    {icon:'🌤️',label:'계절',value:item.season||'-'},
-    {icon:'💰',label:'예상가',value:item.priceRange||'-'}
+    {label:'TPO',value:item.tpo||'-'},
+    {label:'스타일',value:item.style||'-'},
+    {label:'소재',value:item.material||'-'},
+    {label:'계절',value:item.season||'-'},
+    {label:'예상가',value:item.priceRange||'-'}
   ];
   const metaHtml=rows.map(r=>`
     <div class="wd-meta-chip">
-      ${r.swatch?`<span class="meta-swatch" style="background:${colorNameToHex(r.value)}"></span>`:`<span class="meta-icon">${r.icon}</span>`}
+      ${r.swatch?`<span class="meta-swatch" style="background:${colorNameToHex(r.value)}"></span>`:''}
       <div><div class="wd-meta-label">${r.label}</div><div class="wd-meta-value">${escapeHtml(r.value)}</div></div>
     </div>
   `).join('');
@@ -1878,6 +1878,7 @@ document.querySelectorAll('[data-c]').forEach(el=>{
         name: item.name || "아이템",
         category: item.category || "기타",
         color: item.color || "-",
+        tpo: item.tpo || "-",
         material: item.material || "-",
         style: item.style || "-",
         season: item.season || "-",
