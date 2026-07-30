@@ -187,6 +187,43 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--black)
 .wardrobe-empty-icon{font-size:32px;margin-bottom:10px}
 .wardrobe-empty-text{font-size:13px;color:var(--g400);font-weight:300;line-height:1.6}
 
+/* ── 메타 정보 카드 (화려한 비주얼라이징) ── */
+@keyframes metaPopIn{from{opacity:0;transform:translateY(10px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes metaGlow{0%,100%{box-shadow:0 0 0 0 rgba(184,105,122,0.35)}50%{box-shadow:0 0 24px 2px rgba(184,105,122,0.35)}}
+.ai-result.on .ai-result-thumb{animation:metaGlow 2.2s ease-in-out 1}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.meta-chip{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px 12px;opacity:0;animation:metaPopIn 0.45s cubic-bezier(.2,.8,.3,1.2) forwards}
+.meta-icon{font-size:16px;flex-shrink:0}
+.meta-swatch{width:16px;height:16px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,0.25);box-shadow:0 0 6px rgba(255,255,255,0.15)}
+.meta-label{font-size:9px;color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:0.03em;text-transform:uppercase}
+.meta-value{font-size:12.5px;color:var(--white);font-weight:700;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── 옷장 카드 색상 인디케이터 ── */
+.wardrobe-item-dot{position:absolute;left:6px;bottom:6px;width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,0.7);box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+.wardrobe-item-cat{position:absolute;top:5px;left:5px;background:rgba(0,0,0,0.55);color:#fff;font-size:11px;padding:3px 6px;border-radius:8px;backdrop-filter:blur(4px)}
+
+/* ── 옷장 상세 모달 ── */
+.wardrobe-detail-overlay{position:fixed;inset:0;background:rgba(10,10,10,0.7);backdrop-filter:blur(6px);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.wardrobe-detail-overlay.on{display:flex}
+@keyframes detailUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.wardrobe-detail-card{background:var(--white);color:var(--black);width:100%;max-width:480px;border-radius:24px 24px 0 0;overflow:hidden;animation:detailUp 0.35s cubic-bezier(.2,.8,.3,1)}
+.wd-img-wrap{position:relative;width:100%;aspect-ratio:1.3;background:var(--g100)}
+.wd-img-wrap img{width:100%;height:100%;object-fit:cover}
+.wd-img-scrim{position:absolute;left:0;right:0;bottom:0;height:70%;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent)}
+.wd-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.9);border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.wd-title{position:absolute;left:18px;right:18px;bottom:16px;color:#fff}
+.wd-title-name{font-size:20px;font-weight:800}
+.wd-title-sub{font-size:12px;color:rgba(255,255,255,0.7);margin-top:2px}
+.wd-body{padding:18px}
+.wd-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.wd-meta-chip{display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:12px;padding:10px 12px}
+.wd-meta-label{font-size:9px;color:var(--g600);font-weight:600;letter-spacing:0.03em;text-transform:uppercase}
+.wd-meta-value{font-size:13px;color:var(--black);font-weight:700;margin-top:1px}
+.wd-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.wd-tag{padding:5px 12px;border-radius:100px;font-size:12px;font-weight:600;background:var(--rose-light);color:var(--rose)}
+.wd-actions{display:flex;gap:8px}
+.wd-btn-delete{flex:1;padding:13px;background:var(--g100);color:var(--g800);border:none;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+
 /* ── 옥션 ── */
 .auction-sec{background:var(--cream)}
 .auction-filters{display:flex;gap:8px;overflow-x:auto;padding:0 20px;margin-bottom:20px}
@@ -607,6 +644,7 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
               <div class="ai-result-sub">배경 제거 완료 · 내 옷장에 저장할 수 있어요</div>
             </div>
           </div>
+          <div class="meta-grid" id="resultMetaGrid"></div>
           <div class="ai-tags-wrap" id="resultTags"></div>
           <button class="btn-add-wardrobe" id="saveWardrobeBtn" onclick="commitToWardrobe()">내 옷장에 저장하기</button>
           <button class="btn-add-wardrobe" style="background:transparent;color:rgba(255,255,255,0.4);margin-top:8px" onclick="resetUpload()">다른 옷 등록하기</button>
@@ -630,6 +668,12 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
     <div class="wardrobe-empty-text">아직 등록한 옷이 없어요<br>위에서 사진을 올려보세요</div>
   </div>
 </section>
+
+<!-- 옷장 아이템 상세 모달 -->
+<div class="wardrobe-detail-overlay" id="wardrobeDetailOverlay" onclick="if(event.target===this)closeWardrobeDetail()">
+  <div class="wardrobe-detail-card" id="wardrobeDetailCard"></div>
+</div>
+
 
 <!-- 옥션 -->
 <section class="sec auction-sec">
@@ -1095,6 +1139,42 @@ function handleUpload(e){
   reader.readAsDataURL(file);
 }
 
+// 색상 이름 → 실제 색상 매핑 (스와치 표시용)
+const COLOR_MAP=[
+  ['네이비','#1f2a44'],['남색','#1f2a44'],['블랙','#111111'],['검정','#111111'],
+  ['화이트','#ffffff'],['흰색','#ffffff'],['아이보리','#f0e8d8'],['그레이','#9a9a9a'],['회색','#9a9a9a'],
+  ['베이지','#d8c3a5'],['브라운','#6b4a34'],['갈색','#6b4a34'],['카키','#6b6a45'],
+  ['레드','#c0392b'],['빨강','#c0392b'],['블루','#2e5eaa'],['파랑','#2e5eaa'],['데님','#4a6d8c'],
+  ['그린','#3f6b4a'],['초록','#3f6b4a'],['옐로우','#e0b84b'],['노랑','#e0b84b'],
+  ['핑크','#d98ba0'],['퍼플','#6b4b8a'],['보라','#6b4b8a'],['오렌지','#d9772f'],['주황','#d9772f'],
+  ['와인','#6e2a3a'],['버건디','#6e2a3a'],['실버','#c0c0c0'],['골드','#c9a227'],['멀티','conic-gradient(from 0deg,#c0392b,#e0b84b,#3f6b4a,#2e5eaa,#6b4b8a,#c0392b)']
+];
+function colorNameToHex(name){
+  if(!name)return 'linear-gradient(135deg,#999,#ccc)';
+  const found=COLOR_MAP.find(([k])=>name.includes(k));
+  return found?found[1]:'linear-gradient(135deg,#999,#ccc)';
+}
+const CATEGORY_ICON={'상의':'👕','하의':'👖','아우터':'🧥','원피스':'👗','신발':'👟','가방':'👜','액세서리':'💍'};
+function categoryIcon(cat){ return CATEGORY_ICON[cat]||'🏷️'; }
+
+// 메타 정보 그리드 렌더 (업로드 결과 카드용, 다크 테마)
+function renderMetaGrid(meta){
+  const rows=[
+    {icon:categoryIcon(meta.category),label:'카테고리',value:meta.category||'-'},
+    {swatch:true,label:'색상',value:meta.color||'-'},
+    {icon:'🧵',label:'소재',value:meta.material||'-'},
+    {icon:'✨',label:'스타일',value:meta.style||'-'},
+    {icon:'🌤️',label:'계절',value:meta.season||'-'},
+    {icon:'💰',label:'예상가',value:meta.priceRange||'-'}
+  ];
+  return rows.map((r,i)=>`
+    <div class="meta-chip" style="animation-delay:${(i*0.06).toFixed(2)}s">
+      ${r.swatch?`<span class="meta-swatch" style="background:${colorNameToHex(r.value)}"></span>`:`<span class="meta-icon">${r.icon}</span>`}
+      <div><div class="meta-label">${r.label}</div><div class="meta-value">${escapeHtml(r.value)}</div></div>
+    </div>
+  `).join('');
+}
+
 async function runAiAnalysis(file,originalSrc){
   ['step1','step2','step3','step4'].forEach((id,i)=>{
     const icon=document.getElementById(id).querySelector('.ai-step-icon');
@@ -1117,12 +1197,15 @@ async function runAiAnalysis(file,originalSrc){
   await delay(300);
   markStepDone('step2'); markStepActive('step3'); setProgress(55);
 
-  // 2단계 — Claude Vision 태그 분석 (API 프록시 연동 전이라 실패 시 기본 태그로 대체)
-  let name='분석 완료', tags=[
-    {text:'업로드된 아이템',type:'style'},
-    {text:'AI 태그 완료',type:'color'},
-    {text:'매칭 준비됨',type:'size'}
-  ];
+  // 2단계 — Claude Vision으로 다양한 메타 정보 분석 (실패 시 기본값으로 대체)
+  let meta={
+    name:'분석 완료', category:'기타', color:'멀티', material:'-', style:'캐주얼', season:'사계절', priceRange:'-',
+    tags:[
+      {text:'업로드된 아이템',type:'style'},
+      {text:'AI 태그 완료',type:'color'},
+      {text:'매칭 준비됨',type:'size'}
+    ]
+  };
   try{
     const base64=originalSrc.split(',')[1];
     const res=await fetch('/api/analyze',{
@@ -1136,16 +1219,25 @@ async function runAiAnalysis(file,originalSrc){
     const jsonMatch=text.match(/\{[\s\S]*\}/);
     if(!jsonMatch) throw new Error('응답에서 JSON을 찾을 수 없음: '+text.slice(0,200));
     const json=JSON.parse(jsonMatch[0]);
-    name=json.name; tags=json.tags;
+    meta={
+      name:json.name||meta.name,
+      category:json.category||meta.category,
+      color:json.color||meta.color,
+      material:json.material||meta.material,
+      style:json.style||meta.style,
+      season:json.season||meta.season,
+      priceRange:json.priceRange||meta.priceRange,
+      tags:json.tags||meta.tags
+    };
   }catch(err){
-    console.error('AI 분석 실패, 기본 태그로 대체:',err);
+    console.error('AI 분석 실패, 기본값으로 대체:',err);
   }
   markStepDone('step3'); markStepActive('step4'); setProgress(80);
   await delay(300);
   markStepDone('step4'); setProgress(100);
   await delay(200);
 
-  showResult(finalImg,name,tags);
+  showResult(finalImg,meta);
 }
 
 function resetUpload(){
@@ -1166,24 +1258,25 @@ function resetUpload(){
   });
 }
 
-function showResult(imgSrc,name,tags){
+function showResult(imgSrc,meta){
   document.getElementById('aiAnalyzing').classList.remove('on');
   document.getElementById('scanBar').style.display='none';
   const result=document.getElementById('aiResult');
-  result.classList.add('on');
+  result.classList.remove('on'); void result.offsetWidth; result.classList.add('on'); // 재생 시 애니메이션 재시작
   document.getElementById('resultImg').src=imgSrc;
-  document.getElementById('resultName').textContent=name;
+  document.getElementById('resultName').textContent=meta.name;
   document.getElementById('demoBarLabel').textContent='분석 완료 ✓';
+  document.getElementById('resultMetaGrid').innerHTML=renderMetaGrid(meta);
   const wrap=document.getElementById('resultTags');
   wrap.innerHTML='';
-  (tags||[]).forEach((t,i)=>{
+  (meta.tags||[]).forEach((t,i)=>{
     const el=document.createElement('span');
     el.className='ai-tag '+(t.type||'style');
     el.textContent=t.text;
     el.style.animationDelay=(i*0.08)+'s';
     wrap.appendChild(el);
   });
-  pendingWardrobeItem={imgSrc,name,tags:tags||[]};
+  pendingWardrobeItem={imgSrc,...meta};
   track('ai_analysis_complete');
 }
 
@@ -1204,7 +1297,9 @@ async function commitToWardrobe(){
 
 // 내 옷장 그리드 렌더 (module 스크립트에서 데이터 로드/변경 시 호출)
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+let wardrobeItemsCache=[];
 function renderWardrobeGrid(items){
+  wardrobeItemsCache=items;
   const grid=document.getElementById('wardrobeGrid');
   const empty=document.getElementById('wardrobeEmpty');
   const countEl=document.getElementById('wardrobeCount');
@@ -1215,17 +1310,61 @@ function renderWardrobeGrid(items){
   }
   empty.style.display='none';
   grid.innerHTML=items.map(it=>`
-    <div class="wardrobe-item" data-id="${it.id}">
+    <div class="wardrobe-item" data-id="${it.id}" onclick="openWardrobeDetail('${it.id}')">
       <img src="${it.imageData}" loading="lazy">
-      <button class="wardrobe-item-remove" onclick="removeWardrobeItem('${it.id}')" title="삭제">×</button>
-      <div class="wardrobe-item-name">${escapeHtml(it.name)||'아이템'}</div>
+      <button class="wardrobe-item-remove" onclick="event.stopPropagation();removeWardrobeItem('${it.id}')" title="삭제">×</button>
+      ${it.category?`<span class="wardrobe-item-cat">${categoryIcon(it.category)} ${escapeHtml(it.category)}</span>`:''}
+      <span class="wardrobe-item-dot" style="background:${colorNameToHex(it.color)}"></span>
     </div>
   `).join('');
 }
 async function removeWardrobeItem(id){
   if(!confirm('이 옷을 옷장에서 삭제할까요?'))return;
   const ok=window.deleteWardrobeItem ? await window.deleteWardrobeItem(id) : false;
-  if(ok) track('wardrobe_delete');
+  if(ok){ track('wardrobe_delete'); closeWardrobeDetail(); }
+}
+
+// 옷장 아이템 상세 모달
+function openWardrobeDetail(id){
+  const item=wardrobeItemsCache.find(x=>x.id===id);
+  if(!item)return;
+  const rows=[
+    {icon:categoryIcon(item.category),label:'카테고리',value:item.category||'-'},
+    {swatch:true,label:'색상',value:item.color||'-'},
+    {icon:'🧵',label:'소재',value:item.material||'-'},
+    {icon:'✨',label:'스타일',value:item.style||'-'},
+    {icon:'🌤️',label:'계절',value:item.season||'-'},
+    {icon:'💰',label:'예상가',value:item.priceRange||'-'}
+  ];
+  const metaHtml=rows.map(r=>`
+    <div class="wd-meta-chip">
+      ${r.swatch?`<span class="meta-swatch" style="background:${colorNameToHex(r.value)}"></span>`:`<span class="meta-icon">${r.icon}</span>`}
+      <div><div class="wd-meta-label">${r.label}</div><div class="wd-meta-value">${escapeHtml(r.value)}</div></div>
+    </div>
+  `).join('');
+  const tagsHtml=(item.tags||[]).map(t=>`<span class="wd-tag">${escapeHtml(t.text)}</span>`).join('');
+  document.getElementById('wardrobeDetailCard').innerHTML=`
+    <div class="wd-img-wrap">
+      <img src="${item.imageData}">
+      <div class="wd-img-scrim"></div>
+      <button class="wd-close" onclick="closeWardrobeDetail()">✕</button>
+      <div class="wd-title">
+        <div class="wd-title-name">${escapeHtml(item.name)||'아이템'}</div>
+        <div class="wd-title-sub">내 옷장에 등록된 아이템</div>
+      </div>
+    </div>
+    <div class="wd-body">
+      <div class="wd-meta-grid">${metaHtml}</div>
+      <div class="wd-tags">${tagsHtml}</div>
+      <div class="wd-actions">
+        <button class="wd-btn-delete" onclick="removeWardrobeItem('${item.id}')">옷장에서 삭제</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('wardrobeDetailOverlay').classList.add('on');
+}
+function closeWardrobeDetail(){
+  document.getElementById('wardrobeDetailOverlay').classList.remove('on');
 }
 
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
@@ -1711,14 +1850,21 @@ document.querySelectorAll('[data-c]').forEach(el=>{
   window.saveWardrobeItem=async function(item){
     try{
       const ownerId=getDeviceId();
-      const docRef=await addDoc(collection(db,"wardrobe_items"),{
+      const docData={
         ownerId: ownerId,
         imageData: item.imgSrc,
         name: item.name || "아이템",
+        category: item.category || "기타",
+        color: item.color || "-",
+        material: item.material || "-",
+        style: item.style || "-",
+        season: item.season || "-",
+        priceRange: item.priceRange || "-",
         tags: item.tags || [],
         createdAt: serverTimestamp()
-      });
-      currentWardrobeItems.unshift({id:docRef.id, ownerId, imageData:item.imgSrc, name:item.name, tags:item.tags});
+      };
+      const docRef=await addDoc(collection(db,"wardrobe_items"),docData);
+      currentWardrobeItems.unshift({id:docRef.id, ...docData});
       renderWardrobeGrid(currentWardrobeItems);
       return true;
     }catch(e){
