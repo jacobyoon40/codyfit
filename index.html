@@ -2141,18 +2141,33 @@ document.querySelectorAll('[data-c]').forEach(el=>{
     const email = nicknameToEmail(nick);
     try {
       await signInWithEmailAndPassword(auth, email, pw);
-    } catch(e) {
-      if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
-        // 신규 가입
-        const cred = await createUserWithEmailAndPassword(auth, email, pw);
-        await setDoc(doc(db, 'users', cred.user.uid), {
-          nickname: nick.trim(),
-          createdAt: serverTimestamp()
-        });
-      } else if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
-        throw new Error('닉네임 또는 비밀번호가 올바르지 않습니다.');
+    } catch(signInErr) {
+      // Firebase v9+: invalid-credential = 계정없음 OR 비밀번호불일치 (구분 불가)
+      // 가입 시도 후 email-already-in-use 발생 시 비밀번호 불일치로 판단
+      if (
+        signInErr.code === 'auth/user-not-found' ||
+        signInErr.code === 'auth/invalid-credential' ||
+        signInErr.code === 'auth/wrong-password'
+      ) {
+        try {
+          const cred = await createUserWithEmailAndPassword(auth, email, pw);
+          await setDoc(doc(db, 'users', cred.user.uid), {
+            nickname: nick.trim(),
+            createdAt: serverTimestamp()
+          });
+        } catch(signUpErr) {
+          if (signUpErr.code === 'auth/email-already-in-use') {
+            throw new Error('닉네임 또는 비밀번호가 올바르지 않습니다.');
+          } else if (signUpErr.code === 'auth/weak-password') {
+            throw new Error('비밀번호는 6자 이상이어야 해요.');
+          } else {
+            console.warn('[Auth] 가입 오류:', signUpErr.code);
+            throw new Error('로그인에 실패했어요. 다시 시도해주세요.');
+          }
+        }
       } else {
-        throw e;
+        console.warn('[Auth] 로그인 오류:', signInErr.code);
+        throw new Error('로그인에 실패했어요. 다시 시도해주세요.');
       }
     }
   };
