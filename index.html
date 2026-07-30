@@ -1133,7 +1133,9 @@ async function runAiAnalysis(file,originalSrc){
     const data=await res.json();
     if(!res.ok) throw new Error(data.error||'분석 실패');
     const text=data.content[0].text;
-    const json=JSON.parse(text.replace(/```json|```/g,'').trim());
+    const jsonMatch=text.match(/\{[\s\S]*\}/);
+    if(!jsonMatch) throw new Error('응답에서 JSON을 찾을 수 없음: '+text.slice(0,200));
+    const json=JSON.parse(jsonMatch[0]);
     name=json.name; tags=json.tags;
   }catch(err){
     console.error('AI 분석 실패, 기본 태그로 대체:',err);
