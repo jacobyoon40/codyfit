@@ -811,23 +811,9 @@ footer span{font-size:11px;color:rgba(255,255,255,0.2)}
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-title" id="matchTitle">내 옷장 매칭</div>
-    <div class="sheet-sub">이 아이템이 내 옷장과 어울리는지 확인해보세요</div>
-    <div class="match-item" data-c="match-1">
-      <div class="match-thumb"><img onerror="this.onerror=null;this.style.background='#f0f0f0';this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'" src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=120&q=80&fit=crop" alt="" loading="lazy"></div>
-      <div class="match-info"><div class="match-name">흰 셔츠</div><div class="match-sub">내 옷장 · 코튼 · M</div></div>
-      <div class="match-badge yes">96% 매칭</div>
-    </div>
-    <div class="match-item" data-c="match-2">
-      <div class="match-thumb"><img onerror="this.onerror=null;this.style.background='#f0f0f0';this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'" src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=120&q=80&fit=crop" alt="" loading="lazy"></div>
-      <div class="match-info"><div class="match-name">네이비 슬랙스</div><div class="match-sub">내 옷장 · 폴리 · M</div></div>
-      <div class="match-badge yes">88% 매칭</div>
-    </div>
-    <div class="match-item" data-c="match-3">
-      <div class="match-thumb" style="background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:18px">?</div>
-      <div class="match-info"><div class="match-name" id="matchItemName">아이템</div><div class="match-sub">내 옷장에 없음 → 최저가 연결</div></div>
-      <button class="buy-link-btn" onclick="openPriceCompare(document.getElementById('matchItemName').textContent)" data-c="match-buy">✦ 내 옷장에 맞는 최저가</button>
-    </div>
-    <button class="sheet-cta" onclick="track('match-cta');showBetaToast()" data-c="match-cta">내 옷장 등록하고 정확하게 받기</button>
+    <div class="sheet-sub" id="matchSub">이 아이템과 어울리는 내 옷장</div>
+    <div id="matchList"></div>
+    <button class="sheet-cta" id="matchCta" onclick="track('match-cta');showBetaToast()" data-c="match-cta">내 옷장 등록하고 정확하게 받기</button>
   </div>
 </div>
 
@@ -1052,21 +1038,96 @@ function switchFeed(el){
   track('feed_'+el.textContent);
 }
 
+// 카테고리 상보성 매핑
+const COMPLEMENT_CAT={
+  '상의':['하의','아우터','신발','가방'],
+  '하의':['상의','아우터','신발'],
+  '아우터':['상의','하의','신발'],
+  '원피스':['신발','가방','액세서리'],
+  '신발':['상의','하의','아우터','원피스'],
+  '가방':['상의','하의','아우터','원피스'],
+  '액세서리':['상의','하의','아우터','원피스']
+};
+const NAME_CAT_RULES=[
+  {k:['팬츠','바지','슬랙스','청바지','조거','카고','스커트','치마','반바지'],c:'하의'},
+  {k:['자켓','점퍼','코트','패딩','가디건','집업','블레이저','아우터'],c:'아우터'},
+  {k:['원피스','드레스'],c:'원피스'},
+  {k:['신발','슈즈','스니커','부츠','샌들','로퍼','플랫'],c:'신발'},
+  {k:['가방','백','파우치','숄더','크로스백'],c:'가방'},
+  {k:['귀걸이','목걸이','반지','벨트','모자','스카프','시계'],c:'액세서리'},
+  {k:['티','셔츠','블라우스','탑','니트','맨투맨','후드','크롭'],c:'상의'}
+];
+function guessCatFromName(name){
+  for(const {k,c} of NAME_CAT_RULES){
+    if(k.some(kw=>name.includes(kw))) return c;
+  }
+  return '기타';
+}
+function stableScore(str,min,range){
+  let h=0; for(const ch of str) h=(h*31+ch.charCodeAt(0))&0xffff;
+  return min+(h%range);
+}
+function computeMatchScore(item,targetCat){
+  const wc=item.category||'기타';
+  const complements=COMPLEMENT_CAT[targetCat]||[];
+  const isComplement=complements.includes(wc);
+  return stableScore((item.name||'')+(item.id||''),isComplement?82:65,14);
+}
+
+let lastMatchTarget='';
 // 매칭 시트
 function openMatch(item){
+  lastMatchTarget=item;
   document.getElementById('matchTitle').textContent=item+' 매칭 결과';
-  document.getElementById('matchItemName').textContent=item;
   document.getElementById('matchOverlay').classList.add('on');
   document.body.style.overflow='hidden';
   track('match_'+item);
+  renderMatchList(item);
+}
+function renderMatchList(item){
+  const targetCat=guessCatFromName(item);
+  const list=document.getElementById('matchList');
+  const cta=document.getElementById('matchCta');
+  if(!wardrobeItemsCache||wardrobeItemsCache.length===0){
+    list.innerHTML=`<div style="text-align:center;padding:28px 0;color:var(--g400)"><div style="font-size:14px;font-weight:500;margin-bottom:4px">아직 등록된 옷이 없어요</div><div style="font-size:12px;font-weight:300">위에서 옷을 등록하면 매칭 결과를 볼 수 있어요</div></div>`;
+    cta.style.display='block';
+    return;
+  }
+  const scored=wardrobeItemsCache
+    .map(it=>({it,score:computeMatchScore(it,targetCat)}))
+    .sort((a,b)=>b.score-a.score).slice(0,3);
+  const top1=scored[0]?.it;
+  const top2=scored[1]?.it;
+  list.innerHTML=scored.map(({it,score})=>`
+    <div class="match-item">
+      <div class="match-thumb"><img src="${it.imageData}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:10px"></div>
+      <div class="match-info">
+        <div class="match-name">${escapeHtml(it.name||'아이템')}</div>
+        <div class="match-sub">내 옷장 · ${escapeHtml(it.material&&it.material!=='-'?it.material:it.category||'-')}</div>
+      </div>
+      <div class="match-badge ${score>=80?'yes':'no'}">${score}% 매칭</div>
+    </div>
+  `).join('')+`
+    <div class="match-item">
+      <div class="match-thumb" style="background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--g400)">?</div>
+      <div class="match-info"><div class="match-name">${escapeHtml(item)}</div><div class="match-sub">새 아이템 최저가 연결</div></div>
+      <button class="buy-link-btn" onclick="openPriceCompare('${item.replace(/'/g,'\\\'')}')" data-c="match-buy">✦ 최저가 보기</button>
+    </div>
+  `;
+  cta.style.display=wardrobeItemsCache.length<3?'block':'none';
+  // 최저가 연결 시 매칭 상위 2개 이름 전달용 저장
+  window._matchTop=[top1?.name,top2?.name].filter(Boolean);
 }
 
 // 오버레이 닫기
-function openPriceCompare(name, thumb){
+function openPriceCompare(name){
   track('price-compare-open');
-  const n = name || document.getElementById('matchItemName').textContent || '아이템';
-  const t = thumb || '';
-  window.location.href = 'price.html?name='+encodeURIComponent(n)+'&thumb='+encodeURIComponent(t);
+  const n=name||lastMatchTarget||'아이템';
+  let url='price.html?name='+encodeURIComponent(n);
+  const tops=window._matchTop||[];
+  if(tops[0]) url+='&m1='+encodeURIComponent(tops[0]);
+  if(tops[1]) url+='&m2='+encodeURIComponent(tops[1]);
+  window.location.href=url;
 }
 function closeOverlay(id){
   document.getElementById(id).classList.remove('on');
