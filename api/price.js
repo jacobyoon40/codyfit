@@ -20,10 +20,11 @@ module.exports = async (req, res) => {
   }
 
   try {
+    const sort = ['sim','asc','dsc','date'].includes(req.query.sort) ? req.query.sort : 'sim';
     const url =
       'https://openapi.naver.com/v1/search/shop.json' +
       '?query=' + encodeURIComponent(query.trim()) +
-      '&display=10&sort=sim';
+      '&display=10&sort=' + sort;
 
     const naverRes = await fetch(url, {
       headers: {

@@ -130,19 +130,19 @@ a{text-decoration:none;color:inherit}
 <!-- 외부 최저가 -->
 <div class="section-label">💰 외부 최저가 비교 <span style="font-size:10px;font-weight:600;color:#03c75a">· 위 옥션이 더 저렴할 수 있어요</span></div>
 
-<a class="price-row best" data-shop="https://search.shopping.naver.com/search/all?query=" href="#" target="_blank">
-  <div class="shop-logo" style="background:#e8f5e9"><span style="color:#03c75a;font-size:18px;font-weight:900">N</span></div>
+<a class="price-row best" id="naverRow" data-shop="https://search.shopping.naver.com/search/all?query=" href="#" target="_blank">
+  <div class="shop-logo" id="naverLogo" style="background:#e8f5e9;overflow:hidden;padding:0;display:flex;align-items:center;justify-content:center"><span id="naverLogoN" style="color:#03c75a;font-size:18px;font-weight:900">N</span></div>
   <div class="price-info">
     <div class="shop-name-row">
       <span class="shop-name">네이버쇼핑</span>
       <span class="sbadge best">최저가</span>
     </div>
-    <div class="price-detail">리바이스 507 데님 자켓 · M · 인디고블루</div>
-    <div class="ship-info" style="color:#03c75a">무료배송 · ★ 4.8 (2,341)</div>
+    <div class="price-detail" id="naverPriceDetail">검색 중...</div>
+    <div class="ship-info" style="color:#03c75a" id="naverShipInfo">네이버쇼핑 최저가</div>
   </div>
   <div class="price-col">
-    <div class="price-num green">₩67,900</div>
-    <div class="price-save">↑ 43% 절약</div>
+    <div class="price-num green" id="naverPriceNum">-</div>
+    <div class="price-save" id="naverPriceSave"></div>
   </div>
   <span class="arrow">›</span>
 </a>
@@ -320,6 +320,63 @@ if(aiMatchEl){
     ? '내 옷장 '+(m1||'')+(m2?' · '+m2:'')+'와 매칭'
     : '내 옷장 기준 추천 상품';
 }
+
+// 네이버 카드 실제 데이터 연동
+(async function fetchNaverCard(){
+  const priceDetail = document.getElementById('naverPriceDetail');
+  const priceNum    = document.getElementById('naverPriceNum');
+  const shipInfo    = document.getElementById('naverShipInfo');
+  const priceSave   = document.getElementById('naverPriceSave');
+  const logo        = document.getElementById('naverLogo');
+  const logoN       = document.getElementById('naverLogoN');
+  const naverRow    = document.getElementById('naverRow');
+
+  try {
+    const res = await fetch('/api/price?query=' + encodeURIComponent(itemName) + '&sort=asc');
+    if (!res.ok) throw new Error('status ' + res.status);
+    const data = await res.json();
+
+    const items = (data.items || [])
+      .map(it => ({ ...it, p: parseInt(it.lprice || '0') }))
+      .filter(it => it.p >= 1000)
+      .sort((a, b) => a.p - b.p);
+
+    if (!items.length) {
+      priceDetail.textContent = itemName;
+      priceNum.textContent = '결과 없음';
+      return;
+    }
+
+    const top = items[0];
+    const name = top.title.replace(/<[^>]*>/g, '');
+    const price = top.p;
+
+    priceDetail.textContent = name;
+    priceNum.textContent = '₩' + price.toLocaleString();
+    shipInfo.textContent = (top.mallName || '네이버쇼핑') + ' · 최저가';
+    priceSave.textContent = '';
+
+    // 상품 링크 직접 연결
+    if (top.link) naverRow.href = top.link;
+
+    // 썸네일 적용 (로고 자리에 상품 이미지)
+    if (top.image) {
+      const img = document.createElement('img');
+      img.alt = name;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:12px;display:block';
+      img.onload = () => {
+        logoN.style.display = 'none';
+        logo.appendChild(img);
+      };
+      img.onerror = () => {}; // 실패 시 N 유지
+      img.src = top.image;
+    }
+  } catch(e) {
+    console.warn('[네이버카드] 조회 실패:', e);
+    priceDetail.textContent = itemName;
+    priceNum.textContent = '조회 실패';
+  }
+})();
 </script>
 
 <!-- Firebase: 내 옷장 중복 확인 -->
