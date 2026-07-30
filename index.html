@@ -1397,7 +1397,28 @@ async function runAiAnalysis(file,originalSrc){
   let finalImg=originalSrc;
   try{
     const {removeBackground}=await loadBgRemoval();
+
+    // [진단] 원본 이미지 크기 측정
+    const origDim = await new Promise(resolve=>{
+      const img=new Image();
+      img.onload=()=>resolve({w:img.naturalWidth,h:img.naturalHeight});
+      img.onerror=()=>resolve(null);
+      img.src=URL.createObjectURL(file);
+    });
+    if(origDim) console.log('[배경제거] 원본 크기:',origDim.w,'x',origDim.h);
+
     const bgBlob=await removeBackground(file);
+
+    // [진단] 배경 제거 결과 크기 측정 → 라이브러리 자동 크롭 여부 확인
+    const bgDim = await new Promise(resolve=>{
+      const img=new Image();
+      img.onload=()=>resolve({w:img.naturalWidth,h:img.naturalHeight});
+      img.onerror=()=>resolve(null);
+      img.src=URL.createObjectURL(bgBlob);
+    });
+    if(bgDim) console.log('[배경제거] 결과 크기:',bgDim.w,'x',bgDim.h,
+      origDim?`(비율변화: ${(bgDim.w/origDim.w*100).toFixed(1)}% x ${(bgDim.h/origDim.h*100).toFixed(1)}%)`:'');
+
     finalImg=await blobToResizedDataURL(bgBlob,640);
     document.getElementById('aiPreviewImg').src=finalImg;
   }catch(err){
