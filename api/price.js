@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     const url =
       'https://openapi.naver.com/v1/search/shop.json' +
       '?query=' + encodeURIComponent(query.trim()) +
-      '&display=10&sort=asc';
+      '&display=10&sort=sim';
 
     const naverRes = await fetch(url, {
       headers: {
